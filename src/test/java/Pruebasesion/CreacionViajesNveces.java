@@ -4,7 +4,6 @@ import io.qameta.allure.Step;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.RepeatedTest;
-import org.junit.jupiter.api.Test;
 import org.openqa.selenium.Alert;
 import org.openqa.selenium.By;
 import org.openqa.selenium.Keys;
@@ -15,15 +14,21 @@ import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.Select;
 import org.openqa.selenium.support.ui.WebDriverWait;
+
 import java.time.Duration;
 import java.util.Random;
 
-public class CreacionViaje {
+public class CreacionViajesNveces {
 
     private WebDriver driver;
     private WebDriverWait wait;
-    private int viajeCount = 1; // Contador para número de viaje
     private Random random;
+    private int viajeCount = 1; // Contador para número de viaje
+    private int intentosTotales;
+    private int exitos;
+    private int fallos;
+
+    private static final int NUM_VEZES = 5; // Número de veces que deseas ejecutar el script
 
     @BeforeEach
     public void setup() {
@@ -31,30 +36,44 @@ public class CreacionViaje {
         driver = new ChromeDriver();
         wait = new WebDriverWait(driver, Duration.ofSeconds(10)); // Inicializar WebDriverWait con tiempo de espera de 10 segundos
         random = new Random(); // Inicializar Random
-
+        intentosTotales = 0;
+        exitos = 0;
+        fallos = 0;
     }
 
-    @RepeatedTest(500)
+    @RepeatedTest(NUM_VEZES)
     public void testCrearViaje() {
-        driver.get("https://www.softwareparatransporte.com/GMTERPV8_WEB/ES/PAGE_CatUsuariosLoginAWP.awp");
-        fillForm();
-        submitForm();
-        handleTipoDocumento();  // Manejar Tipo de Documento
-        handleNumeroViaje();    // Manejar Número de Viaje
-        handleMoneda();         // Manejar Moneda
-        handleCodigoCliente();  // Asignar Cliente al Viaje
-        handleFolioRuta();      // Manejar Folio Ruta
-        handleNumeroEconomicoConvoy(); // Manejar Número Económico Convoy
-        handleSeleccionarPestana(); // Seleccionar Pestaña de Materiales Carga
+        for (int i = 0; i < NUM_VEZES; i++) { // Reemplaza NUM_VEZES con el número de veces que deseas ejecutar el script
+            try {
+                driver.get("https://www.softwareparatransporte.com/GMTERPV8_WEB/ES/PAGE_CatUsuariosLoginAWP.awp");
+                fillForm();
+                submitForm();
+                handleTipoDocumento();  // Manejar Tipo de Documento
+                handleNumeroViaje();    // Manejar Número de Viaje
+                handleMoneda();         // Manejar Moneda
+                handleCodigoCliente();  // Asignar Cliente al Viaje
+                handleFolioRuta();      // Manejar Folio Ruta
+                handleNumeroEconomicoConvoy(); // Manejar Número Económico Convoy
+                handleSeleccionarPestana(); // Seleccionar Pestaña de Materiales Carga
 
-        // Llama al método para llenar los campos adicionales después de cambiar a la pestaña
-        handleAdditionalFields();
+                // Llama al método para llenar los campos adicionales después de cambiar a la pestaña
+                handleAdditionalFields();
 
-        // Llama a los métodos para manejar los botones adicionales después de llenar los datos
-        clickAceptarButton();        // Presionar botón Aceptar
-        clickYesButtonTimbrar();     // Presionar botón Yes para timbrar
-        clickYesButtonEnviarCorreo(); // Presionar botón Yes para enviar por correo
-        clickRegresarButton();       // Presionar botón Regresar
+                // Llama a los métodos para manejar los botones adicionales después de llenar los datos
+                clickAceptarButton();        // Presionar botón Aceptar
+                clickYesButtonTimbrar();     // Presionar botón Yes para timbrar
+                clickYesButtonEnviarCorreo(); // Presionar botón Yes para enviar por correo
+                clickRegresarButton();       // Presionar botón Regresar
+
+                exitos++;
+            } catch (Exception e) {
+                fallos++;
+                e.printStackTrace(); // Captura el error para el registro
+            } finally {
+                intentosTotales++;
+            }
+        }
+        imprimirResumen();
     }
 
     @AfterEach
@@ -251,43 +270,45 @@ public class CreacionViaje {
     @Step("Llenar campos adicionales después de cambiar a la pestaña")
     private void handleAdditionalFields() {
         try {
-            // Genera un número aleatorio entre 1 y 1000
-            int randomNumber = random.nextInt(1000) + 1;
-            String randomValue = String.valueOf(randomNumber);
+            // Genera un número aleatorio entre 1 y 1000 para el campo cantidad
+            int randomNumberCantidad = random.nextInt(1000) + 1;
+            String randomValueCantidad = String.valueOf(randomNumberCantidad);
 
             // Espera a que el campo zrl_1_ATT_CANTIDAD sea visible
             WebElement cantidadField = wait.until(ExpectedConditions.visibilityOfElementLocated(By.name("zrl_1_ATT_CANTIDAD")));
             // Usar JavaScript para desplazar la vista hacia el campo
             ((JavascriptExecutor) driver).executeScript("arguments[0].scrollIntoView(true);", cantidadField);
             // Usar JavaScript para establecer el valor del campo
-            ((JavascriptExecutor) driver).executeScript("arguments[0].value = arguments[1];", cantidadField, randomValue);
+            ((JavascriptExecutor) driver).executeScript("arguments[0].value = arguments[1];", cantidadField, randomValueCantidad);
             // Simular la presión de la tecla Enter
             cantidadField.sendKeys(Keys.ENTER);
 
             // Opcionalmente, puedes agregar un pequeño retraso para asegurar que la acción se complete
             Thread.sleep(2000);
 
+            // Genera un número aleatorio entre 1 y 1000 para el campo peso
+            int randomNumberPeso = random.nextInt(1000) + 1;
+            String randomValuePeso = String.valueOf(randomNumberPeso);
+
             // Espera a que el campo zrl_1_ATT_PESO sea visible
             WebElement pesoField = wait.until(ExpectedConditions.visibilityOfElementLocated(By.name("zrl_1_ATT_PESO")));
             // Usar JavaScript para desplazar la vista hacia el campo
             ((JavascriptExecutor) driver).executeScript("arguments[0].scrollIntoView(true);", pesoField);
             // Usar JavaScript para establecer el valor del campo
-            ((JavascriptExecutor) driver).executeScript("arguments[0].value = arguments[1];", pesoField, randomValue);
+            ((JavascriptExecutor) driver).executeScript("arguments[0].value = arguments[1];", pesoField, randomValuePeso);
             // Simular la presión de la tecla Enter
             pesoField.sendKeys(Keys.ENTER);
 
             // Opcionalmente, puedes agregar un pequeño retraso para asegurar que la acción se complete
             Thread.sleep(2000);
-
         } catch (Exception e) {
-            System.out.println("Error al llenar campos adicionales.");
             e.printStackTrace();
         }
     }
 
 
 
-    @Step("Aceptar el viaje")
+        @Step("Aceptar el viaje")
     private void clickAceptarButton() {
         try {
             WebElement aceptarButton = wait.until(ExpectedConditions.elementToBeClickable(By.id("BTN_ACEPTAR")));
@@ -339,5 +360,13 @@ public class CreacionViaje {
             System.out.println("Error al buscar o presionar el botón Regresar.");
             e.printStackTrace();
         }
+    }
+
+
+    private void imprimirResumen() {
+        System.out.println("Resumen de la prueba:");
+        System.out.println("Intentos Totales: " + intentosTotales);
+        System.out.println("Éxitos: " + exitos);
+        System.out.println("Fallos: " + fallos);
     }
 }
