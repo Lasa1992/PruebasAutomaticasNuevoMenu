@@ -4,7 +4,6 @@ import io.qameta.allure.Step;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.RepeatedTest;
-import org.junit.jupiter.api.Test;
 import org.openqa.selenium.Alert;
 import org.openqa.selenium.By;
 import org.openqa.selenium.Keys;
@@ -22,7 +21,7 @@ import java.time.Duration;
 import java.util.Random;
 import java.util.List;
 
-public class CreacionViajeSNSesion {
+public class CreacionViajeSNSesionTest {
 
     // Variables estáticas para WebDriver, WebDriverWait y Random
     private static WebDriver driver;
