@@ -34,7 +34,7 @@ public class CreacionViaje {
 
     }
 
-    @RepeatedTest(10)
+    @RepeatedTest(500)
     public void testCrearViaje() {
         driver.get("https://www.softwareparatransporte.com/GMTERPV8_WEB/ES/PAGE_CatUsuariosLoginAWP.awp");
         fillForm();

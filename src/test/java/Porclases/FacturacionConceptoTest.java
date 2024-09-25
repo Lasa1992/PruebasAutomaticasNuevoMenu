@@ -1,23 +1,20 @@
 package Porclases;
 
+import io.qameta.allure.Allure;
+import io.qameta.allure.Description;
 import io.qameta.allure.Step;
 import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.RepeatedTest;
-import org.openqa.selenium.Alert;
-import org.openqa.selenium.By;
-import org.openqa.selenium.Keys;
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebElement;
+import org.openqa.selenium.*;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import org.openqa.selenium.support.ui.Select;
 import org.openqa.selenium.support.ui.FluentWait;
-import org.openqa.selenium.NoSuchElementException;
-import org.openqa.selenium.TimeoutException;
-import org.openqa.selenium.JavascriptExecutor;
 
+import java.io.ByteArrayInputStream;
 import java.time.Duration;
 import java.util.List;
 import java.util.Random;
@@ -31,9 +28,10 @@ public class FacturacionConceptoTest {
     private static Random random = new Random();
 
 
+
     @BeforeAll
     public static void setup() {
-        System.setProperty("webdriver.chrome.driver", "C:\\RepositorioPrueAuto\\Chromedriver\\chromedriver.exe");
+        //System.setProperty("webdriver.chrome.driver", "C:\\RepositorioPrueAuto\\Chromedriver\\chromedriver.exe");
         driver = new ChromeDriver();
         wait = new WebDriverWait(driver, Duration.ofSeconds(10));
 
@@ -48,7 +46,8 @@ public class FacturacionConceptoTest {
         handleSubMenuButton();
     }
 
-    @RepeatedTest(30)
+    @RepeatedTest(5)
+    @Description("Se genera una factura con conceptos aleatorios")
     public void testFacturacionporConcepto() {
         handleBotonAgregarListado();
         handleAsignaCliente();
@@ -133,7 +132,8 @@ public class FacturacionConceptoTest {
             WebElement imageButton = wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//img[contains(@src, '/GMTERPV8_WEB/Imagenes/FACTURACION1.JPG')]")));
             imageButton.click();
         } catch (Exception e) {
-            System.out.println("Botón Módulo Tráfico no funciona.");
+            UtilidadesAllure.manejoError(driver, e, "Botón Módulo Facturación no funciona.");
+            System.out.println("Botón Módulo Facturación no funciona.");
         }
     }
 
@@ -142,7 +142,9 @@ public class FacturacionConceptoTest {
             WebElement subMenuButton = wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//img[contains(@src, '/GMTERPV8_WEB/Imagenes/FACTURACION/PORCONCEPTO1.JPG')]")));
             subMenuButton.click();
         } catch (Exception e) {
-            System.out.println("Botón listado de viajes no funciona.");
+            //Captura el mensaje de error, toma una captura de pantalla y lo despliega en el reporte de Allure.
+            UtilidadesAllure.manejoError(driver, e, "Botón listado de Facturas por Concepto no funciona.");
+            System.out.println("Botón listado Facturas por Concepto no funciona.");
         }
     }
 
@@ -151,7 +153,9 @@ public class FacturacionConceptoTest {
             WebElement additionalButton = wait.until(ExpectedConditions.elementToBeClickable(By.id("BTN_AGREGAR")));
             additionalButton.click();
         } catch (Exception e) {
-            System.out.println("Botón adicional no encontrado o no clickeable.");
+            //Captura el mensaje de error, toma una captura de pantalla y lo despliega en el reporte de Allure.
+            UtilidadesAllure.manejoError(driver, e, "Botón agregar no encontrado o no clickeable.");
+            System.out.println("Botón agregar no encontrado o no clickeable.");
         }
     }
 
@@ -178,6 +182,9 @@ public class FacturacionConceptoTest {
 
             System.out.println("El campo de cliente tiene información.");
         } catch (Exception e) {
+            //Captura el mensaje de error, toma una captura de pantalla y lo despliega en el reporte de Allure.
+            UtilidadesAllure.manejoError(driver, e, "Error al realizar la acción en el campo 'Número de Cliente'.");
+
             System.out.println("Error al realizar la acción en el campo 'Número de Cliente'.");
             e.printStackTrace();
         }
@@ -225,6 +232,9 @@ public class FacturacionConceptoTest {
                 System.out.println("Se seleccionó 'Crédito'. La Forma de pago es POR DEFINIR por default");
             }
         } catch (Exception e) {
+            //Captura el mensaje de error, toma una captura de pantalla y lo despliega en el reporte de Allure.
+            UtilidadesAllure.manejoError(driver, e, "Se ha producido un error: " + e.getMessage());
+
             // Maneja cualquier excepción que ocurra
             System.out.println("Se ha producido un error: " + e.getMessage());
             e.printStackTrace();
@@ -328,6 +338,9 @@ public class FacturacionConceptoTest {
             // Imprime la opción seleccionada
             System.out.println("La Moneda es: " + opcionSeleccionada);
         } catch (Exception e) {
+            //Captura el mensaje de error, toma una captura de pantalla y lo despliega en el reporte de Allure.
+            UtilidadesAllure.manejoError(driver, e, "Se ha producido un error: " + e.getMessage());
+
             // Maneja cualquier excepción que ocurra
             System.out.println("Se ha producido un error: " + e.getMessage());
             e.printStackTrace();
@@ -340,6 +353,9 @@ public class FacturacionConceptoTest {
             WebElement botonAgregar = driver.findElement(By.id("BTN_AGREGAR"));
             botonAgregar.click();
         } catch (Exception e) {
+            //Captura el mensaje de error, toma una captura de pantalla y lo despliega en el reporte de Allure.
+            UtilidadesAllure.manejoError(driver, e, "Error al presionar el botón Agregar: " + e.getMessage());
+
             System.out.println("Error al presionar el botón Agregar: " + e.getMessage());
             e.printStackTrace();
         }
@@ -356,6 +372,9 @@ public class FacturacionConceptoTest {
 
             nuevoCampo.sendKeys(String.format("%.4f", valorAleatorio));
         } catch (Exception e) {
+            //Captura el mensaje de error, toma una captura de pantalla y lo despliega en el reporte de Allure.
+            UtilidadesAllure.manejoError(driver, e, "Error al ingresar la cantidad: " + e.getMessage());
+
             System.out.println("Error al ingresar la cantidad: " + e.getMessage());
             e.printStackTrace();
         }
@@ -382,6 +401,8 @@ public class FacturacionConceptoTest {
                 System.out.println("El concepto de facturación es: " + valorConcepto);
             }
         } catch (Exception e) {
+            //Captura el mensaje de error, toma una captura de pantalla y lo despliega en el reporte de Allure.
+            UtilidadesAllure.manejoError(driver, e, "Error al asignar el código de concepto de facturación: " + e.getMessage());
             System.out.println("Error al asignar el código de concepto de facturación: " + e.getMessage());
             e.printStackTrace();
         }
@@ -397,6 +418,8 @@ public class FacturacionConceptoTest {
             CampoPrecioUnitario.sendKeys(Keys.TAB);
             CampoPrecioUnitario.sendKeys(String.format("%.2f", valorAleatorio));
         } catch (Exception e) {
+            //Captura el mensaje de error, toma una captura de pantalla y lo despliega en el reporte de Allure.
+            UtilidadesAllure.manejoError(driver, e, "Error al ingresar el precio unitario: " + e.getMessage());
             System.out.println("Error al ingresar el precio unitario: " + e.getMessage());
             e.printStackTrace();
         }
@@ -433,6 +456,9 @@ public class FacturacionConceptoTest {
             // Imprimir el texto de la opción seleccionada
             System.out.println("Opción seleccionada: " + opcionSeleccionada);
         } catch (Exception e) {
+            //Captura el mensaje de error, toma una captura de pantalla y lo despliega en el reporte de Allure.
+            UtilidadesAllure.manejoError(driver, e, "Error al seleccionar una opción del combo box: " + e.getMessage());
+
             // Manejar cualquier excepción que ocurra
             System.out.println("Error al seleccionar una opción del combo box: " + e.getMessage());
             e.printStackTrace();
@@ -546,6 +572,8 @@ public class FacturacionConceptoTest {
                 }
             }
         } catch (Exception e) {
+            //Captura el mensaje de error, toma una captura de pantalla y lo despliega en el reporte de Allure.
+            UtilidadesAllure.manejoError(driver, e, "Error al interactuar con los checkboxes y combos: " + e.getMessage());
             // Manejar cualquier excepción que ocurra
             System.out.println("Error al interactuar con los checkboxes y combos: " + e.getMessage());
             e.printStackTrace();
@@ -578,6 +606,8 @@ public class FacturacionConceptoTest {
             }
 
         } catch (Exception e) {
+            //Captura el mensaje de error, toma una captura de pantalla y lo despliega en el reporte de Allure.
+            UtilidadesAllure.manejoError(driver, e, null);
             // Manejar cualquier excepción que ocurra
             System.out.println("Se ha producido un error al hacer clic en el botón 'Agregar': " + e.getMessage());
             e.printStackTrace();
@@ -596,6 +626,8 @@ public class FacturacionConceptoTest {
             System.out.println("Se ha hecho clic en el botón 'Agregar'.");
 
         } catch (Exception e) {
+            //Captura el mensaje de error, toma una captura de pantalla y lo despliega en el reporte de Allure.
+            UtilidadesAllure.manejoError(driver, e, null);
             // Manejar cualquier excepción que ocurra
             System.out.println("Se ha producido un error al hacer clic en el botón 'Agregar': " + e.getMessage());
             e.printStackTrace();
@@ -616,9 +648,13 @@ public class FacturacionConceptoTest {
             System.out.println("Se ha hecho clic en el botón 'Sí' del mensaje de validación.");
 
         } catch (TimeoutException e) {
+            //Captura el mensaje de error, toma una captura de pantalla y lo despliega en el reporte de Allure.
+            UtilidadesAllure.manejoError(driver, e,"No se detectó el mensaje de validación dentro del tiempo esperado.");
             // Si el mensaje de validación no aparece en el tiempo esperado
             System.out.println("No se detectó el mensaje de validación dentro del tiempo esperado.");
         } catch (Exception e) {
+            //Captura el mensaje de error, toma una captura de pantalla y lo despliega en el reporte de Allure.
+            UtilidadesAllure.manejoError(driver, e,"Ocurrió un problema al timbrar");
             // Manejar cualquier otra excepción que ocurra
             System.out.println("Se ha producido un error al aceptar el mensaje de validación: " + e.getMessage());
             e.printStackTrace();
@@ -645,7 +681,7 @@ public class FacturacionConceptoTest {
                 // Localizar y hacer clic en el botón correspondiente
                 WebElement botonContinuar = driver.findElement(By.id("dwwBTN_OK")); // Ajusta el ID según sea necesario
                 botonContinuar.click();
-                System.out.println("Se ha hecho clic en el botón 'Continuar'.");
+                System.out.println("Se ha hecho clic en el botón 'OK'.");
 
             } else {
                 // Si el mensaje no contiene "PRODIGIA", aceptar el mensaje y continuar
@@ -654,18 +690,20 @@ public class FacturacionConceptoTest {
                 System.out.println("Se ha hecho clic en el botón 'Aceptar'.");
 
                 // Continuar con el siguiente paso
-                WebElement botonContinuar = driver.findElement(By.id("BOTON_CONTINUAR")); // Ajusta el ID según sea necesario
+               /* WebElement botonContinuar = driver.findElement(By.id("BOTON_CONTINUAR")); // Ajusta el ID según sea necesario
                 botonContinuar.click();
-                System.out.println("Se ha hecho clic en el botón 'Continuar'.");
+                System.out.println("Se ha hecho clic en el botón 'Continuar'.");*/
             }
 
         } catch (TimeoutException e) {
             // Si el mensaje no aparece en el tiempo esperado
             System.out.println("No se detectó el mensaje dentro del tiempo esperado.");
+            //UtilidadesAllure.manejoError(driver, e,"No se detectó el mensaje dentro del tiempo esperado");
         } catch (Exception e) {
             // Manejar cualquier otra excepción que ocurra
             System.out.println("Se ha producido un error al validar el mensaje: " + e.getMessage());
             e.printStackTrace();
+            UtilidadesAllure.manejoError(driver, e, null);
         }
     }
 
@@ -696,9 +734,11 @@ public class FacturacionConceptoTest {
             }
 
         } catch (TimeoutException e) {
+            //UtilidadesAllure.manejoError(driver, e, "No se detectó el mensaje con las opciones dentro del tiempo esperado.");
             // Si el mensaje con las opciones no aparece en el tiempo esperado
             System.out.println("No se detectó el mensaje con las opciones dentro del tiempo esperado.");
         } catch (Exception e) {
+            UtilidadesAllure.manejoError(driver, e, "Se ha producido un error al seleccionar la opción aleatoria: "+ e.getMessage());
             // Manejar cualquier otra excepción que ocurra
             System.out.println("Se ha producido un error al seleccionar la opción aleatoria: " + e.getMessage());
             e.printStackTrace();

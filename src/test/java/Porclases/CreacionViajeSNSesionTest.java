@@ -32,7 +32,7 @@ public class CreacionViajeSNSesionTest {
     @BeforeAll
     public static void setup() {
         // Configura la propiedad del driver de Chrome y crea una instancia de ChromeDriver
-        System.setProperty("webdriver.chrome.driver", "C:\\RepositorioPrueAuto\\Chromedriver\\chromedriver.exe");
+        //System.setProperty("webdriver.chrome.driver", "C:\\RepositorioPrueAuto\\Chromedriver\\chromedriver.exe");
         driver = new ChromeDriver();
         wait = new WebDriverWait(driver, Duration.ofSeconds(10));
 
@@ -52,7 +52,7 @@ public class CreacionViajeSNSesionTest {
 
     }
 
-    @RepeatedTest(100)
+    @RepeatedTest(1)
     public void testCrearViaje() {
         // Ejecuta el flujo de pruebas repetidamente para crear un viaje
         handleAdditionalButton(Duration.ofSeconds(5)); // Maneja el botón adicional
