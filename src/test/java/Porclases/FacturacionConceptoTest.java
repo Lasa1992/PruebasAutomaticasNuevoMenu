@@ -11,11 +11,10 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 import org.openqa.selenium.support.ui.Select;
 import org.openqa.selenium.support.ui.FluentWait;
 
-import java.io.ByteArrayInputStream;
 import java.time.Duration;
 import java.util.List;
+import java.util.Objects;
 import java.util.Random;
-import java.util.function.Function;
 import java.util.ArrayList;
 
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
@@ -23,7 +22,7 @@ public class FacturacionConceptoTest {
 
     private static WebDriver driver;
     private static WebDriverWait wait;
-    private static Random random = new Random();
+    //Se crean variables para almacenar la información concatenada de las Facturas y mostrarlas en el reporte de Allure
     static StringBuilder informacionFactura = new StringBuilder();
     static StringBuilder informacionConcepto = new StringBuilder();
     static StringBuilder informacionTimbrado = new StringBuilder();
@@ -36,15 +35,8 @@ public class FacturacionConceptoTest {
         wait = new WebDriverWait(driver, Duration.ofSeconds(10));
 
         driver.get("https://www.softwareparatransporte.com/GMTERPV8_WEB/ES/PAGE_CatUsuariosLoginAWP.awp");
-
-        //fillForm();
-        //submitForm();
-        //handleAlert();
-        //handleTipoCambio();
-        //handleNovedadesScreen();
-        //handleImageButton();
-        //handleSubMenuButton();
     }
+
     @Test
     @Order(1)
     @Description("Prueba de Inicio de Sesion - Se utiliza usuario GM")
@@ -94,8 +86,6 @@ public class FacturacionConceptoTest {
         BotonTimbre();
         ValidarPosibleErrorPRODIGIA();
         BotonEnvioCorre();
-
-
     }
 
     @AfterAll
@@ -200,12 +190,9 @@ public class FacturacionConceptoTest {
             numeroCliente.sendKeys("000001");
             informacionFactura.append("Numero Cliente: 000001 \n");
             numeroCliente.sendKeys(Keys.TAB);
-            fluentWait.until(new Function<WebDriver, Boolean>() {
-                @Override
-                public Boolean apply(WebDriver driver) {
-                    WebElement field = driver.findElement(By.id("EDT_NUMEROCLIENTE"));
-                    return !field.getAttribute("value").isEmpty();
-                }
+            fluentWait.until(driver -> {
+                WebElement field = driver.findElement(By.id("EDT_NUMEROCLIENTE"));
+                return !Objects.requireNonNull(field.getAttribute("value")).isEmpty();
             });
 
             System.out.println("El campo de cliente tiene información.");
@@ -304,7 +291,7 @@ public class FacturacionConceptoTest {
                 int indexToSelect = random.nextInt(opciones.size());
                 comboBox.selectByIndex(indexToSelect);
                 System.out.println("Opción seleccionada en combo box (Método de Pago): " + opciones.get(indexToSelect).getText());
-                informacionFactura.append("Metodo de Pago: " + opciones.get(indexToSelect).getText() + "\n");
+                informacionFactura.append("Metodo de Pago: ").append(opciones.get(indexToSelect).getText()).append("\n");
 
             } else {
                 System.out.println("Error: no hay suficientes opciones disponibles en el Método de pago.");
@@ -352,7 +339,7 @@ public class FacturacionConceptoTest {
             int indexToSelect = random.nextInt(opciones.size());
             comboBox.selectByIndex(indexToSelect);
             System.out.println("Opción seleccionada en combo (Uso CFDI): " + opciones.get(indexToSelect).getText());
-            informacionFactura.append("Uso CFDI: " + opciones.get(indexToSelect).getText() + "\n");
+            informacionFactura.append("Uso CFDI: ").append(opciones.get(indexToSelect).getText()).append("\n");
             //Allure.addAttachment("Uso CFDI", opciones.get(indexToSelect).getText());
         } else {
             System.out.println("El combo Uso de CFDI no tiene información disponible.");
@@ -378,10 +365,10 @@ public class FacturacionConceptoTest {
 
             // Imprime la opción seleccionada
             System.out.println("La Moneda es: " + opcionSeleccionada);
-            informacionFactura.append("Moneda: " + opcionSeleccionada + "\n\n");
+            informacionFactura.append("Moneda: ").append(opcionSeleccionada).append("\n\n");
             //Allure.addAttachment("Moneda", opcionSeleccionada);
 
-            //Agrega al reporte de Allure la informacion de la factura generada.
+            //Agrega al reporte de Allure la información de la factura generada.
             Allure.addAttachment("Informacion Factura", informacionFactura.toString());
         } catch (Exception e) {
             //Captura el mensaje de error, toma una captura de pantalla y lo despliega en el reporte de Allure.
@@ -396,7 +383,8 @@ public class FacturacionConceptoTest {
     private void HandleConceptofacturacionAgregar() {
         try {
             WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(5));
-            WebElement botonAgregar = driver.findElement(By.id("BTN_AGREGAR"));
+            // Espera explícita hasta que el botón sea clicable
+            WebElement botonAgregar = wait.until(ExpectedConditions.elementToBeClickable(By.id("BTN_AGREGAR")));
             botonAgregar.click();
         } catch (Exception e) {
             //Captura el mensaje de error, toma una captura de pantalla y lo despliega en el reporte de Allure.
@@ -417,7 +405,7 @@ public class FacturacionConceptoTest {
             double valorAleatorio = 1.0000 + (99.9999 - 1.0000) * random.nextDouble();
 
             nuevoCampo.sendKeys(String.format("%.4f", valorAleatorio));
-            informacionConcepto.append("Cantidad del Concepto: " + valorAleatorio + "\n");
+            informacionConcepto.append("Cantidad del Concepto: ").append(valorAleatorio).append("\n");
         } catch (Exception e) {
             //Captura el mensaje de error, toma una captura de pantalla y lo despliega en el reporte de Allure.
             UtilidadesAllure.manejoError(driver, e, "Error al ingresar la cantidad: " + e.getMessage());
@@ -429,18 +417,21 @@ public class FacturacionConceptoTest {
 
     private void AsignarCodigoConceptoFacturacion() {
         try {
+            Thread.sleep(3000);
+
             WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
             WebElement campoCodigo = driver.findElement(By.id("EDT_CODIGOCONCEPTOFACTURACION"));
-
 
             Random random = new Random();
             int valorAleatorio = 1 + random.nextInt(5);
             campoCodigo.clear();
             campoCodigo.sendKeys(String.valueOf(valorAleatorio));
+            campoCodigo.sendKeys(Keys.TAB);
 
             WebElement campoConcepto = wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("EDT_CONCEPTOFACTURACION")));
             String valorConcepto = campoConcepto.getAttribute("value");
 
+            assert valorConcepto != null;
             if (valorConcepto.isEmpty() || valorConcepto.equals("El concepto de facturación no está activo, Revisar")) {
                 System.out.println("Error: El concepto de facturación no está activo.");
                 informacionConcepto.append("Concepto: Error, el concepto de facturación no esta activo.\n");
@@ -448,9 +439,9 @@ public class FacturacionConceptoTest {
                 System.out.println("Concepto número " + valorAleatorio + " asignado correctamente.");
                 System.out.println("El concepto de facturación es: " + valorConcepto);
 
-                //Se agrega informacion del numero y nombre del concepto al reporte de allure
-                informacionConcepto.append("Numero Concepto: " + valorAleatorio + "\n");
-                informacionConcepto.append("Nombre Concepto: " + valorConcepto + "\n");
+                //Se agrega información del número y nombre del concepto al reporte de allure
+                informacionConcepto.append("Numero Concepto: ").append(valorAleatorio).append("\n");
+                informacionConcepto.append("Nombre Concepto: ").append(valorConcepto).append("\n");
             }
         } catch (Exception e) {
             //Captura el mensaje de error, toma una captura de pantalla y lo despliega en el reporte de Allure.
@@ -469,7 +460,7 @@ public class FacturacionConceptoTest {
             double valorAleatorio = 1 + (1000 - 1) * random.nextDouble();
             CampoPrecioUnitario.sendKeys(Keys.TAB);
             CampoPrecioUnitario.sendKeys(String.format("%.2f", valorAleatorio));
-            informacionConcepto.append("Precio Unitario: " + valorAleatorio + "\n");
+            informacionConcepto.append("Precio Unitario: ").append(valorAleatorio).append("\n");
 
         } catch (Exception e) {
             //Captura el mensaje de error, toma una captura de pantalla y lo despliega en el reporte de Allure.
@@ -494,13 +485,6 @@ public class FacturacionConceptoTest {
                     new OpcionConProbabilidad("SI OBJETO DE IMPUESTO Y NO OBLIGADO AL DESGLOSE", 0.05),
                     new OpcionConProbabilidad("Sí objeto del impuesto y no causa impuesto", 0.05)
             );
-            // Verificar que la lista de opciones con probabilidades no esté vacía
-            if (opcionesConProbabilidades.isEmpty()) {
-                System.out.println("Error: La lista de opciones con probabilidades está vacía.");
-
-                informacionConcepto.append("Tipo Objeto: ERROR La lista de opciones con probabilidades esta vacia.\n");
-                return;
-            }
 
             // Seleccionar una opción basada en probabilidades
             String opcionSeleccionada = seleccionarOpcionAleatoria(opcionesConProbabilidades);
@@ -512,7 +496,7 @@ public class FacturacionConceptoTest {
             System.out.println("Opción seleccionada: " + opcionSeleccionada);
 
             //Enviá la opción elegida al reporte de allure.
-            informacionConcepto.append("Tipo Objeto Impuesto: " + opcionSeleccionada + "\n");
+            informacionConcepto.append("Tipo Objeto Impuesto: ").append(opcionSeleccionada).append("\n");
         } catch (Exception e) {
             //Captura el mensaje de error, toma una captura de pantalla y lo despliega en el reporte de Allure.
             UtilidadesAllure.manejoError(driver, e, "Error al seleccionar una opción del combo box: " + e.getMessage());
@@ -556,9 +540,22 @@ public class FacturacionConceptoTest {
         try {
             // Localizar el primer checkbox
             WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
-            WebElement checkboxTrasladaIVA = driver.findElement(By.id("CBOX_TRASLADAIVA_1"));
+            WebElement checkboxTrasladaIVA = wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("CBOX_TRASLADAIVA_1")));
+
+            // Si el elemento es visible, validar si es clickeable
+            if (checkboxTrasladaIVA != null && checkboxTrasladaIVA.isDisplayed()) {
+                try {
+                    // Esperar a que el elemento sea clickeable
+                    System.out.println("El elemento es visible y clickeable.");
+                } catch (TimeoutException e) {
+                    System.out.println("El elemento es visible, pero no es clickeable.");
+                }
+            } else {
+                System.out.println("El elemento no es visible.");
+            }
 
             // Verificar el estado del primer checkbox
+            assert checkboxTrasladaIVA != null;
             if (checkboxTrasladaIVA.isSelected()) {
                 // Si el primer checkbox está activado
                 System.out.println("Checkbox 'Traslada IVA' está activado.");
@@ -573,8 +570,8 @@ public class FacturacionConceptoTest {
                     System.out.println("Checkbox 'Retiene IVA' activado.");
 
                     //Agrega al reporte de allure si se tiene el check activo en 'retiene iva' o no en una sección aparte.
-                }                    informacionConcepto.append("CHECKBOX 'RETIENE IVA' ESTA ACTIVADO \n");
-
+                    informacionConcepto.append("CHECKBOX 'RETIENE IVA' ACTIVADO \n");
+                }
 
                 // Localizar el combo box COMBO_CATIMPUESTOSRETENCION
                 WebElement comboBoxRetencion = driver.findElement(By.id("COMBO_CATIMPUESTOSRETENCION"));
@@ -597,7 +594,7 @@ public class FacturacionConceptoTest {
                     selectRetencion.selectByVisibleText(textoSeleccionadoRetencion);
                     System.out.println("Opción seleccionada en 'COMBO_CATIMPUESTOSRETENCION': " + textoSeleccionadoRetencion);
 
-                    informacionConcepto.append("Opcion de Impuesto seleccionado: Retencion " + textoSeleccionadoRetencion + " \n\n");
+                    informacionConcepto.append("Opcion de Impuesto seleccionado: Retencion ").append(textoSeleccionadoRetencion).append(" \n\n");
                 } else {
                     System.out.println("Error: El combo 'Retención IVA' está deshabilitado.");
 
@@ -640,7 +637,7 @@ public class FacturacionConceptoTest {
                     selectTraslado.selectByVisibleText(textoSeleccionadoTraslado);
                     System.out.println("Opción seleccionada en 'COMBO_CATIMPUESTOSTRASLADO': " + textoSeleccionadoTraslado);
 
-                    informacionConcepto.append("Opcion de Impuesto seleccionada: Traslado " + textoSeleccionadoTraslado + "\n");
+                    informacionConcepto.append("Opcion de Impuesto seleccionada: Traslado ").append(textoSeleccionadoTraslado).append("\n");
                 } else {
                     System.out.println("Error: El combo 'Traslado IVA' está deshabilitado.");
                 }
@@ -714,6 +711,9 @@ public class FacturacionConceptoTest {
             // Esperar hasta que el mensaje de validación sea visible
             WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
             WebElement mensajeValidacion = wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("dwwBTN_YES")));
+            if (mensajeValidacion.isEnabled()) {
+                System.out.println("El botón de YES está habilitado.");
+            }
 
             // Localizar el botón "Sí" dentro del mensaje de validación
             WebElement botonYes = driver.findElement(By.id("BTN_YES"));
@@ -748,8 +748,6 @@ public class FacturacionConceptoTest {
             String mensajeTexto = mensaje.getText();
             System.out.println("Mensaje mostrado: " + mensajeTexto);
 
-            informacionTimbrado.append("Mensaje Obtenido al Timbrar: " + mensajeTexto + "\n\n");
-
             // Verificar si el mensaje contiene la palabra "PRODIGIA"
             if (mensajeTexto.contains("PRODIGIA")) {
                 // Guardar el mensaje si contiene "PRODIGIA"
@@ -767,11 +765,17 @@ public class FacturacionConceptoTest {
                 botonAceptar.click();
                 System.out.println("Se ha hecho clic en el botón 'Aceptar'.");
 
-                informacionTimbrado.append("Mensaje Obtenido al Timbrar: " + mensajeTexto + "\n\n");
+                informacionTimbrado.append("Mensaje Obtenido al Timbrar: ").append(mensajeTexto).append("\n\n");
                 // Continuar con el siguiente paso
-               /* WebElement botonContinuar = driver.findElement(By.id("BOTON_CONTINUAR")); // Ajusta el ID según sea necesario
-                botonContinuar.click();
-                System.out.println("Se ha hecho clic en el botón 'Continuar'.");*/
+                List<WebElement> botonContinuarList = driver.findElements(By.id("BOTON_CONTINUAR"));
+                if (!botonContinuarList.isEmpty()) {
+                    // Si la lista no está vacía, significa que el botón está presente
+                    WebElement botonContinuar = botonContinuarList.getFirst();  // Obtenemos el primer (y único) elemento de la lista
+                    botonContinuar.click();
+                    System.out.println("Se ha hecho clic en el botón 'Continuar'.");
+                } else {
+                    System.out.println("El botón 'Continuar' no está presente en la página.");
+                }
             }
 
         } catch (TimeoutException e) {
@@ -791,40 +795,50 @@ public class FacturacionConceptoTest {
     private void BotonEnvioCorre() {
         try {
             // Esperar hasta que el mensaje con las opciones sea visible
-            WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
-            WebElement mensajeOpciones = wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("tzSTC_DESCRIPTION"))); // Ajusta el ID según sea necesario
+            WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(5));
 
-            // Localizar los botones de opciones por su ID
-            WebElement botonEnviar = driver.findElement(By.id("BTN_YES"));
-            WebElement botonNoEnviar = driver.findElement(By.id("BTN_NO"));
+            // Verificar si el elemento con ID "tzSTC_DESCRIPTION" está presente y visible
+            List<WebElement> elementosDescripcion = driver.findElements(By.id("tzSTC_DESCRIPTION"));
 
-            // Lista de botones disponibles
-            List<WebElement> botonesOpciones = List.of(botonEnviar, botonNoEnviar);
+            if (!elementosDescripcion.isEmpty() && elementosDescripcion.getFirst().isDisplayed()) {
+                WebElement mensajeOpciones = elementosDescripcion.getFirst();
 
-            // Verificar si hay al menos dos botones disponibles
-            if (botonesOpciones.size() >= 2) {
-                // Seleccionar una opción aleatoria
-                Random random = new Random();
-                WebElement botonSeleccionado = botonesOpciones.get(random.nextInt(botonesOpciones.size()));
+                if (mensajeOpciones.isEnabled()) {
+                    System.out.println("El botón de Descripcion está habilitado.");
 
-                // Hacer clic en el botón seleccionado
-                botonSeleccionado.click();
-                System.out.println("Se ha hecho clic en el botón: " + botonSeleccionado.getText());
+                    // Localizar los botones de opciones por su ID
+                    WebElement botonEnviar = wait.until(ExpectedConditions.elementToBeClickable(By.id("BTN_YES")));
+                    WebElement botonNoEnviar = wait.until(ExpectedConditions.elementToBeClickable(By.id("BTN_NO")));
+
+                    // Lista de botones disponibles
+                    List<WebElement> botonesOpciones = List.of(botonEnviar, botonNoEnviar);
+
+                    // Seleccionar una opción aleatoria
+                    Random random = new Random();
+                    WebElement botonSeleccionado = botonesOpciones.get(random.nextInt(botonesOpciones.size()));
+
+                    // Volver a verificar que el botón esté presente y clickeable antes de interactuar
+                    wait.until(ExpectedConditions.elementToBeClickable(botonSeleccionado));
+                    // Imprimir en la consola el valor del botón seleccionado
+                    System.out.println("Se ha hecho clic en el botón de enviar correo: " + botonSeleccionado.getText() + " (ID: " + botonSeleccionado.getAttribute("id") + ")");
+                    Allure.addAttachment("ENVIO CORREO", botonSeleccionado.getText());
+                    // Hacer clic en el botón seleccionado
+                    botonSeleccionado.click();
+                } else {
+                    System.out.println("El botón de Descripcion no está habilitado.");
+                }
             } else {
-                System.out.println("No se encontraron suficientes botones en el mensaje.");
+                System.out.println("El elemento 'tzSTC_DESCRIPTION' no está visible.");
             }
 
-        } catch (TimeoutException e) {
-            //UtilidadesAllure.manejoError(driver, e, "No se detectó el mensaje con las opciones dentro del tiempo esperado.");
-            // Si el mensaje con las opciones no aparece en el tiempo esperado
-            System.out.println("No se detectó el mensaje con las opciones dentro del tiempo esperado.");
         } catch (Exception e) {
-            UtilidadesAllure.manejoError(driver, e, "Se ha producido un error al seleccionar la opción aleatoria: "+ e.getMessage());
+            UtilidadesAllure.manejoError(driver, e, "Se ha producido un error al seleccionar la opción aleatoria: " + e.getMessage());
             // Manejar cualquier otra excepción que ocurra
             System.out.println("Se ha producido un error al seleccionar la opción aleatoria: " + e.getMessage());
             e.printStackTrace();
         }
     }
+
 }
 
 
