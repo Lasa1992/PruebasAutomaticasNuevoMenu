@@ -112,8 +112,8 @@ public class FacturacionConceptoTest {
         WebElement inputContrasena = driver.findElement(By.id("EDT_CONTRASENA"));
 
         inputEmpresa.sendKeys("KIJ0906199R1");
-        inputUsuario.sendKeys("LUIS");
-        inputContrasena.sendKeys("Lasa1992#23");
+        inputUsuario.sendKeys("ALEJANDRO");
+        inputContrasena.sendKeys("Calidad01.");
     }
 
     @Step("Enviar el formulario")
