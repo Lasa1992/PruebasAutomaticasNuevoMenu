@@ -61,7 +61,7 @@ public class FacturacionConceptoTest {
         handleSubMenuButton();
     }
 
-    @RepeatedTest(10)
+    @RepeatedTest(800)
     @Order(4)
     @Description("Se genera una factura con conceptos aleatorios")
     public void testFacturacionporConcepto() {
@@ -171,6 +171,7 @@ public class FacturacionConceptoTest {
             WebElement additionalButton = wait.until(ExpectedConditions.elementToBeClickable(By.id("BTN_AGREGAR")));
             additionalButton.click();
         } catch (Exception e) {
+            manejarBotonesCancelar();
             //Captura el mensaje de error, toma una captura de pantalla y lo despliega en el reporte de Allure.
             UtilidadesAllure.manejoError(driver, e, "Botón agregar no encontrado o no clickeable.");
             System.out.println("Botón agregar no encontrado o no clickeable.");
@@ -504,6 +505,8 @@ public class FacturacionConceptoTest {
             // Manejar cualquier excepción que ocurra
             System.out.println("Error al seleccionar una opción del combo box: " + e.getMessage());
             e.printStackTrace();
+            //Se manda llamar funcion para que cierre la ventana de concepto y facturacion. Regresa al listado de facturacion.
+            manejarBotonesCancelar();
         }
     }
 
@@ -648,6 +651,8 @@ public class FacturacionConceptoTest {
             // Manejar cualquier excepción que ocurra
             System.out.println("Error al interactuar con los checkboxes y combos: " + e.getMessage());
             e.printStackTrace();
+            //Se manda llamar funcion para que cierre la ventana de concepto y facturacion. Regresa al listado de facturacion.
+            manejarBotonesCancelar();
         }
     }
 
@@ -835,6 +840,60 @@ public class FacturacionConceptoTest {
             UtilidadesAllure.manejoError(driver, e, "Se ha producido un error al seleccionar la opción aleatoria: " + e.getMessage());
             // Manejar cualquier otra excepción que ocurra
             System.out.println("Se ha producido un error al seleccionar la opción aleatoria: " + e.getMessage());
+            e.printStackTrace();
+        }
+    }
+    private static void manejarBotonesCancelar() {
+        try {
+            WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(5));
+
+            boolean botonesPresentes = true; // Controla si algún botón sigue presente
+
+            while (botonesPresentes) {
+                botonesPresentes = false; // Suponemos que no hay botones al inicio de cada iteración
+
+                // Verificar si el botón "BTN_IMPRIMIR" está presente
+                List<WebElement> btnImprimir = driver.findElements(By.id("BTN_IMPRIMIR"));
+                if (!btnImprimir.isEmpty() && btnImprimir.getFirst().isDisplayed()) {
+                    System.out.println("El botón 'Imprimir' está presente. Se detiene la ejecución.");
+                    break; // Salir del ciclo si el botón "Imprimir" está presente
+                }
+
+                // Buscar el botón "BTN_CANCELARDETALLE"
+                List<WebElement> btnCancelarDetalle = driver.findElements(By.id("BTN_CANCELARDETALLE"));
+                if (!btnCancelarDetalle.isEmpty() && btnCancelarDetalle.getFirst().isDisplayed()) {
+                    // Si el botón "BTN_CANCELARDETALLE" está presente y visible, hacer clic en él
+                    WebElement botonCancelarDetalle = btnCancelarDetalle.getFirst();
+                    wait.until(ExpectedConditions.elementToBeClickable(botonCancelarDetalle));
+                    botonCancelarDetalle.click();
+                    System.out.println("Se hizo clic en el botón 'Cancelar Detalle'.");
+
+                    // Después de hacer clic, asumimos que puede aparecer el botón "BTN_CANCELAR"
+                    botonesPresentes = true; // Mantiene el ciclo activo
+                }
+
+                // Buscar el botón "BTN_CANCELAR" si no está activo el otro
+                List<WebElement> btnCancelar = driver.findElements(By.id("BTN_CANCELAR"));
+                if (!btnCancelar.isEmpty() && btnCancelar.getFirst().isDisplayed()) {
+                    // Si el botón "BTN_CANCELAR" está presente y visible, hacer clic en él
+                    WebElement botonCancelar = btnCancelar.getFirst();
+                    wait.until(ExpectedConditions.elementToBeClickable(botonCancelar));
+                    botonCancelar.click();
+                    System.out.println("Se hizo clic en el botón 'Cancelar'.");
+
+                    // Después de hacer clic, asumimos que puede aparecer el botón "BTN_CANCELARDETALLE"
+                    botonesPresentes = true; // Mantiene el ciclo activo
+                }
+
+                // Si ambos botones no están presentes, el ciclo terminará
+                if (!botonesPresentes) {
+                    System.out.println("No se encontraron más botones 'Cancelar Detalle' o 'Cancelar'.");
+                }
+            }
+
+        } catch (Exception e) {
+            UtilidadesAllure.manejoError(driver, e, "Se ha producido un error al intentar cancelar para salir de las ventanas: " + e.getMessage());
+            System.out.println("Ocurrió un error al intentar manejar los botones de cancelación: " + e.getMessage());
             e.printStackTrace();
         }
     }
