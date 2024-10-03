@@ -29,4 +29,12 @@ public class UtilidadesAllure {
         // Marca la prueba como fallida
         Assertions.fail("La prueba falló debido a: " + e.getMessage());
     }
+
+    public static void capturaImagen(WebDriver driver) {
+        // Toma una captura de pantalla
+        byte[] captura = ((TakesScreenshot) driver).getScreenshotAs(OutputType.BYTES);
+        // Adjunta la captura de pantalla al reporte de Allure
+        Allure.addAttachment("Captura de Pantalla", new ByteArrayInputStream(captura));
+    }
+
 }

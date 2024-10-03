@@ -3,10 +3,7 @@ package Porclases;
 import io.qameta.allure.Allure;
 import io.qameta.allure.Description;
 import io.qameta.allure.Step;
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.RepeatedTest;
+import org.junit.jupiter.api.*;
 import org.openqa.selenium.*;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.support.ui.ExpectedConditions;
@@ -21,12 +18,15 @@ import java.util.Random;
 import java.util.function.Function;
 import java.util.ArrayList;
 
+@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class FacturacionConceptoTest {
 
     private static WebDriver driver;
     private static WebDriverWait wait;
     private static Random random = new Random();
-
+    static StringBuilder informacionFactura = new StringBuilder();
+    static StringBuilder informacionConcepto = new StringBuilder();
+    static StringBuilder informacionTimbrado = new StringBuilder();
 
 
     @BeforeAll
@@ -37,18 +37,46 @@ public class FacturacionConceptoTest {
 
         driver.get("https://www.softwareparatransporte.com/GMTERPV8_WEB/ES/PAGE_CatUsuariosLoginAWP.awp");
 
+        //fillForm();
+        //submitForm();
+        //handleAlert();
+        //handleTipoCambio();
+        //handleNovedadesScreen();
+        //handleImageButton();
+        //handleSubMenuButton();
+    }
+    @Test
+    @Order(1)
+    @Description("Prueba de Inicio de Sesion - Se utiliza usuario GM")
+    public void inicioSesion() {
         fillForm();
         submitForm();
         handleAlert();
+    }
+    @Test
+    @Order(2)
+    @Description("Prueba para el manejo del tipo de Cambio y de la ventana de novedades.")
+    public void AlertaTipoCambio() {
         handleTipoCambio();
         handleNovedadesScreen();
+    }
+
+    @Test
+    @Order(3)
+    @Description("Ingresar al modulo de facturación.")
+    public void ingresarModuloFacturacion() {
         handleImageButton();
         handleSubMenuButton();
     }
 
-    @RepeatedTest(5)
+    @RepeatedTest(10)
+    @Order(4)
     @Description("Se genera una factura con conceptos aleatorios")
     public void testFacturacionporConcepto() {
+        //Limpia variables de Allure para los reportes.
+        informacionFactura.setLength(0);
+        informacionConcepto.setLength(0);
+        informacionTimbrado.setLength(0);
         handleBotonAgregarListado();
         handleAsignaCliente();
         handleCondiciondePago();
@@ -170,8 +198,8 @@ public class FacturacionConceptoTest {
             WebElement numeroCliente = wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("EDT_NUMEROCLIENTE")));
             numeroCliente.click();
             numeroCliente.sendKeys("000001");
+            informacionFactura.append("Numero Cliente: 000001 \n");
             numeroCliente.sendKeys(Keys.TAB);
-
             fluentWait.until(new Function<WebDriver, Boolean>() {
                 @Override
                 public Boolean apply(WebDriver driver) {
@@ -202,7 +230,7 @@ public class FacturacionConceptoTest {
             if (esContado) {
                 // Selecciona la opción "Contado" en el primer combo box
                 primerComboBox.selectByVisibleText("CONTADO");
-
+                informacionFactura.append("Condicion de Pago: CONTADO \n");
                 // Espera a que el segundo combo box se haga visible
                 WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
                 WebElement segundoComboBoxElement = wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("COMBO_CATMETODOSPAGOS")));
@@ -217,7 +245,6 @@ public class FacturacionConceptoTest {
                 if (opciones.size() > 1) {
                     // Elige una opción aleatoria
                     int indexToSelect = random.nextInt(opciones.size());
-
                     // Selecciona la opción aleatoria
                     segundoComboBox.selectByIndex(indexToSelect);
 
@@ -225,11 +252,13 @@ public class FacturacionConceptoTest {
                     System.out.println("Opción seleccionada en segundo combo box: " + opciones.get(indexToSelect).getText());
                 } else {
                     System.out.println("El Combo Forma de Pago esta vacio");
+                    informacionFactura.append("Condicion de Pago: El Combo Forma de Pago esta vacio \n");
                 }
             } else {
                 // Selecciona la opción "Crédito" en el primer combo box
                 primerComboBox.selectByVisibleText("CREDITO");
                 System.out.println("Se seleccionó 'Crédito'. La Forma de pago es POR DEFINIR por default");
+                informacionFactura.append("Condicion de Pago: CREDITO \n");
             }
         } catch (Exception e) {
             //Captura el mensaje de error, toma una captura de pantalla y lo despliega en el reporte de Allure.
@@ -264,6 +293,8 @@ public class FacturacionConceptoTest {
                         if (opcion.getText().equalsIgnoreCase("POR DEFINIR")) {
                             comboBox.selectByVisibleText("POR DEFINIR");
                             System.out.println("Opción seleccionada en combo box (Método de Pago): POR DEFINIR");
+                            informacionFactura.append("Metodo de Pago: POR DEFINIR \n");
+                            //Allure.addAttachment("Metodo de Pago", "POR DEFINIR");
                             return; // Termina aquí si se seleccionó "POR DEFINIR"
                         }
                     }
@@ -273,13 +304,18 @@ public class FacturacionConceptoTest {
                 int indexToSelect = random.nextInt(opciones.size());
                 comboBox.selectByIndex(indexToSelect);
                 System.out.println("Opción seleccionada en combo box (Método de Pago): " + opciones.get(indexToSelect).getText());
+                informacionFactura.append("Metodo de Pago: " + opciones.get(indexToSelect).getText() + "\n");
 
             } else {
                 System.out.println("Error: no hay suficientes opciones disponibles en el Método de pago.");
+                informacionFactura.append("Metodo de Pago: Error: no hay suficientes opciones disponibles en el Método de pago. \n");
+                //Allure.addAttachment("Metodo de Pago", "Error: no hay suficientes opciones disponibles en el Método de pago.");
             }
         } else {
             // Si el combo box no está habilitado
             System.out.println("El check Permitir seleccionar Método de pago está deshabilitado.");
+            informacionFactura.append("Metodo de Pago: El check Permitir seleccionar Método de pago está deshabilitado. \n");
+            //Allure.addAttachment("Metodo de Pago","El check Permitir seleccionar Método de pago está deshabilitado.");
         }
     }
 
@@ -305,6 +341,8 @@ public class FacturacionConceptoTest {
                     if (opcion.getText().equalsIgnoreCase("SIN EFECTOS FISCALES")) {
                         comboBox.selectByVisibleText("SIN EFECTOS FISCALES");
                         System.out.println("Opción seleccionada en combo (Uso CFDI): SIN EFECTOS FISCALES");
+                        informacionFactura.append("Uso CFDI: SIN EFECTOS FISCALES \n");
+                        //Allure.addAttachment("Uso CFDI", "Opción seleccionada en combo (Uso CFDI): SIN EFECTOS FISCALES");
                         return; // Termina aquí si se seleccionó "SIN EFECTOS FISCALES"
                     }
                 }
@@ -314,9 +352,12 @@ public class FacturacionConceptoTest {
             int indexToSelect = random.nextInt(opciones.size());
             comboBox.selectByIndex(indexToSelect);
             System.out.println("Opción seleccionada en combo (Uso CFDI): " + opciones.get(indexToSelect).getText());
-
+            informacionFactura.append("Uso CFDI: " + opciones.get(indexToSelect).getText() + "\n");
+            //Allure.addAttachment("Uso CFDI", opciones.get(indexToSelect).getText());
         } else {
             System.out.println("El combo Uso de CFDI no tiene información disponible.");
+            informacionFactura.append("Uso CFDI: El combo Uso de CFDI no tiene información disponible. \n");
+            //Allure.addAttachment("Uso CFDI", "El combo Uso de CFDI no tiene información disponible.");
         }
     }
 
@@ -337,6 +378,11 @@ public class FacturacionConceptoTest {
 
             // Imprime la opción seleccionada
             System.out.println("La Moneda es: " + opcionSeleccionada);
+            informacionFactura.append("Moneda: " + opcionSeleccionada + "\n\n");
+            //Allure.addAttachment("Moneda", opcionSeleccionada);
+
+            //Agrega al reporte de Allure la informacion de la factura generada.
+            Allure.addAttachment("Informacion Factura", informacionFactura.toString());
         } catch (Exception e) {
             //Captura el mensaje de error, toma una captura de pantalla y lo despliega en el reporte de Allure.
             UtilidadesAllure.manejoError(driver, e, "Se ha producido un error: " + e.getMessage());
@@ -371,6 +417,7 @@ public class FacturacionConceptoTest {
             double valorAleatorio = 1.0000 + (99.9999 - 1.0000) * random.nextDouble();
 
             nuevoCampo.sendKeys(String.format("%.4f", valorAleatorio));
+            informacionConcepto.append("Cantidad del Concepto: " + valorAleatorio + "\n");
         } catch (Exception e) {
             //Captura el mensaje de error, toma una captura de pantalla y lo despliega en el reporte de Allure.
             UtilidadesAllure.manejoError(driver, e, "Error al ingresar la cantidad: " + e.getMessage());
@@ -396,9 +443,14 @@ public class FacturacionConceptoTest {
 
             if (valorConcepto.isEmpty() || valorConcepto.equals("El concepto de facturación no está activo, Revisar")) {
                 System.out.println("Error: El concepto de facturación no está activo.");
+                informacionConcepto.append("Concepto: Error, el concepto de facturación no esta activo.\n");
             } else {
                 System.out.println("Concepto número " + valorAleatorio + " asignado correctamente.");
                 System.out.println("El concepto de facturación es: " + valorConcepto);
+
+                //Se agrega informacion del numero y nombre del concepto al reporte de allure
+                informacionConcepto.append("Numero Concepto: " + valorAleatorio + "\n");
+                informacionConcepto.append("Nombre Concepto: " + valorConcepto + "\n");
             }
         } catch (Exception e) {
             //Captura el mensaje de error, toma una captura de pantalla y lo despliega en el reporte de Allure.
@@ -417,6 +469,8 @@ public class FacturacionConceptoTest {
             double valorAleatorio = 1 + (1000 - 1) * random.nextDouble();
             CampoPrecioUnitario.sendKeys(Keys.TAB);
             CampoPrecioUnitario.sendKeys(String.format("%.2f", valorAleatorio));
+            informacionConcepto.append("Precio Unitario: " + valorAleatorio + "\n");
+
         } catch (Exception e) {
             //Captura el mensaje de error, toma una captura de pantalla y lo despliega en el reporte de Allure.
             UtilidadesAllure.manejoError(driver, e, "Error al ingresar el precio unitario: " + e.getMessage());
@@ -440,10 +494,11 @@ public class FacturacionConceptoTest {
                     new OpcionConProbabilidad("SI OBJETO DE IMPUESTO Y NO OBLIGADO AL DESGLOSE", 0.05),
                     new OpcionConProbabilidad("Sí objeto del impuesto y no causa impuesto", 0.05)
             );
-
             // Verificar que la lista de opciones con probabilidades no esté vacía
             if (opcionesConProbabilidades.isEmpty()) {
                 System.out.println("Error: La lista de opciones con probabilidades está vacía.");
+
+                informacionConcepto.append("Tipo Objeto: ERROR La lista de opciones con probabilidades esta vacia.\n");
                 return;
             }
 
@@ -455,6 +510,9 @@ public class FacturacionConceptoTest {
 
             // Imprimir el texto de la opción seleccionada
             System.out.println("Opción seleccionada: " + opcionSeleccionada);
+
+            //Enviá la opción elegida al reporte de allure.
+            informacionConcepto.append("Tipo Objeto Impuesto: " + opcionSeleccionada + "\n");
         } catch (Exception e) {
             //Captura el mensaje de error, toma una captura de pantalla y lo despliega en el reporte de Allure.
             UtilidadesAllure.manejoError(driver, e, "Error al seleccionar una opción del combo box: " + e.getMessage());
@@ -505,12 +563,18 @@ public class FacturacionConceptoTest {
                 // Si el primer checkbox está activado
                 System.out.println("Checkbox 'Traslada IVA' está activado.");
 
+                //Agrega al reporte de allure si se tiene el check activo en 'traslada iva' o no en una sección aparte.
+                informacionConcepto.append("CHECKBOX 'TRASLADA IVA' ESTA ACTIVADO \n");
+
                 // Activar el segundo checkbox si no está activado
                 WebElement checkboxRetieneIVA = driver.findElement(By.id("CBOX_RETIENEIVA_1"));
                 if (!checkboxRetieneIVA.isSelected()) {
                     checkboxRetieneIVA.click();
                     System.out.println("Checkbox 'Retiene IVA' activado.");
-                }
+
+                    //Agrega al reporte de allure si se tiene el check activo en 'retiene iva' o no en una sección aparte.
+                }                    informacionConcepto.append("CHECKBOX 'RETIENE IVA' ESTA ACTIVADO \n");
+
 
                 // Localizar el combo box COMBO_CATIMPUESTOSRETENCION
                 WebElement comboBoxRetencion = driver.findElement(By.id("COMBO_CATIMPUESTOSRETENCION"));
@@ -532,19 +596,27 @@ public class FacturacionConceptoTest {
                     String textoSeleccionadoRetencion = opcionesRetencion.get(random.nextInt(opcionesRetencion.size())).getText();
                     selectRetencion.selectByVisibleText(textoSeleccionadoRetencion);
                     System.out.println("Opción seleccionada en 'COMBO_CATIMPUESTOSRETENCION': " + textoSeleccionadoRetencion);
+
+                    informacionConcepto.append("Opcion de Impuesto seleccionado: Retencion " + textoSeleccionadoRetencion + " \n\n");
                 } else {
                     System.out.println("Error: El combo 'Retención IVA' está deshabilitado.");
+
+                    informacionConcepto.append("Opcion de Impuesto seleccionado: ERROR el combo 'Retencion IVA' esta deshabilitado \n\n");
                 }
 
             } else {
                 // Si el primer checkbox está desactivado
                 System.out.println("Checkbox 'Traslada IVA' está desactivado.");
 
+                informacionConcepto.append("Opcion de Impuesto seleccionada: Checkbox 'Traslada IVA' está desactivado.\n\n");
+
                 // Asegurarse de que el segundo checkbox esté desactivado
                 WebElement checkboxRetieneIVA = driver.findElement(By.id("CBOX_RETIENEIVA_1"));
                 if (checkboxRetieneIVA.isSelected()) {
                     checkboxRetieneIVA.click();
                     System.out.println("Checkbox 'Retiene IVA' desactivado.");
+
+                    informacionConcepto.append("Opcion de Impuesto seleccionada: Checkbox 'Retiene IVA' desactivado.\n\n");
                 }
 
                 // Localizar el combo box COMBO_CATIMPUESTOSTRASLADO
@@ -567,6 +639,8 @@ public class FacturacionConceptoTest {
                     String textoSeleccionadoTraslado = opcionesTraslado.get(random.nextInt(opcionesTraslado.size())).getText();
                     selectTraslado.selectByVisibleText(textoSeleccionadoTraslado);
                     System.out.println("Opción seleccionada en 'COMBO_CATIMPUESTOSTRASLADO': " + textoSeleccionadoTraslado);
+
+                    informacionConcepto.append("Opcion de Impuesto seleccionada: Traslado " + textoSeleccionadoTraslado + "\n");
                 } else {
                     System.out.println("Error: El combo 'Traslado IVA' está deshabilitado.");
                 }
@@ -612,6 +686,7 @@ public class FacturacionConceptoTest {
             System.out.println("Se ha producido un error al hacer clic en el botón 'Agregar': " + e.getMessage());
             e.printStackTrace();
         }
+        Allure.addAttachment("Informacion del Concepto", informacionConcepto.toString());
     }
 
     private void AceptarFactura() {
@@ -673,10 +748,13 @@ public class FacturacionConceptoTest {
             String mensajeTexto = mensaje.getText();
             System.out.println("Mensaje mostrado: " + mensajeTexto);
 
+            informacionTimbrado.append("Mensaje Obtenido al Timbrar: " + mensajeTexto + "\n\n");
+
             // Verificar si el mensaje contiene la palabra "PRODIGIA"
             if (mensajeTexto.contains("PRODIGIA")) {
                 // Guardar el mensaje si contiene "PRODIGIA"
                 System.out.println("El mensaje contiene 'PRODIGIA': " + mensajeTexto);
+                //informacionTimbrado.append("PRODIGIA - Mensaje obtenido: " + mensajeTexto + "\n\n");
 
                 // Localizar y hacer clic en el botón correspondiente
                 WebElement botonContinuar = driver.findElement(By.id("dwwBTN_OK")); // Ajusta el ID según sea necesario
@@ -689,6 +767,7 @@ public class FacturacionConceptoTest {
                 botonAceptar.click();
                 System.out.println("Se ha hecho clic en el botón 'Aceptar'.");
 
+                informacionTimbrado.append("Mensaje Obtenido al Timbrar: " + mensajeTexto + "\n\n");
                 // Continuar con el siguiente paso
                /* WebElement botonContinuar = driver.findElement(By.id("BOTON_CONTINUAR")); // Ajusta el ID según sea necesario
                 botonContinuar.click();
@@ -705,6 +784,8 @@ public class FacturacionConceptoTest {
             e.printStackTrace();
             UtilidadesAllure.manejoError(driver, e, null);
         }
+
+        Allure.addAttachment("Timbrado", informacionTimbrado.toString());
     }
 
     private void BotonEnvioCorre() {
