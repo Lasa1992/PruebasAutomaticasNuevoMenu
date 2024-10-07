@@ -1,5 +1,5 @@
 package Porclases;
-
+import Indicadores.InicioSesion;
 import io.qameta.allure.Allure;
 import io.qameta.allure.Description;
 import io.qameta.allure.Step;
@@ -43,16 +43,16 @@ public class FacturacionConceptoTest {
     @Order(1)
     @Description("Prueba de Inicio de Sesion - Se utiliza usuario GM")
     public void inicioSesion() {
-        fillForm();
-        submitForm();
-        handleAlert();
+        InicioSesion.fillForm(driver);
+        InicioSesion.submitForm(wait);
+        InicioSesion.handleAlert(wait);
     }
     @Test
     @Order(2)
     @Description("Prueba para el manejo del tipo de Cambio y de la ventana de novedades.")
     public void AlertaTipoCambio() {
-        handleTipoCambio();
-        handleNovedadesScreen();
+        InicioSesion.handleTipoCambio(driver, wait);
+        InicioSesion.handleNovedadesScreen(wait);
     }
 
     @Test
@@ -120,56 +120,6 @@ public class FacturacionConceptoTest {
     public static void tearDown() {
         if (driver != null) {
             driver.quit();
-        }
-    }
-
-    @Step("Llenar el formulario")
-    private static void fillForm() {
-        WebElement inputEmpresa = driver.findElement(By.id("EDT_EMPRESA"));
-        WebElement inputUsuario = driver.findElement(By.id("EDT_USUARIO"));
-        WebElement inputContrasena = driver.findElement(By.id("EDT_CONTRASENA"));
-
-        inputEmpresa.sendKeys("KIJ0906199R1");
-        inputUsuario.sendKeys("LUIS");
-        inputContrasena.sendKeys("Lasa1992#23");
-    }
-
-    @Step("Enviar el formulario")
-    private static void submitForm() {
-        WebElement submitButton = wait.until(ExpectedConditions.elementToBeClickable(By.id("BTN_ENTRAR")));
-        submitButton.click();
-    }
-
-    private static void handleAlert() {
-        try {
-            Alert alert = wait.until(ExpectedConditions.alertIsPresent());
-            if (alert != null) {
-                alert.accept();
-                System.out.println("Alerta aceptada.");
-            }
-        } catch (Exception e) {
-            System.out.println("No se encontró una alerta o ocurrió un error.");
-        }
-    }
-
-    private static void handleTipoCambio() {
-        try {
-            WebElement extraField = wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("EDT_TIPOCAMBIO")));
-            extraField.sendKeys("20");
-            WebElement extraButton = driver.findElement(By.id("BTN_ACEPTAR"));
-            extraButton.click();
-        } catch (Exception e) {
-            System.out.println("Ventana tipo de Cambio no encontrada.");
-        }
-    }
-
-    private static void handleNovedadesScreen() {
-        try {
-            WebElement novedadesScreen = wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("dwwCELL_POPUPMAIN")));
-            WebElement acceptButton = novedadesScreen.findElement(By.id("z_BTN_ACEPTAR_IMG"));
-            acceptButton.click();
-        } catch (Exception e) {
-            System.out.println("Pantalla de novedades no encontrada.");
         }
     }
 
