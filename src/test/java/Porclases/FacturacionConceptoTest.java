@@ -10,6 +10,8 @@ import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import org.openqa.selenium.support.ui.Select;
 import org.openqa.selenium.support.ui.FluentWait;
+import java.util.Set;
+import java.util.HashSet;
 
 import java.time.Duration;
 import java.util.List;
@@ -61,32 +63,58 @@ public class FacturacionConceptoTest {
         handleSubMenuButton();
     }
 
-    @RepeatedTest(800)
+    @RepeatedTest(80)
     @Order(4)
     @Description("Se genera una factura con conceptos aleatorios")
     public void testFacturacionporConcepto() {
-        //Limpia variables de Allure para los reportes.
+        // Limpia variables de Allure para los reportes.
         informacionFactura.setLength(0);
         informacionConcepto.setLength(0);
         informacionTimbrado.setLength(0);
+
+        // Comienza el flujo de facturación
         handleBotonAgregarListado();
         handleAsignaCliente();
         handleCondiciondePago();
         HandleComboMetodoPago();
         HandleComboUsoCFDI();
         HandleMonedas();
-        HandleConceptofacturacionAgregar();
-        IngresaValorCantidad();
-        AsignarCodigoConceptoFacturacion();
-        IngresaPrecioUnitario();
-        SeleccionarObjetoImpuestos();
-        InteractuarConIVASyRetenciones();
-        BotonAgregarConcepto();
-        AceptarFactura();
-        BotonTimbre();
-        ValidarPosibleErrorPRODIGIA();
-        BotonEnvioCorre();
+
+        // Genera un número aleatorio entre 1 y 5 para determinar cuántos conceptos se van a agregar
+        Random random = new Random();
+        int repeticiones = random.nextInt(5) + 1; // Genera un número entre 1 y 5
+
+        Set<Integer> codigosUsados = new HashSet<>(); // Para almacenar códigos únicos de concepto
+
+        for (int i = 0; i < repeticiones; i++) {
+            HandleConceptofacturacionAgregar(); // Abre el formulario de facturación de concepto
+
+            IngresaValorCantidad(); // Ingresa la cantidad
+
+            // Asegura que el código sea único antes de asignarlo
+            int codigoConcepto;
+            do {
+                codigoConcepto = 1 + random.nextInt(5); // Genera un número aleatorio entre 1 y 5
+            } while (codigosUsados.contains(codigoConcepto)); // Verifica si ya se ha usado
+
+            codigosUsados.add(codigoConcepto); // Agrega el código a la lista de usados
+
+
+            AsignarCodigoConceptoFacturacion(codigoConcepto); // Aquí le pasas el código único
+
+            IngresaPrecioUnitario(); // Ingresa el precio unitario
+            SeleccionarObjetoImpuestos(); // Selecciona los impuestos
+            InteractuarConIVASyRetenciones(); // Maneja IVA y retenciones
+            BotonAgregarConcepto(); // Agrega el concepto
+        }
+
+        // Una vez que todos los conceptos han sido agregados
+        AceptarFactura(); // Acepta la factura
+        BotonTimbre(); // Timbrar la factura
+        ValidarPosibleErrorPRODIGIA(); // Validar posibles errores
+        BotonEnvioCorre(); // Enviar factura por correo
     }
+
 
     @AfterAll
     public static void tearDown() {
@@ -102,8 +130,8 @@ public class FacturacionConceptoTest {
         WebElement inputContrasena = driver.findElement(By.id("EDT_CONTRASENA"));
 
         inputEmpresa.sendKeys("KIJ0906199R1");
-        inputUsuario.sendKeys("ALEJANDRO");
-        inputContrasena.sendKeys("Calidad01.");
+        inputUsuario.sendKeys("LUIS");
+        inputContrasena.sendKeys("Lasa1992#23");
     }
 
     @Step("Enviar el formulario")
@@ -297,13 +325,13 @@ public class FacturacionConceptoTest {
             } else {
                 System.out.println("Error: no hay suficientes opciones disponibles en el Método de pago.");
                 informacionFactura.append("Metodo de Pago: Error: no hay suficientes opciones disponibles en el Método de pago. \n");
-                //Allure.addAttachment("Metodo de Pago", "Error: no hay suficientes opciones disponibles en el Método de pago.");
+
             }
         } else {
             // Si el combo box no está habilitado
             System.out.println("El check Permitir seleccionar Método de pago está deshabilitado.");
             informacionFactura.append("Metodo de Pago: El check Permitir seleccionar Método de pago está deshabilitado. \n");
-            //Allure.addAttachment("Metodo de Pago","El check Permitir seleccionar Método de pago está deshabilitado.");
+
         }
     }
 
@@ -416,17 +444,16 @@ public class FacturacionConceptoTest {
         }
     }
 
-    private void AsignarCodigoConceptoFacturacion() {
+    private void AsignarCodigoConceptoFacturacion(int codigoConcepto) {
         try {
             Thread.sleep(3000);
 
             WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
             WebElement campoCodigo = driver.findElement(By.id("EDT_CODIGOCONCEPTOFACTURACION"));
 
-            Random random = new Random();
-            int valorAleatorio = 1 + random.nextInt(5);
+            // Asigna el código de concepto pasado como parámetro
             campoCodigo.clear();
-            campoCodigo.sendKeys(String.valueOf(valorAleatorio));
+            campoCodigo.sendKeys(String.valueOf(codigoConcepto));
             campoCodigo.sendKeys(Keys.TAB);
 
             WebElement campoConcepto = wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("EDT_CONCEPTOFACTURACION")));
@@ -435,22 +462,23 @@ public class FacturacionConceptoTest {
             assert valorConcepto != null;
             if (valorConcepto.isEmpty() || valorConcepto.equals("El concepto de facturación no está activo, Revisar")) {
                 System.out.println("Error: El concepto de facturación no está activo.");
-                informacionConcepto.append("Concepto: Error, el concepto de facturación no esta activo.\n");
+                informacionConcepto.append("Concepto: Error, el concepto de facturación no está activo.\n");
             } else {
-                System.out.println("Concepto número " + valorAleatorio + " asignado correctamente.");
+                System.out.println("Concepto número " + codigoConcepto + " asignado correctamente.");
                 System.out.println("El concepto de facturación es: " + valorConcepto);
 
-                //Se agrega información del número y nombre del concepto al reporte de allure
-                informacionConcepto.append("Numero Concepto: ").append(valorAleatorio).append("\n");
+                // Se agrega información del número y nombre del concepto al reporte de allure
+                informacionConcepto.append("Número Concepto: ").append(codigoConcepto).append("\n");
                 informacionConcepto.append("Nombre Concepto: ").append(valorConcepto).append("\n");
             }
         } catch (Exception e) {
-            //Captura el mensaje de error, toma una captura de pantalla y lo despliega en el reporte de Allure.
+            // Captura el mensaje de error, toma una captura de pantalla y lo despliega en el reporte de Allure.
             UtilidadesAllure.manejoError(driver, e, "Error al asignar el código de concepto de facturación: " + e.getMessage());
             System.out.println("Error al asignar el código de concepto de facturación: " + e.getMessage());
             e.printStackTrace();
         }
     }
+
 
     private void IngresaPrecioUnitario() {
         try {
