@@ -9,7 +9,6 @@ import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
-import org.openqa.selenium.support.ui.*;
 
 import java.time.Duration;
 
@@ -17,15 +16,14 @@ public class InicioSesion {
 
     public static WebDriver driver;
     public static WebDriverWait wait;
-
     @BeforeAll
     public static void setup() {
-        //System.setProperty("webdriver.chrome.driver", "C:\\RepositorioPrueAuto\\Chromedriver\\chromedriver.exe");
-        driver = new ChromeDriver();
-        wait = new WebDriverWait(driver, Duration.ofSeconds(10));
+            driver = new ChromeDriver();
+            wait = new WebDriverWait(driver, Duration.ofSeconds(10));
 
-        driver.get("https://www.softwareparatransporte.com/GMTERPV8_WEB/ES/PAGE_CatUsuariosLoginAWP.awp");
+            driver.get("https://www.softwareparatransporte.com/GMTERPV8_WEB/ES/PAGE_CatUsuariosLoginAWP.awp");
     }
+
     @Description("Llena los campos de inicio de sesion con informacion.")
     public static void fillForm(WebDriver driver) {
         WebElement inputEmpresa = driver.findElement(By.id("EDT_EMPRESA"));
