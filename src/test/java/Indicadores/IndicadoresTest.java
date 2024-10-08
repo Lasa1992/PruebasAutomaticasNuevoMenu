@@ -1,5 +1,6 @@
 package Indicadores;
 
+import Porclases.UtilidadesAllure;
 import io.qameta.allure.Description;
 import org.junit.jupiter.api.*;
 import org.openqa.selenium.*;
@@ -8,6 +9,7 @@ import org.openqa.selenium.support.ui.*;
 import java.time.Duration;
 
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
+@DisplayName("Prueba de indicadores")
 public class IndicadoresTest {
     private static WebDriver driver;
     private static WebDriverWait wait;
@@ -31,6 +33,7 @@ public class IndicadoresTest {
         InicioSesion.submitForm(wait);
         InicioSesion.handleAlert(wait);
     }
+
     @Test
     @Order(2)
     @DisplayName("Alertas - Inicio Sesion")
@@ -40,63 +43,99 @@ public class IndicadoresTest {
         InicioSesion.handleNovedadesScreen(wait);
     }
 
-    @Test
+    @RepeatedTest(13) //MAX 13 repeticiones ya que cada repeticion suma al ciclo.
     @Order(3)
-    @DisplayName("Agregar Indicador")
-    public void agregarIndicador(){
-        try {
-            botonQuitarIndicador = driver.findElement(By.id("z_BTN_CERRARFRAME1_IMG"));
-            if (botonQuitarIndicador.isDisplayed())
-            {
+    @DisplayName("Agregar, seleccionar y quitar indicador")
+    @Description("Da clic en el boton de agregar indicador, para despues seleccionar un indicador, lo agrega y lo quita. Continua con los demas indicadores sucesivamente.")
+    public void agregarYSeleccionarIndicadorCiclo(RepetitionInfo repetitionInfo) {
+        // Definir el número de repeticiones
+            try {
+                agregarIndicador();
+                seleccionarIndicador(repetitionInfo.getCurrentRepetition());
                 validarIndicador();
-                InicioSesion.handleNovedadesScreen(wait);
-            }else{
-                WebElement botonIndicador = wait.until(ExpectedConditions.elementToBeClickable(By.id("z_BTN_AGREGARINDICADOR1_IMG")));
-                botonIndicador.click();
-                System.out.println("Se dio clic correctamente en el boton de agregar indicador.");
+            } catch (Exception e) {
+                e.printStackTrace();
             }
-        }catch(Exception e) {
-                System.out.println("No se encontro el boton para agregar el Indicador.");
+    }
+
+    public void agregarIndicador() {
+        try {
+            botonQuitarIndicador = driver.findElement(By.id("dwwBTN_CERRARFRAME1"));
+            if (botonQuitarIndicador.isDisplayed()){
+                validarIndicador();
+                //InicioSesion.handleNovedadesScreen(wait);
+            }
+            WebElement botonIndicador = wait.until(ExpectedConditions.elementToBeClickable(By.id("z_BTN_AGREGARINDICADOR1_IMG")));
+            botonIndicador.click();
+            System.out.println("Se dio clic correctamente en el botón de agregar indicador.");
+        } catch (Exception e) {
+            UtilidadesAllure.manejoError(driver,e,"Error al agregar indicador: ");
+            System.out.println("No se encontró el botón para agregar el Indicador.");
         }
     }
 
-    @Test
-    @Order(4)
-    @DisplayName("Seleccionar Indicador")
-    public void seleccionarIndicador(){
-        try{
-            WebElement botonAgregar = wait.until(ExpectedConditions.elementToBeClickable(By.id("BTN_GRABAR")));
-            WebElement indicador = wait.until(ExpectedConditions.elementToBeClickable(By.id("TABLE_CATUSUARIOSPROCESOS_0_2")));
-            indicador.click();
+    public void seleccionarIndicador(int currentRepetition) {
+        try {
+            // El ID ahora cambia en función de la repetición actual
+            String dynamicId = "TABLE_CATUSUARIOSPROCESOS_" + (currentRepetition - 1) + "_2";  // Restar 1 ya que la repetición empieza desde 1
+            WebElement indicador;
+
+            // Intentar encontrar el elemento, y si no está visible, hacer scroll
+            try {
+                // Intentar localizar el indicador sin hacer scroll inicialmente
+                indicador = wait.until(ExpectedConditions.presenceOfElementLocated(By.id(dynamicId)));
+
+                // Mover el scroll hasta el indicador
+                ((JavascriptExecutor) driver).executeScript("arguments[0].scrollIntoView(true);", indicador);
+            } catch (TimeoutException te) {
+                // Si el elemento no está visible o no se encuentra, manejar la excepción
+                System.out.println("Indicador no encontrado de inmediato. Intentando hacer scroll.");
+                // Puedes mover el scroll más abajo en la página (ajusta los píxeles según sea necesario)
+                ((JavascriptExecutor) driver).executeScript("window.scrollBy(0,500);");
+                // Vuelve a intentar localizar el indicador
+                indicador = wait.until(ExpectedConditions.elementToBeClickable(By.id(dynamicId)));
+            }
+
+            // Obtener el texto del indicador
             nombreIndicador = indicador.getText();
-            System.out.println("Se agrego el indicador: " + nombreIndicador);
+            System.out.println("Se seleccionó el indicador con ID: " + dynamicId + " y nombre: " + nombreIndicador);
+
+            // Clic en el indicador correspondiente
+            indicador.click();
+
+            // Botón de grabar después de seleccionar el indicador
+            WebElement botonAgregar = wait.until(ExpectedConditions.elementToBeClickable(By.id("BTN_GRABAR")));
             botonAgregar.click();
-        }catch(Exception e){
-            System.out.println("No se encontro el indicador al dar clic.");
+        } catch (Exception e) {
+            UtilidadesAllure.manejoError(driver, e, "Error al seleccionar el indicador:");
+            System.out.println("No se encontró el indicador al dar clic.");
+            e.printStackTrace();
         }
     }
 
-    @Test
-    @Order(5)
-    @DisplayName("Quitar el Indicador agregado")
-    public void validarIndicador(){
-        try{
+    public void validarIndicador() {
+        try {
             InicioSesion.handleNovedadesScreen(wait);
-            // Ahora busca el texto después de manejar novedades
-            botonQuitarIndicador = driver.findElement(By.id("z_BTN_CERRARFRAME1_IMG"));
-
-            // Valida si se encontró el texto en la página
+            botonQuitarIndicador = driver.findElement(By.id("BTN_CERRARFRAME1"));
+            Thread.sleep(2500);
+            UtilidadesAllure.capturaImagen(driver);
             if (botonQuitarIndicador.isDisplayed()) {
                 System.out.println("Indicador encontrado");
                 botonQuitarIndicador.click();
                 InicioSesion.handleAlert(wait);
-                System.out.println("Se quito correctamente el indicador.");
+                System.out.println("Se quitó correctamente el indicador.");
                 InicioSesion.handleNovedadesScreen(wait);
-            } else {
-                System.out.println("El indicador no se encontró.");
             }
-        }catch(Exception e){
-            System.out.println("No se encontro el indicador.");
+        } catch (Exception e) {
+            UtilidadesAllure.manejoError(driver,e,"Error al quitar el indicador: ");
+            System.out.println("No se encontró el indicador.");
+        }
+    }
+
+    @AfterAll
+    public static void tearDown() {
+        if (driver != null) {
+            driver.quit();
         }
     }
 }
