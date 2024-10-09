@@ -213,7 +213,7 @@ public class FacturacionCancelacionSustitucion {
                 }
 
                 // Obtener el valor del "Documento" (Columna 0)
-                String documentoSeleccionado = columnas.get(0).getText().trim();
+                String documentoSeleccionado = columnas.getFirst().getText().trim();
                 System.out.println("Documento seleccionado: " + documentoSeleccionado);
 
                 if (documentoSeleccionado.isEmpty()) {
@@ -261,6 +261,7 @@ public class FacturacionCancelacionSustitucion {
 
             // Esperar a que aparezca la ventana emergente de cancelación
             WebElement ventanaEmergente = wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("CELL_POPUPMAIN")));
+            ventanaEmergente.isDisplayed();
             System.out.println("Ventana emergente de cancelación visible.");
 
             // Seleccionar una opción en el combo box "Motivo de Cancelación"

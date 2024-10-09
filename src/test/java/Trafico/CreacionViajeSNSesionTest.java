@@ -26,7 +26,7 @@ public class CreacionViajeSNSesionTest {
     // Variables estáticas para WebDriver, WebDriverWait y Random
     private static WebDriver driver;
     private static WebDriverWait wait;
-    private static Random random = new Random();
+    private static final Random random = new Random();
     private int viajeCount = 1;
 
     @BeforeAll
@@ -73,7 +73,7 @@ public class CreacionViajeSNSesionTest {
     @Description("Se ingresa al listado de Viajes y se crea una Carta Porte, se factura y timbra el viaje.")
     public void testCrearViaje() {
         // Ejecuta el flujo de pruebas repetidamente para crear un viaje
-        handleAdditionalButton(Duration.ofSeconds(5)); // Maneja el botón adicional
+        handleAdditionalButton(); // Maneja el botón adicional
         handleTipoDocumento(); // Maneja el tipo de documento
         handleNumeroViaje(); // Maneja el número de viaje
         handleMoneda(); // Maneja la moneda
@@ -180,7 +180,7 @@ public class CreacionViajeSNSesionTest {
         }
     }
 
-    private static void handleAdditionalButton(Duration timeout) {
+    private static void handleAdditionalButton() {
         // Maneja el botón adicional
         try {
             WebElement additionalButton = wait.until(ExpectedConditions.elementToBeClickable(By.id("BTN_AGREGAR")));
@@ -288,8 +288,8 @@ public class CreacionViajeSNSesionTest {
     @Step("Seleccionar Pestaña de Materiales Carga")
     private void handleSeleccionarPestana() {
         try {
-            WebElement pestañaMateriales = wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("TAB_TAB1_2")));
-            pestañaMateriales.click();
+            WebElement pestanaMateriales = wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("TAB_TAB1_2")));
+            pestanaMateriales.click();
             Thread.sleep(3000); // Esperar 3 segundos después de hacer clic en la pestaña
         } catch (Exception e) {
             System.out.println("Error al seleccionar la pestaña de Materiales Carga.");
