@@ -1,7 +1,7 @@
 package Facturacion;
 
 import Indicadores.InicioSesion;
-import Indicadores.UtilidadesAllure;
+import Utilidades.UtilidadesAllure;
 import io.qameta.allure.Description;
 import io.qameta.allure.Step;
 import org.junit.jupiter.api.*;

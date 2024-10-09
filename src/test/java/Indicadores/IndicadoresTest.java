@@ -1,6 +1,6 @@
 package Indicadores;
 
-import Porclases.UtilidadesAllure;
+import Utilidades.UtilidadesAllure;
 import io.qameta.allure.Description;
 import org.junit.jupiter.api.*;
 import org.openqa.selenium.*;
