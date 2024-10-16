@@ -9,40 +9,51 @@
     <version>1.0-SNAPSHOT</version>
 
     <dependencies>
+        <!-- JUnit -->
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
             <version>4.13.2</version>
         </dependency>
+
+        <!-- Selenium -->
         <dependency>
             <groupId>org.seleniumhq.selenium</groupId>
             <artifactId>selenium-java</artifactId>
             <version>4.25.0</version>
             <scope>test</scope>
         </dependency>
+
+        <!-- Allure JUnit Integration -->
         <dependency>
             <groupId>io.qameta.allure</groupId>
             <artifactId>allure-junit5</artifactId>
             <version>2.29.0</version>
             <scope>test</scope>
         </dependency>
+
+        <!-- WebDriver Manager -->
         <dependency>
             <groupId>io.github.bonigarcia</groupId>
             <artifactId>webdrivermanager</artifactId>
             <version>5.9.2</version>
         </dependency>
+
         <!-- SLF4J API -->
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>
-            <version>2.0.0</version> <!-- Usa la versión más reciente -->
+            <version>2.0.0</version>
         </dependency>
-        <!-- Implementación SLF4J con Logback -->
+
+        <!-- Logback (SLF4J Implementation) -->
         <dependency>
             <groupId>ch.qos.logback</groupId>
             <artifactId>logback-classic</artifactId>
-            <version>1.4.12</version> <!-- Usa la versión más reciente -->
+            <version>1.4.12</version>
         </dependency>
+
+        <!-- Apache POI for Excel Files -->
         <dependency>
             <groupId>org.apache.poi</groupId>
             <artifactId>poi</artifactId>
@@ -56,13 +67,15 @@
         <dependency>
             <groupId>org.apache.xmlbeans</groupId>
             <artifactId>xmlbeans</artifactId>
-            <version>5.2.1</version>
+            <version>5.1.1</version>
         </dependency>
         <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-collections4</artifactId>
             <version>4.5.0-M2</version>
         </dependency>
+
+        <!-- JetBrains Annotations -->
         <dependency>
             <groupId>org.jetbrains</groupId>
             <artifactId>annotations</artifactId>
@@ -79,11 +92,11 @@
 
     <build>
         <plugins>
-            <!-- Plugin de Surefire para ejecutar pruebas JUnit -->
+            <!-- Maven Surefire Plugin for Running JUnit Tests -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
-                <version>3.0.0-M5</version> <!-- Usa la versión más reciente -->
+                <version>3.0.0-M5</version>
                 <configuration>
                     <systemPropertyVariables>
                         <allure.results.directory>${project.build.directory}/allure-results</allure.results.directory>
@@ -91,16 +104,16 @@
                 </configuration>
             </plugin>
 
-            <!-- Plugin de Allure para generar reportes -->
+            <!-- Allure Maven Plugin for Generating Reports -->
             <plugin>
                 <groupId>io.qameta.allure</groupId>
                 <artifactId>allure-maven</artifactId>
                 <version>2.14.0</version>
                 <executions>
                     <execution>
-                        <phase>test</phase>
+                        <phase>verify</phase>
                         <goals>
-                            <goal>serve</goal>
+                            <goal>aggregate</goal>
                         </goals>
                     </execution>
                 </executions>

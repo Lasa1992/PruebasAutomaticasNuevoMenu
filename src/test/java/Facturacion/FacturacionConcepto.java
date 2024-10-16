@@ -65,7 +65,7 @@ public class FacturacionConcepto {
         handleSubMenuButton();
     }
 
-    @RepeatedTest(8)
+    @RepeatedTest(20)
     @Order(4)
     @Description("Se genera una factura con conceptos aleatorios")
     public void testFacturacionporConcepto() {
@@ -127,7 +127,7 @@ public class FacturacionConcepto {
 
     private static void handleImageButton() {
         try {
-            WebElement imageButton = wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//img[contains(@src, '/GMTERPV8_WEB/Imagenes/FACTURACION1.JPG')]")));
+            WebElement imageButton = wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//img[contains(@src, '/GMTERPV8_WEB/Imagenes/FACTURACION1.jpg')]")));
             imageButton.click();
         } catch (Exception e) {
             UtilidadesAllure.manejoError(driver, e, "Botón Módulo Facturación no funciona.");
@@ -137,7 +137,7 @@ public class FacturacionConcepto {
 
     private static void handleSubMenuButton() {
         try {
-            WebElement subMenuButton = wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//img[contains(@src, '/GMTERPV8_WEB/Imagenes/FACTURACION/PORCONCEPTO1.JPG')]")));
+            WebElement subMenuButton = wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//img[contains(@src, '/GMTERPV8_WEB/Imagenes/FACTURACION/PORCONCEPTO1.jpg')]")));
             subMenuButton.click();
         } catch (Exception e) {
             //Captura el mensaje de error, toma una captura de pantalla y lo despliega en el reporte de Allure.
