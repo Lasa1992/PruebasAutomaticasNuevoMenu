@@ -30,9 +30,9 @@ public class InicioSesion {
         WebElement inputUsuario = driver.findElement(By.id("EDT_USUARIO"));
         WebElement inputContrasena = driver.findElement(By.id("EDT_CONTRASENA"));
 
-        inputEmpresa.sendKeys("IIA040805DZ4");
-        inputUsuario.sendKeys("LUIS");
-        inputContrasena.sendKeys("Lasa1992#red23");
+        inputEmpresa.sendKeys("KIJ0906199R1");
+        inputUsuario.sendKeys("UsuarioPruebas");
+        inputContrasena.sendKeys("Lasa1992#23");
     }
 
     @Description("Da clic en el boton de Entrar para ingresar al sistema.")

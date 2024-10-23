@@ -68,7 +68,7 @@ public class FacturacionConcepto {
     @RepeatedTest(20)
     @Order(4)
     @Description("Se genera una factura con conceptos aleatorios")
-    public void testFacturacionporConcepto() {
+    public void FacturacionporConcepto() {
         // Limpia variables de Allure para los reportes.
         informacionFactura.setLength(0);
         informacionConcepto.setLength(0);
@@ -755,7 +755,7 @@ public class FacturacionConcepto {
                 List<WebElement> botonContinuarList = driver.findElements(By.id("BOTON_CONTINUAR"));
                 if (!botonContinuarList.isEmpty()) {
                     // Si la lista no está vacía, significa que el botón está presente
-                    WebElement botonContinuar = botonContinuarList.getFirst();  // Obtenemos el primer (y único) elemento de la lista
+                    WebElement botonContinuar = botonContinuarList.get(0);  // Obtenemos el primer (y único) elemento de la lista
                     botonContinuar.click();
                     System.out.println("Se ha hecho clic en el botón 'Continuar'.");
                 } else {
@@ -785,8 +785,8 @@ public class FacturacionConcepto {
             // Verificar si el elemento con ID "tzSTC_DESCRIPTION" está presente y visible
             List<WebElement> elementosDescripcion = driver.findElements(By.id("tzSTC_DESCRIPTION"));
 
-            if (!elementosDescripcion.isEmpty() && elementosDescripcion.getFirst().isDisplayed()) {
-                WebElement mensajeOpciones = elementosDescripcion.getFirst();
+            if (!elementosDescripcion.isEmpty() && elementosDescripcion.get(0).isDisplayed()) {
+                WebElement mensajeOpciones = elementosDescripcion.get(0);
 
                 if (mensajeOpciones.isEnabled()) {
                     System.out.println("El botón de Descripcion está habilitado.");
@@ -834,16 +834,16 @@ public class FacturacionConcepto {
 
                 // Verificar si el botón "BTN_IMPRIMIR" está presente
                 List<WebElement> btnImprimir = driver.findElements(By.id("BTN_IMPRIMIR"));
-                if (!btnImprimir.isEmpty() && btnImprimir.getFirst().isDisplayed()) {
+                if (!btnImprimir.isEmpty() && btnImprimir.get(0).isDisplayed()) {
                     System.out.println("El botón 'Imprimir' está presente. Se detiene la ejecución.");
                     break; // Salir del ciclo si el botón "Imprimir" está presente
                 }
 
                 // Buscar el botón "BTN_CANCELARDETALLE"
                 List<WebElement> btnCancelarDetalle = driver.findElements(By.id("BTN_CANCELARDETALLE"));
-                if (!btnCancelarDetalle.isEmpty() && btnCancelarDetalle.getFirst().isDisplayed()) {
+                if (!btnCancelarDetalle.isEmpty() && btnCancelarDetalle.get(0).isDisplayed()) {
                     // Si el botón "BTN_CANCELARDETALLE" está presente y visible, hacer clic en él
-                    WebElement botonCancelarDetalle = btnCancelarDetalle.getFirst();
+                    WebElement botonCancelarDetalle = btnCancelarDetalle.get(0);
                     wait.until(ExpectedConditions.elementToBeClickable(botonCancelarDetalle));
                     botonCancelarDetalle.click();
                     System.out.println("Se hizo clic en el botón 'Cancelar Detalle'.");
@@ -854,9 +854,9 @@ public class FacturacionConcepto {
 
                 // Buscar el botón "BTN_CANCELAR" si no está activo el otro
                 List<WebElement> btnCancelar = driver.findElements(By.id("BTN_CANCELAR"));
-                if (!btnCancelar.isEmpty() && btnCancelar.getFirst().isDisplayed()) {
+                if (!btnCancelar.isEmpty() && btnCancelar.get(0).isDisplayed()) {
                     // Si el botón "BTN_CANCELAR" está presente y visible, hacer clic en él
-                    WebElement botonCancelar = btnCancelar.getFirst();
+                    WebElement botonCancelar = btnCancelar.get(0);
                     wait.until(ExpectedConditions.elementToBeClickable(botonCancelar));
                     botonCancelar.click();
                     System.out.println("Se hizo clic en el botón 'Cancelar'.");

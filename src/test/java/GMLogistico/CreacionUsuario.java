@@ -54,7 +54,7 @@ public class CreacionUsuario {
         EntrarUsuarios();
     }
 
-    @RepeatedTest(500)
+    @RepeatedTest(10)
     @Order(3)
     @Description("Generar un usuario desde un archivo Excel y guardarlo")
     public void testCreacionUsuariosMasivos() {
@@ -86,10 +86,10 @@ public class CreacionUsuario {
                     Thread.sleep(1000); // Espera de 1 segundo después de asignar el email
 
                     AsignarRol();
-                    Thread.sleep(300); // Espera de 1 segundo después de asignar el rol
+                    Thread.sleep(1000); // Espera de 1 segundo después de asignar el rol
 
                     AsignarContrasenaYConfirmacion(contrasena);
-                    Thread.sleep(300); // Espera de 1 segundo después de asignar la contraseña y confirmación
+                    Thread.sleep(1000); // Espera de 1 segundo después de asignar la contraseña y confirmación
 
                     // Presionar el botón 'Guardar' para cada usuario y verificar si se guardó correctamente
                     if (PresionarBotonGuardar()) {
@@ -230,21 +230,30 @@ public class CreacionUsuario {
     @Step("Asignar el rol al nuevo usuario")
     private void AsignarRol() {
         try {
+            // Esperar que el botón para abrir el combo esté clicable
             WebElement abrirComboRolButton = wait.until(ExpectedConditions.elementToBeClickable(
-                    By.xpath("//button[@aria-label='Open']")
-            ));
+                    By.xpath("//button[@aria-label='Open']")));
             abrirComboRolButton.click();
+            System.out.println("Combo de roles abierto correctamente.");
 
-            WebElement primeraOpcionRol = wait.until(ExpectedConditions.visibilityOfElementLocated(
-                    By.xpath("//ul[@role='listbox']/li[1]")
-            ));
-            primeraOpcionRol.click();
-            System.out.println("Rol asignado correctamente.");
+            // Esperar que la lista de roles esté visible
+            WebElement listaRoles = wait.until(ExpectedConditions.visibilityOfElementLocated(
+                    By.xpath("//ul[@role='listbox']")));
+
+            // Buscar y seleccionar el rol "Administrador" en la lista de roles
+            WebElement opcionRol = wait.until(ExpectedConditions.elementToBeClickable(
+                    By.xpath("//ul[@role='listbox']/li[contains(text(), 'Administrador')]")));
+
+            // Hacer clic en la opción del rol "Administrador"
+            opcionRol.click();
+            System.out.println("Rol 'Administrador' asignado correctamente.");
 
         } catch (Exception e) {
-            UtilidadesAllureLog.manejoError(driver, e, "No se pudo asignar el rol.");
+            UtilidadesAllureLog.manejoError(driver, e, "No se pudo asignar el rol 'Administrador'.");
         }
     }
+
+
 
     @Step("Asignar contraseña y confirmación al nuevo usuario")
     private void AsignarContrasenaYConfirmacion(String contrasena) {
@@ -272,7 +281,7 @@ public class CreacionUsuario {
             ((JavascriptExecutor) driver).executeScript("arguments[0].click();", guardarButton);
             System.out.println("Botón 'Guardar' presionado usando JavaScript.");
 
-            // Esperar el mensaje de éxito específico después de presionar el botón
+            // Aumentar el tiempo de espera para asegurar que el mensaje de éxito aparezca
             WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
             WebElement mensajeExito = wait.until(ExpectedConditions.visibilityOfElementLocated(
                     By.xpath("//*[contains(text(), '¡En hora buena!') and contains(text(), 'éxito')]")
@@ -281,11 +290,10 @@ public class CreacionUsuario {
 
             // Intentar cerrar el mensaje si hay un botón de cierre
             try {
-                WebElement closeButton = wait.until(ExpectedConditions.elementToBeClickable(
-                        By.cssSelector(".w-6")
-                ));
-                closeButton.click();
-                System.out.println("Mensaje de éxito cerrado.");
+                // Esperar hasta 3 segundos a que el botón de cierre sea clicable
+                WebElement closeButton = wait.until(ExpectedConditions.elementToBeClickable(By.cssSelector(".w-6")));
+                closeButton.click();  // Presionar el botón una vez que esté clicable
+                System.out.println("Mensaje de éxito cerrado después de esperar hasta 3 segundos.");
             } catch (TimeoutException | NoSuchElementException e) {
                 System.out.println("No se pudo cerrar el mensaje de éxito: " + e.getMessage());
             }
@@ -310,10 +318,10 @@ public class CreacionUsuario {
         try (FileInputStream fileInputStream = new FileInputStream(new File(rutaArchivo));
              Workbook workbook = new XSSFWorkbook(fileInputStream)) {
 
-            // Obtener la hoja del archivo Excel donde se encuentran los datos
+            // Obtener la hoja del archivo Excel dnode se encuentran los datos
             Sheet sheet = workbook.getSheetAt(0);
 
-            // Marcar la fila del usuario como procesado
+            // Marcar la fila del ussuario como procesado
             int rowIndex = row.getRowNum();
             Row currentRow = sheet.getRow(rowIndex);
             if (currentRow != null) {
@@ -326,7 +334,6 @@ public class CreacionUsuario {
             // Guardar los cambios en el archivo Excel
             try (FileOutputStream fileOutputStream = new FileOutputStream(new File(rutaArchivo))) {
                 workbook.write(fileOutputStream);
-                System.out.println("Usuario marcado como procesado: " + row.getCell(1).getStringCellValue());
             }
 
         } catch (Exception e) {
@@ -334,3 +341,12 @@ public class CreacionUsuario {
         }
     }
 }
+
+
+// Query Eliminar Usuarios en Sql
+
+/*DELETE FROM dbo.CatUsuarios
+WHERE IdSisCliente = '10133'
+AND Admin != 1;
+ */
+

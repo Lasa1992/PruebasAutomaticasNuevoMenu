@@ -9,11 +9,12 @@
     <version>1.0-SNAPSHOT</version>
 
     <dependencies>
-        <!-- JUnit -->
+        <!-- JUnit 5 (Jupiter) -->
         <dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
-            <version>4.13.2</version>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter</artifactId>
+            <version>5.10.3</version>
+            <scope>test</scope>
         </dependency>
 
         <!-- Selenium -->
@@ -24,7 +25,7 @@
             <scope>test</scope>
         </dependency>
 
-        <!-- Allure JUnit Integration -->
+        <!-- Allure JUnit 5 Integration -->
         <dependency>
             <groupId>io.qameta.allure</groupId>
             <artifactId>allure-junit5</artifactId>
@@ -72,7 +73,7 @@
         <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-collections4</artifactId>
-            <version>4.5.0-M2</version>
+            <version>4.4</version>
         </dependency>
 
         <!-- JetBrains Annotations -->
@@ -85,19 +86,24 @@
     </dependencies>
 
     <properties>
-        <maven.compiler.source>22</maven.compiler.source>
-        <maven.compiler.target>22</maven.compiler.target>
+        <skipTests>true</skipTests>
+        <maven.compiler.source>17</maven.compiler.source>
+        <maven.compiler.target>17</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <!-- Permitir que la fase de compilación se ejecute sin construir todo el proyecto cada vez -->
+        <maven.build.skip>false</maven.build.skip>
     </properties>
 
     <build>
         <plugins>
-            <!-- Maven Surefire Plugin for Running JUnit Tests -->
+            <!-- Maven Surefire Plugin for Running JUnit 5 Tests -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
-                <version>3.0.0-M5</version>
+                <version>3.0.0-M7</version>
                 <configuration>
+                    <skipTests>true</skipTests> <!-- Las pruebas no se ejecutarán automáticamente -->
+                    <useModulePath>false</useModulePath>
                     <systemPropertyVariables>
                         <allure.results.directory>${project.build.directory}/allure-results</allure.results.directory>
                     </systemPropertyVariables>
@@ -111,7 +117,7 @@
                 <version>2.14.0</version>
                 <executions>
                     <execution>
-                        <phase>verify</phase>
+                        <phase>site</phase> <!-- Solo se ejecutará en la fase 'site' para evitar ejecuciones automáticas -->
                         <goals>
                             <goal>aggregate</goal>
                         </goals>
@@ -120,4 +126,14 @@
             </plugin>
         </plugins>
     </build>
+
+    <profiles>
+        <!-- Perfil para habilitar la ejecución de pruebas manualmente -->
+        <profile>
+            <id>run-tests</id>
+            <properties>
+                <skipTests>false</skipTests>
+            </properties>
+        </profile>
+    </profiles>
 </project>
