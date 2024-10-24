@@ -347,7 +347,6 @@ public class FacturacionConcepto {
             // Imprime la opción seleccionada
             System.out.println("La Moneda es: " + opcionSeleccionada);
             informacionFactura.append("Moneda: ").append(opcionSeleccionada).append("\n\n");
-            //Allure.addAttachment("Moneda", opcionSeleccionada);
 
             //Agrega al reporte de Allure la información de la factura generada.
             Allure.addAttachment("Informacion Factura", informacionFactura.toString());

@@ -2,6 +2,8 @@ package Indicadores;
 
 import Utilidades.UtilidadesAllure;
 import io.qameta.allure.Description;
+import io.qameta.allure.Epic;
+import io.qameta.allure.Story;
 import org.junit.jupiter.api.*;
 import org.openqa.selenium.*;
 import org.openqa.selenium.chrome.ChromeDriver;
@@ -47,6 +49,8 @@ public class IndicadoresTest {
     @Order(3)
     @DisplayName("Agregar, seleccionar y quitar indicador")
     @Description("Da clic en el boton de agregar indicador, para despues seleccionar un indicador, lo agrega y lo quita. Continua con los demas indicadores sucesivamente.")
+    @Epic("Indicadores")
+    @Story("Indicadores de Cobranza, Mapa ubicaciones, Viajes, etc")
     public void agregarYSeleccionarIndicadorCiclo(RepetitionInfo repetitionInfo) {
         // Definir el número de repeticiones
             try {
