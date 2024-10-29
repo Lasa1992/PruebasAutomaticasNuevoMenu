@@ -38,6 +38,7 @@ public class FacturacionViajeComplemento {
         driver.manage().window().maximize(); // Maximizar la ventana para evitar problemas de visibilidad
     }
 
+
     @Test
     @Order(1)
     @Description("Prueba de Inicio de Sesion - Se utiliza usuario GM")
@@ -55,42 +56,41 @@ public class FacturacionViajeComplemento {
         InicioSesion.handleNovedadesScreen(wait);
     }
 
-    @RepeatedTest(10)
+    @RepeatedTest(20)
     @Order(3)
     @Description("Metodos para entrar al listado de viajes")
     public void EntrarAViajes() {
-        BotonModuloTrafico();
-        BotonListadoViajes();
-        // Crea Un Viaje p[ara que timbre la factura Con Complemento.
-        BotonAgregarCartaPorte(); // Maneja el botón adicional
-        TipoDocumentoIngreso(); // Maneja el tipo de documento
-        NumeroViajeCliente(); // Maneja el número de viaje
-        CodigoCliente(); // Asigna un cliente al viaje
-        MonedaCartaPorte(); // Maneja la moneda
-        FolioRuta(); // Maneja el folio de ruta
-        NumeroEconomicoConvoy(); // Maneja el número económico del convoy
-        SeleccionarPestanaMateriales(); // Selecciona la pestaña de materiales carga
-        BotonImportarMaterial(); // Damos Click en el boton importar
-        ImportacionMaterial(); // MMetodo que importa Materiales desde un excel
-        BotonAceptarImportacion(); // Aceptamos la ventana dell importacion
-        BotonAceptarViaje(); // Boton Aceptar Viaje
-        EnvioCorreo(); // Envio de Correo Aleatorio
-        BotonImpresion(); // Manejamos Mensaje de Imprecion
+        BotonModuloTrafico(); // Selecciona el módulo de tráfico en la interfaz de usuario.
+        BotonListadoViajes(); // Abre el listado de viajes en el módulo de tráfico.
+        BotonAgregarCartaPorte(); // Agrega un nuevo 'Carta Porte' para crear un viaje.
+        TipoDocumentoIngreso(); // Selecciona el tipo de documento en el formulario del viaje.
+        NumeroViajeCliente(); // Introduce el número de viaje correspondiente al cliente.
+        CodigoCliente(); // Asigna el cliente correspondiente al viaje.
+        MonedaCartaPorte(); // Selecciona aleatoriamente una moneda para el 'Carta Porte'.
+        FolioRuta(); // Introduce el folio de la ruta en el formulario del viaje.
+        NumeroEconomicoConvoy(); // Introduce el número económico del convoy.
+        SeleccionarPestanaMateriales(); // Selecciona la pestaña de materiales de carga.
+        BotonImportarMaterial(); // Da clic en el botón de importación de materiales.
+        ImportacionMaterial(); // Importa los materiales desde un archivo de Excel.
+        BotonAceptarImportacion(); // Acepta el cuadro de diálogo de importación de materiales.
+        BotonAceptarViaje(); // Acepta el registro del viaje recién creado.
+        EnvioCorreo(); // Envía un correo de confirmación aleatoriamente (Sí/No).
+        BotonImpresion(); // Muestra el mensaje relacionado con la impresión.
 
-        // Bloque donde controlamos  la facturacion de dicho viaje
-        BotonModuloFacturacion(); // Presiona boton modulo
-        BotonFacturacionPorViaje();
-        BotonAgregarFactura();
-        CodigoClienteFactura();
-        MonedaAFacturar();
-        FiltroMoneda();
-        CampoBusqueda();
-        SelecionaFactura();
-    AceptarFactura();
-     AceptarEDI();
-       EnvioCorreoFactura();
-     AceptarPoliza();
-      AceptarImpresion();
+        // Bloque donde se controla la facturación del viaje creado
+        BotonModuloFacturacion(); // Selecciona el módulo de facturación en la interfaz de usuario.
+        BotonFacturacionPorViaje(); // Selecciona la opción de facturación por viaje.
+        BotonAgregarFactura(); // Da clic en el botón para agregar una nueva factura.
+        CodigoClienteFactura(); // Introduce el código del cliente para la factura.
+        MonedaAFacturar(); // Selecciona una moneda aleatoria para la factura.
+        FiltroMoneda(); // Aplica un filtro de moneda basado en la moneda previamente seleccionada.
+        CampoBusqueda(); // Realiza una búsqueda utilizando el número de viaje.
+        SelecionaFactura(); // Selecciona la factura generada.
+        AceptarFactura(); // Acepta la factura generada.
+        AceptarEDI(); // Acepta el proceso EDI relacionado con la factura.
+        EnvioCorreoFactura(); // Envía un correo para la factura generada (Sí/No).
+        AceptarPoliza(); // Acepta la póliza generada.
+        AceptarImpresion(); // Acepta el cuadro de diálogo de impresión.
 
     }
 
@@ -194,39 +194,47 @@ public class FacturacionViajeComplemento {
 
     @Step("Manejar Moneda")
     private void MonedaCartaPorte() {
+        monedaSeleccionada = ""; // Limpiar la variable al inicio de cada ejecución
         try {
-            // Espera a que el combo box de moneda sea visible
             WebElement tipoDocumentoCombo = wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("COMBO_CATMONEDAS")));
             Select comboBox = new Select(tipoDocumentoCombo);
 
-            // Obtener todas las opciones disponibles
+            // Leer y obtener las opciones disponibles en el combo box
             List<WebElement> opcionesDisponibles = comboBox.getOptions();
+            Random random = new Random();
 
-            // Definir las opciones válidas según el texto visible
-            List<String> opcionesValidas = List.of("PESOS", "DÓLARES");
-            List<WebElement> opcionesValidasDisponibles = new ArrayList<>();
+            // Seleccionar aleatoriamente una opción
+            int indiceAleatorio = random.nextInt(opcionesDisponibles.size());
+            WebElement opcionSeleccionada = opcionesDisponibles.get(indiceAleatorio);
 
-            // Filtrar las opciones disponibles para casar solo las válidas
-            for (WebElement opcion : opcionesDisponibles) {
-                if (opcionesValidas.contains(opcion.getText())) {
-                    opcionesValidasDisponibles.add(opcion);
-                }
+            // Usar JavaScript para asegurar que el cambio de moneda se realiza correctamente
+            String valorASeleccionar = opcionSeleccionada.getAttribute("value");
+            JavascriptExecutor js = (JavascriptExecutor) driver;
+            js.executeScript("arguments[0].value = arguments[1]; arguments[0].dispatchEvent(new Event('change'))", tipoDocumentoCombo, valorASeleccionar);
+
+            // Esperar a que el valor del combo box se haya actualizado correctamente
+            wait.until(ExpectedConditions.textToBePresentInElement(tipoDocumentoCombo, opcionSeleccionada.getText()));
+
+            // Actualizar el valor de monedaSeleccionada con la opción seleccionada
+            monedaSeleccionada = opcionSeleccionada.getText().trim().toUpperCase();
+            System.out.println("La moneda seleccionada es: " + monedaSeleccionada);
+
+            // Validar si el cambio de moneda se aplicó correctamente
+            String valorActual = comboBox.getFirstSelectedOption().getText().trim().toUpperCase();
+            if (!valorActual.equals(monedaSeleccionada)) {
+                throw new Exception("Error: no se pudo cambiar la moneda. Valor actual sigue siendo: " + valorActual);
             }
-
-            // Elegir una opción aleatoria del combo box entre las opciones válidas
-            if (!opcionesValidasDisponibles.isEmpty()) {
-                Random random = new Random();
-                WebElement opcionAleatoria = opcionesValidasDisponibles.get(random.nextInt(opcionesValidasDisponibles.size()));
-
-                // Seleccionar la opción aleatoria utilizando el texto visible
-                comboBox.selectByVisibleText(opcionAleatoria.getText());
-                monedaSeleccionada = opcionAleatoria.getText(); // Guarda el valor en la variable
-                System.out.println("Se seleccionó la opción: " + monedaSeleccionada);
-            }
+        } catch (NoSuchElementException | TimeoutException e) {
+            UtilidadesAllure.manejoError(driver, e, "Error al manejar la Moneda en MonedaCartaPorte");
+            System.out.println("Error al manejar la Moneda en MonedaCartaPorte: " + e.getMessage());
         } catch (Exception e) {
-            UtilidadesAllure.manejoError(driver, e, "Error al manejar la Moneda");
+            UtilidadesAllure.manejoError(driver, e, "Error al cambiar la moneda en MonedaCartaPorte");
+            System.out.println("Error al cambiar la moneda en MonedaCartaPorte: " + e.getMessage());
         }
     }
+
+
+
 
     @Step("Manejar Folio Ruta")
     private void FolioRuta() {
@@ -482,29 +490,37 @@ public class FacturacionViajeComplemento {
 
                 // Seleccionar la opción aleatoria utilizando el texto visible
                 comboBox.selectByVisibleText(opcionAleatoria.getText());
-                monedaSeleccionada = opcionAleatoria.getText(); // Guarda el valor en la variable
-                System.out.println("Se seleccionó la opción: " + monedaSeleccionada);
+                System.out.println("Se seleccionó la opción moneda a facturar: " + opcionAleatoria.getText());
             }
         } catch (Exception e) {
             UtilidadesAllure.manejoError(driver, e, "Error al manejar la Moneda a Facturar");
             System.out.println("Error al manejar la Moneda a Facturar");
         }
     }
+
+
     private static void FiltroMoneda() {
         try {
-            // Espera explícita hasta que el combo box del filtro de moneda sea visible
-            WebElement filtroMonedaCombo = wait.until(ExpectedConditions.visibilityOfElementLocated(
-                    By.id("COMBO_CATMONEDAS_FILTRO")));
+            WebElement filtroMonedaCombo = wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("COMBO_CATMONEDAS_FILTRO")));
             Select comboBox = new Select(filtroMonedaCombo);
 
-            // Seleccionar la moneda previamente seleccionada en MonedaCartaPorte
-            comboBox.selectByVisibleText(monedaSeleccionada);
-            System.out.println("Se seleccionó la opción de moneda en el filtro: " + monedaSeleccionada);
-        } catch (Exception e) {
+            String valorInicialComboBox = comboBox.getFirstSelectedOption().getText().trim().toUpperCase();
+            System.out.println("Valor actual del filtro de moneda leído: " + valorInicialComboBox);
+
+            if (!valorInicialComboBox.equals(monedaSeleccionada)) {
+                comboBox.selectByVisibleText(monedaSeleccionada);
+                wait.until(ExpectedConditions.textToBePresentInElement(filtroMonedaCombo, monedaSeleccionada));
+                System.out.println("Se seleccionó la opción de moneda en el filtro: " + monedaSeleccionada);
+            } else {
+                System.out.println("El valor inicial del filtro de moneda ya coincide con el valor deseado: " + monedaSeleccionada);
+            }
+        } catch (NoSuchElementException | TimeoutException e) {
             UtilidadesAllure.manejoError(driver, e, "Error al manejar el filtro de Moneda");
-            System.out.println("Error al manejar el filtro de Moneda");
+            System.out.println("Error al manejar el filtro de Moneda: " + e.getMessage());
         }
     }
+
+
     private static void CampoBusqueda() {
         try {
             // Espera explícita hasta que el campo de búsqueda sea visible
