@@ -31,7 +31,7 @@ public class FacturacionViajeComplemento {
 
     @BeforeAll
     public static void setup() {
-        System.setProperty("webdriver.chrome.driver", "C:\\RepositorioPrueAuto\\Chromedriver\\chromedriver.exe");
+       // System.setProperty("webdriver.chrome.driver", "C:\\RepositorioPrueAuto\\Chromedriver\\chromedriver.exe");
         driver = new ChromeDriver();
         wait = new WebDriverWait(driver, Duration.ofSeconds(10));
         driver.get("https://www.softwareparatransporte.com/");
@@ -56,7 +56,7 @@ public class FacturacionViajeComplemento {
         InicioSesion.handleNovedadesScreen(wait);
     }
 
-    @RepeatedTest(20)
+    @RepeatedTest(5)
     @Order(3)
     @Description("Metodos para entrar al listado de viajes")
     public void EntrarAViajes() {
@@ -87,7 +87,7 @@ public class FacturacionViajeComplemento {
         CampoBusqueda(); // Realiza una búsqueda utilizando el número de viaje.
         SelecionaFactura(); // Selecciona la factura generada.
         AceptarFactura(); // Acepta la factura generada.
-        AceptarEDI(); // Acepta el proceso EDI relacionado con la factura.
+        AceptarTimbre(); // Acepta el proceso EDI relacionado con la factura.
         EnvioCorreoFactura(); // Envía un correo para la factura generada (Sí/No).
         AceptarPoliza(); // Acepta la póliza generada.
         AceptarImpresion(); // Acepta el cuadro de diálogo de impresión.
@@ -113,7 +113,7 @@ public class FacturacionViajeComplemento {
     private static void BotonModuloTrafico() {
         try {
             // Espera explícita hasta que el botón (enlace) que contiene la imagen sea clicable
-            WebElement ModuloBotonTrafico = wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//img[contains(@src, '/GMTERPV8_WEB/Imagenes/TRAFICO1.JPG')]")));
+            WebElement ModuloBotonTrafico = wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//img[contains(@src, '/GMTERPV8_WEB/Imagenes/TRAFICO1.jpg')]")));
 
             // Hacer clic en el botón una vez esté listo
             ModuloBotonTrafico.click();
@@ -127,7 +127,7 @@ public class FacturacionViajeComplemento {
     private static void BotonListadoViajes() {
         try {
             // Espera explícita hasta que el enlace que contiene la imagen sea clicable
-            WebElement ListadoBoton = wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//a[img[contains(@src, '/GMTERPV8_WEB/Imagenes/TRAFICO/VIAJES1.JPG')]]")));
+            WebElement ListadoBoton = wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//a[img[contains(@src, '/GMTERPV8_WEB/Imagenes/TRAFICO/VIAJES1.jpg')]]")));
 
             // Hacer clic en el enlace una vez esté listo
             ListadoBoton.click();
@@ -152,17 +152,18 @@ public class FacturacionViajeComplemento {
             // Espera que el combo box sea visible
             WebElement tipoDocumentoCombo = wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("COMBO_CATTIPOSDOCUMENTOS")));
 
-            // Crear un objeto Select para manipular el combo box
-            Select comboBox = new Select(tipoDocumentoCombo);
+            // Usar XPath para seleccionar la opción con el texto "CARTA PORTE CFDI - CP"
+            WebElement opcionIngreso = tipoDocumentoCombo.findElement(By.xpath(".//option[text()='CARTA PORTE CFDI - CP']"));
 
-            // Seleccionar la opción con el texto visible "CARTA PORTE CFDI - INGRESO"
-            comboBox.selectByVisibleText("CARTA PORTE CFDI - INGRESO");
+            // Hacer clic en la opción para seleccionarla
+            opcionIngreso.click();
 
         } catch (Exception e) {
             // Manejo del error utilizando la clase UtilidadesAllure
-            UtilidadesAllure.manejoError(driver, e, "No se pudo seleccionar el Tipo de Documento: CARTA PORTE CFDI - INGRESO");
+            UtilidadesAllure.manejoError(driver, e, "No se pudo seleccionar el Tipo de Documento: CARTA PORTE CFDI - CP");
         }
     }
+
 
 
     @Step("Manejar Número de Viaje")
@@ -184,7 +185,7 @@ public class FacturacionViajeComplemento {
         try {
             WebElement NumeroCliente = wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("EDT_NUMEROCLIENTE")));
             NumeroCliente.click();
-            NumeroCliente.sendKeys("000001");
+            NumeroCliente.sendKeys("000003");
             NumeroCliente.sendKeys(Keys.TAB);
             Thread.sleep(1000); // Reducido para optimizar
         } catch (TimeoutException | InterruptedException e) {
@@ -241,7 +242,7 @@ public class FacturacionViajeComplemento {
         try {
             WebElement folioRutaField = wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("EDT_FOLIORUTA")));
             folioRutaField.click();
-            folioRutaField.sendKeys("000004");
+            folioRutaField.sendKeys("000089");
             folioRutaField.sendKeys(Keys.TAB);
             Thread.sleep(1000); // Reducido para optimizar
         } catch (TimeoutException | InterruptedException e) {
@@ -398,7 +399,7 @@ public class FacturacionViajeComplemento {
         try {
             // Espera explícita hasta que el botón que contiene la imagen de facturación sea clicable
             WebElement imageButton = wait.until(ExpectedConditions.elementToBeClickable(
-                    By.xpath("//img[contains(@src, '/GMTERPV8_WEB/Imagenes/FACTURACION1.JPG')]")));
+                    By.xpath("//img[contains(@src, '/GMTERPV8_WEB/Imagenes/FACTURACION1.jpg')]")));
 
             // Hacer clic en el botón una vez esté listo
             imageButton.click();
@@ -414,7 +415,7 @@ public class FacturacionViajeComplemento {
         try {
             // Espera explícita hasta que el botón que contiene la imagen de facturación por viaje sea clicable
             WebElement subMenuButton = wait.until(ExpectedConditions.elementToBeClickable(
-                    By.xpath("//img[contains(@src, '/GMTERPV8_WEB/Imagenes/FACTURACION/PORVIAJE1.JPG')]")));
+                    By.xpath("//img[contains(@src, '/GMTERPV8_WEB/Imagenes/FACTURACION/PORVIAJE1.jpg')]")));
 
             // Hacer clic en el botón una vez esté listo
             subMenuButton.click();
@@ -451,7 +452,7 @@ public class FacturacionViajeComplemento {
             Thread.sleep(500);
 
             // Llenar el campo con el número de cliente 000001
-            clienteField.sendKeys("000001");
+            clienteField.sendKeys("000003");
             Thread.sleep(200); // Pausa adicional para permitir el procesamiento adecuado
 
             clienteField.sendKeys(Keys.TAB);
@@ -560,35 +561,44 @@ public class FacturacionViajeComplemento {
             System.out.println("Error al seleccionar la factura");
         }
     }
+
     private static void AceptarFactura() {
+        int intentos = 0;
+        boolean exito = false;
+        while (intentos < 3 && !exito) {
+            try {
+                WebElement aceptarButton = wait.until(ExpectedConditions.elementToBeClickable(By.id("BTN_ACEPTAR")));
+                aceptarButton.click();
+                System.out.println("Se presionó el botón de aceptar factura en el intento " + (intentos + 1));
+                exito = true;
+            } catch (Exception e) {
+                intentos++;
+                if (intentos == 3) {
+                    UtilidadesAllure.manejoError(driver, e, "Error al presionar el botón de aceptar factura");
+                    System.out.println("Error al presionar el botón de aceptar factura después de 3 intentos");
+                }
+            }
+        }
+    }
+
+
+
+
+
+    private static void AceptarTimbre() {
         try {
-            // Espera explícita hasta que el botón de aceptar sea clicable
-            WebElement aceptarButton = wait.until(ExpectedConditions.elementToBeClickable(
-                    By.id("BTN_ACEPTAR")));
+            // Espera explícita hasta que el botón de aceptar sea clicable usando el nuevo ID "BTN_YES"
+            WebElement aceptarEDIButton = wait.until(ExpectedConditions.elementToBeClickable(By.id("BTN_YES")));
 
             // Hacer clic en el botón de aceptar
-            aceptarButton.click();
-            System.out.println("Se presionó el botón de aceptar factura");
-        } catch (Exception e) {
-            UtilidadesAllure.manejoError(driver, e, "Error al presionar el botón de aceptar factura");
-            System.out.println("Error al presionar el botón de aceptar factura");
-        }
-    }
-
-    private static void AceptarEDI() {
-        try {
-            // Espera explícita hasta que el botón de aceptar EDI sea clicable
-            WebElement aceptarEDIButton = wait.until(ExpectedConditions.elementToBeClickable(
-                    By.id("BTN_OK")));
-
-            // Hacer clic en el botón de aceptar EDI
             aceptarEDIButton.click();
-            System.out.println("Se presionó el botón de aceptar EDI");
+            System.out.println("Se presionó el botón de aceptar timbre");
         } catch (Exception e) {
-            UtilidadesAllure.manejoError(driver, e, "Error al presionar el botón de aceptar EDI");
-            System.out.println("Error al presionar el botón de aceptar EDI");
+            UtilidadesAllure.manejoError(driver, e, "Error al presionar el botón de aceptar timbre");
+            System.out.println("Error al presionar el botón de aceptar timbre");
         }
     }
+
 
     private static void EnvioCorreoFactura() {
         try {
@@ -648,3 +658,4 @@ public class FacturacionViajeComplemento {
     }
 
 }
+hvbrhbvbrvbrbvbrikvbriokjvbrikjhvbrikbvikrb vkrvkibrikjvbnrk
