@@ -86,7 +86,7 @@ public class CreacionViajeTimbreIngreso {
     }
 
 
-   /* @AfterAll
+    @AfterAll
     public static void tearDown() {
         // Cierra el navegador después de que todas las pruebas han terminado
         try {
@@ -99,12 +99,12 @@ public class CreacionViajeTimbreIngreso {
                 driver.quit();
             }
         }
-    }*/
+    }
 
     private static void BotonModuloTrafico() {
         try {
             // Espera explícita hasta que el botón (enlace) que contiene la imagen sea clicable
-            WebElement ModuloBotonTrafico = wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//img[contains(@src, '/GMTERPV8_WEB/Imagenes/TRAFICO1.JPG')]")));
+            WebElement ModuloBotonTrafico = wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//img[contains(@src, '/GMTERPV8_WEB/Imagenes/TRAFICO1.jpg')]")));
 
             // Hacer clic en el botón una vez esté listo
             ModuloBotonTrafico.click();
@@ -118,7 +118,7 @@ public class CreacionViajeTimbreIngreso {
     private static void BotonListadoViajes() {
         try {
             // Espera explícita hasta que el enlace que contiene la imagen sea clicable
-            WebElement ListadoBoton = wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//a[img[contains(@src, '/GMTERPV8_WEB/Imagenes/TRAFICO/VIAJES1.JPG')]]")));
+            WebElement ListadoBoton = wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//a[img[contains(@src, '/GMTERPV8_WEB/Imagenes/TRAFICO/VIAJES1.jpg')]]")));
 
             // Hacer clic en el enlace una vez esté listo
             ListadoBoton.click();
@@ -147,7 +147,7 @@ public class CreacionViajeTimbreIngreso {
             Select comboBox = new Select(tipoDocumentoCombo);
 
             // Seleccionar la opción con el texto visible "CARTA PORTE CFDI - INGRESO"
-            comboBox.selectByVisibleText("CARTA PORTE CFDI - INGRESO");
+            comboBox.selectByVisibleText("CARTA PORTE CFDI - HMO");
 
         } catch (Exception e) {
             // Manejo del error utilizando la clase UtilidadesAllure
@@ -175,7 +175,7 @@ public class CreacionViajeTimbreIngreso {
         try {
             WebElement NumeroCliente = wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("EDT_NUMEROCLIENTE")));
             NumeroCliente.click();
-            NumeroCliente.sendKeys("000001");
+            NumeroCliente.sendKeys("000003");
             NumeroCliente.sendKeys(Keys.TAB);
             Thread.sleep(1000); // Reducido para optimizar
         } catch (TimeoutException | InterruptedException e) {
@@ -224,7 +224,7 @@ public class CreacionViajeTimbreIngreso {
         try {
             WebElement folioRutaField = wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("EDT_FOLIORUTA")));
             folioRutaField.click();
-            folioRutaField.sendKeys("000004");
+            folioRutaField.sendKeys("000089");
             folioRutaField.sendKeys(Keys.TAB);
             Thread.sleep(1000); // Reducido para optimizar
         } catch (TimeoutException | InterruptedException e) {

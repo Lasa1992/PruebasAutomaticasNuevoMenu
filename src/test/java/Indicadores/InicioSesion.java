@@ -21,7 +21,8 @@ public class InicioSesion {
             driver = new ChromeDriver();
             wait = new WebDriverWait(driver, Duration.ofSeconds(10));
 
-            driver.get("https://www.softwareparatransporte.com/GMTERPV8_WEB/ES/PAGE_CatUsuariosLoginAWP.awp");
+            driver.get("https://www.softwareparatransporte.com/");
+            //driver.get("https://www.softwareparatransporte.com/");
     }
 
     @Description("Llena los campos de inicio de sesion con informacion.")
@@ -30,9 +31,14 @@ public class InicioSesion {
         WebElement inputUsuario = driver.findElement(By.id("EDT_USUARIO"));
         WebElement inputContrasena = driver.findElement(By.id("EDT_CONTRASENA"));
 
+      //  inputEmpresa.sendKeys("TST050505000");
+       // inputUsuario.sendKeys("UsuarioPA");
+       // inputContrasena.sendKeys("Luis.0000");
+
         inputEmpresa.sendKeys("KIJ0906199R1");
-        inputUsuario.sendKeys("UsuarioPruebas");
-        inputContrasena.sendKeys("Lasa1992#23");
+        inputUsuario.sendKeys("LUIS");
+        inputContrasena.sendKeys("Luis.0000");
+
     }
 
     @Description("Da clic en el boton de Entrar para ingresar al sistema.")

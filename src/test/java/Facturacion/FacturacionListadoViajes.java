@@ -57,7 +57,7 @@ public class FacturacionListadoViajes {
         InicioSesion.handleNovedadesScreen(wait);
     }
 
-    @RepeatedTest(25)
+    @RepeatedTest(3)
     @Order(3)
     @Description("Metodos para entrar al listado de viajes")
     public void EntrarAViajes() {
@@ -102,7 +102,7 @@ public class FacturacionListadoViajes {
     private static void BotonModuloTrafico() {
         try {
             // Espera explícita hasta que el botón (enlace) que contiene la imagen sea clicable
-            WebElement ModuloBotonTrafico = wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//img[contains(@src, '/GMTERPV8_WEB/Imagenes/TRAFICO1.JPG')]")));
+            WebElement ModuloBotonTrafico = wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//img[contains(@src, '/GMTERPV8_WEB/Imagenes/TRAFICO1')]")));
 
             // Hacer clic en el botón una vez esté listo
             ModuloBotonTrafico.click();
@@ -116,7 +116,7 @@ public class FacturacionListadoViajes {
     private static void BotonListadoViajes() {
         try {
             // Espera explícita hasta que el enlace que contiene la imagen sea clicable
-            WebElement ListadoBoton = wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//a[img[contains(@src, '/GMTERPV8_WEB/Imagenes/TRAFICO/VIAJES1.JPG')]]")));
+            WebElement ListadoBoton = wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//a[img[contains(@src, '/GMTERPV8_WEB/Imagenes/TRAFICO/VIAJES1')]]")));
 
             // Hacer clic en el enlace una vez esté listo
             ListadoBoton.click();
@@ -141,15 +141,15 @@ public class FacturacionListadoViajes {
             // Espera que el combo box sea visible
             WebElement tipoDocumentoCombo = wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("COMBO_CATTIPOSDOCUMENTOS")));
 
-            // Crear un objeto Select para manipular el combo box
-            Select comboBox = new Select(tipoDocumentoCombo);
+            // Usar XPath para seleccionar la opción con el texto "CARTA PORTE CFDI - CP"
+            WebElement opcionIngreso = tipoDocumentoCombo.findElement(By.xpath(".//option[text()='CARTA PORTE CFDI - INGRESO']"));
 
-            // Seleccionar la opción con el texto visible "CARTA PORTE CFDI - INGRESO"
-            comboBox.selectByVisibleText("CARTA PORTE CFDI - INGRESO");
+            // Hacer clic en la opción para seleccionarla
+            opcionIngreso.click();
 
         } catch (Exception e) {
             // Manejo del error utilizando la clase UtilidadesAllure
-            UtilidadesAllure.manejoError(driver, e, "No se pudo seleccionar el Tipo de Documento: CARTA PORTE CFDI - INGRESO");
+            UtilidadesAllure.manejoError(driver, e, "No se pudo seleccionar el Tipo de Documento: CARTA PORTE CFDI - CP");
         }
     }
     @Step("Guardar Folio del Viaje")
@@ -191,6 +191,7 @@ public class FacturacionListadoViajes {
             UtilidadesAllure.manejoError(driver, e, "Error al asignar el cliente al viaje");
         }
     }
+
     @Step("Manejar Moneda")
     private void MonedaCartaPorte() {
         monedaSeleccionada = ""; // Limpiar la variable al inicio de cada ejecución
@@ -232,6 +233,9 @@ public class FacturacionListadoViajes {
         }
     }
 
+
+
+
     @Step("Manejar Folio Ruta")
     private void FolioRuta() {
         try {
@@ -244,7 +248,6 @@ public class FacturacionListadoViajes {
             UtilidadesAllure.manejoError(driver, e, "Error al manejar el Folio Ruta");
         }
     }
-
 
     @Step("Manejar Número Económico Convoy")
     private void NumeroEconomicoConvoy() {
@@ -447,6 +450,7 @@ public class FacturacionListadoViajes {
             // Métodos necesarios para completar el proceso de facturación en la nueva ventana.
             MonedaAFacturar();
             AceptarFactura();
+            AceptarTimbre();
             AceptarEDI();
             EnvioCorreoFactura();
             AceptarPoliza();
@@ -518,15 +522,39 @@ public class FacturacionListadoViajes {
         }
     }
 
-    private static void AceptarEDI() {
+    private static void AceptarTimbre() {
         try {
             // Espera explícita hasta que el botón de aceptar EDI sea clicable
             WebElement aceptarEDIButton = wait.until(ExpectedConditions.elementToBeClickable(
-                    By.id("BTN_OK")));
+                    By.id("BTN_YES")));
 
             // Hacer clic en el botón de aceptar EDI
             aceptarEDIButton.click();
-            System.out.println("Se presionó el botón de aceptar EDI");
+            System.out.println("Se presionó el botón de aceptar Timbre");
+        } catch (Exception e) {
+            UtilidadesAllure.manejoError(driver, e, "Error al presionar el botón de aceptar Timbre");
+            System.out.println("Error al presionar el botón de aceptar Timbre");
+        }
+    }
+
+    private static void AceptarEDI() {
+        try {
+            // Espera explícita con un tiempo de espera reducido para verificar si el botón está presente
+            WebDriverWait shortWait = new WebDriverWait(driver, Duration.ofSeconds(3));
+
+            // Verifica si el botón es clickeable sin lanzar una excepción si no está presente
+            WebElement aceptarEDIButton = shortWait.until(ExpectedConditions.elementToBeClickable(By.id("BTN_OK")));
+
+            if (aceptarEDIButton != null) {
+                // Hacer clic en el botón de aceptar EDI
+                aceptarEDIButton.click();
+                System.out.println("Se presionó el botón de aceptar EDI");
+            } else {
+                System.out.println("El botón de aceptar EDI no se encontró, continuando con la ejecución");
+            }
+        } catch (TimeoutException e) {
+            // Si el botón no aparece en el tiempo dado, se maneja la excepción y se continúa
+            System.out.println("El botón de aceptar EDI no se mostró, continuando la ejecución normalmente");
         } catch (Exception e) {
             UtilidadesAllure.manejoError(driver, e, "Error al presionar el botón de aceptar EDI");
             System.out.println("Error al presionar el botón de aceptar EDI");

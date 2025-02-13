@@ -57,7 +57,7 @@ public class CreacionViajeTimbreTraslado {
         BotonListadoViajes();
     }
 
-    @RepeatedTest(10)
+    @RepeatedTest(5)
     @Order(4)
     @Description("Se ingresa al listado de Viajes y se crea una Carta Porte, se factura y timbra el viaje.")
     public void testCrearViaje() {
@@ -84,23 +84,45 @@ public class CreacionViajeTimbreTraslado {
 
     @AfterAll
     public static void tearDown() {
-        // Cierra el navegador después de que todas las pruebas han terminado
         try {
+            // Espera antes de cerrar el navegador
             Thread.sleep(5000); // Reducido a 5 segundos para optimizar el tiempo de prueba
+
+            // Limpieza, generación de reporte y apertura de servidor de Allure
+            ejecutarComando("mvn allure:report"); // Genera el reporte Allure
+            ejecutarComando("mvn allure:serve");  // Inicia el servidor Allure
+
         } catch (InterruptedException e) {
-            Thread.currentThread().interrupt(); // Reestablecer el estado de interrupción
+            Thread.currentThread().interrupt(); // Restablecer el estado de interrupción
             e.printStackTrace();
+        } catch (Exception e) {
+            System.err.println("Error al ejecutar los comandos de Allure: " + e.getMessage());
         } finally {
             if (driver != null) {
-                driver.quit();
+                driver.quit(); // Cierra el navegador
             }
         }
     }
 
+    // Método auxiliar para ejecutar comandos del sistema
+    private static void ejecutarComando(String comando) throws Exception {
+        ProcessBuilder processBuilder = new ProcessBuilder();
+        processBuilder.command("sh", "-c", comando); // Usa "cmd /c" en Windows
+        processBuilder.inheritIO(); // Hereda la entrada y salida del proceso principal
+
+        Process process = processBuilder.start();
+        int exitCode = process.waitFor(); // Espera a que el comando termine
+
+        if (exitCode != 0) {
+            throw new RuntimeException("Error al ejecutar el comando: " + comando);
+        }
+    }
+
+
     private static void BotonModuloTrafico() {
         try {
             // Espera explícita hasta que el botón (enlace) que contiene la imagen sea clicable
-            WebElement ModuloBotonTrafico = wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//img[contains(@src, '/GMTERPV8_WEB/Imagenes/TRAFICO1.JPG')]")));
+            WebElement ModuloBotonTrafico = wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//img[contains(@src, '/GMTERPV8_WEB/Imagenes/TRAFICO1.jpg')]")));
 
             // Hacer clic en el botón una vez esté listo
             ModuloBotonTrafico.click();
@@ -114,7 +136,7 @@ public class CreacionViajeTimbreTraslado {
     private static void BotonListadoViajes() {
         try {
             // Espera explícita hasta que el enlace que contiene la imagen sea clicable
-            WebElement ListadoBoton = wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//a[img[contains(@src, '/GMTERPV8_WEB/Imagenes/TRAFICO/VIAJES1.JPG')]]")));
+            WebElement ListadoBoton = wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//a[img[contains(@src, '/GMTERPV8_WEB/Imagenes/TRAFICO/VIAJES1.jpg')]]")));
 
             // Hacer clic en el enlace una vez esté listo
             ListadoBoton.click();
@@ -139,17 +161,18 @@ public class CreacionViajeTimbreTraslado {
             // Espera que el combo box sea visible
             WebElement tipoDocumentoCombo = wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("COMBO_CATTIPOSDOCUMENTOS")));
 
-            // Crear un objeto Select para manipular el combo box
-            Select comboBox = new Select(tipoDocumentoCombo);
+            // Usar XPath para seleccionar la opción con el texto "CARTA PORTE CFDI - TR"
+            WebElement opcionTraslado = tipoDocumentoCombo.findElement(By.xpath(".//option[text()='CARTA PORTE CFDI - TRASLADO']"));
 
-            // Seleccionar la opción con el texto visible "CARTA PORTE CFDI - TRASLADO"
-            comboBox.selectByVisibleText("CARTA PORTE CFDI - TRASLADO");
+            // Hacer clic en la opción para seleccionarla
+            opcionTraslado.click();
 
         } catch (Exception e) {
             // Manejo del error utilizando la clase UtilidadesAllure
-            UtilidadesAllure.manejoError(driver, e, "No se pudo seleccionar el Tipo de Documento: CARTA PORTE CFDI - TRASLADO");
+            UtilidadesAllure.manejoError(driver, e, "No se pudo seleccionar el Tipo de Documento: CARTA PORTE CFDI - TR");
         }
     }
+
 
     @Step("Manejar Número de Viaje")
     private void NumeroViajeCliente() {

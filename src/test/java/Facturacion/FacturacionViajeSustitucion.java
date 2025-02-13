@@ -1,8 +1,7 @@
 package Facturacion;
+
 import Indicadores.InicioSesion;
 import Utilidades.UtilidadesAllure;
-import Trafico.CreacionViajeTimbreIngreso;
-import io.qameta.allure.Allure;
 import io.qameta.allure.Description;
 import io.qameta.allure.Step;
 import org.junit.jupiter.api.*;
@@ -12,14 +11,16 @@ import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.Select;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
+
 import java.io.File;
 import java.time.Duration;
 import java.util.ArrayList;
 import java.util.Random;
 import java.util.List;
 
+
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-public class FacturacionViajeComplemento {
+public class FacturacionViajeSustitucion {
 
     private static WebDriver driver;
     private static WebDriverWait wait;
@@ -27,11 +28,12 @@ public class FacturacionViajeComplemento {
     // Variables para almacenar valores reutilizables
     private static String numeroViajeCliente;
     private static String monedaSeleccionada;
+    private static String numeroFactura;
 
 
     @BeforeAll
     public static void setup() {
-       // System.setProperty("webdriver.chrome.driver", "C:\\RepositorioPrueAuto\\Chromedriver\\chromedriver.exe");
+        // System.setProperty("webdriver.chrome.driver", "C:\\RepositorioPrueAuto\\Chromedriver\\chromedriver.exe");
         driver = new ChromeDriver();
         wait = new WebDriverWait(driver, Duration.ofSeconds(10));
         driver.get("https://www.softwareparatransporte.com/");
@@ -60,6 +62,8 @@ public class FacturacionViajeComplemento {
     @Order(3)
     @Description("Metodos para entrar al listado de viajes")
     public void EntrarAViajes() {
+
+        // Bloque donde se controla la Creacion del viaje para facturar
         BotonModuloTrafico(); // Selecciona el módulo de tráfico en la interfaz de usuario.
         BotonListadoViajes(); // Abre el listado de viajes en el módulo de tráfico.
         BotonAgregarCartaPorte(); // Agrega un nuevo 'Carta Porte' para crear un viaje.
@@ -80,7 +84,8 @@ public class FacturacionViajeComplemento {
         // Bloque donde se controla la facturación del viaje creado
         BotonModuloFacturacion(); // Selecciona el módulo de facturación en la interfaz de usuario.
         BotonFacturacionPorViaje(); // Selecciona la opción de facturación por viaje.
-        BotonAgregarFactura(); // Da clic en el botón para agregar una nueva factura.
+        BotonAgregarFactura(); // Guarda el folio de la Factura para su busqueda en el listado y posterior sustitucion.
+        NumeroFactura();// Da clic en el botón para agregar una nueva factura.
         CodigoClienteFactura(); // Introduce el código del cliente para la factura.
         MonedaAFacturar(); // Selecciona una moneda aleatoria para la factura.
         FiltroMoneda(); // Aplica un filtro de moneda basado en la moneda previamente seleccionada.
@@ -91,6 +96,21 @@ public class FacturacionViajeComplemento {
         EnvioCorreoFactura(); // Envía un correo para la factura generada (Sí/No).
         AceptarPoliza(); // Acepta la póliza generada.
         AceptarImpresion(); // Acepta el cuadro de diálogo de impresión.
+
+        // Bloque donde se sustituira la factura
+        BusquedaFacturaListado(); // Busca la factura previamente timbrada para la sustitucion.
+        SeleccionarFactura(); // Selecciona la factura en el listado.
+        CancelacionFactura(); // Presiona el boton dfe cancelar factura.
+        SeleccionaMotivoCancelacion(); // Elige un motivo de cancelacion aleatorio para realizar la sustitucion o no.
+        MensajeSustitucionRequerida(); // Acepta el mensaje de si se desea realizar la sustitucion.
+        FiltroMonedaSustitucion(); // Filtra la moneda para que concuerde con la del viaje.
+        SeleccionFacturaSutitucion(); // Vuelve elegir la misma factura que se cancelo para realizar la sustitucion.
+        AceptarFacturaSustituida(); //Acepta la factura para terminar la suistitutcion.
+        CorreoDesspuesSustitucion(); // Envía un correo para la factura generada (Sí/No).
+        CancelacionSAT(); // Acepta la cancelacion de la factura anterior en el SAT.
+        CancelacionSAT2(); // Acepta la cancelacion de la factura anterion en el SAT mensaje 2.
+        CancelacionSAT3(); // Acepta el tercer mensaje de que sera sustituida la factura
+
 
     }
 
@@ -113,7 +133,7 @@ public class FacturacionViajeComplemento {
     private static void BotonModuloTrafico() {
         try {
             // Espera explícita hasta que el botón (enlace) que contiene la imagen sea clicable
-            WebElement ModuloBotonTrafico = wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//img[contains(@src, '/GMTERPV8_WEB/Imagenes/TRAFICO1.jpg')]")));
+            WebElement ModuloBotonTrafico = wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//img[contains(@src, '/GMTERPV8_WEB/Imagenes/TRAFICO1')]")));
 
             // Hacer clic en el botón una vez esté listo
             ModuloBotonTrafico.click();
@@ -127,7 +147,7 @@ public class FacturacionViajeComplemento {
     private static void BotonListadoViajes() {
         try {
             // Espera explícita hasta que el enlace que contiene la imagen sea clicable
-            WebElement ListadoBoton = wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//a[img[contains(@src, '/GMTERPV8_WEB/Imagenes/TRAFICO/VIAJES1.jpg')]]")));
+            WebElement ListadoBoton = wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//a[img[contains(@src, '/GMTERPV8_WEB/Imagenes/TRAFICO/VIAJES1')]]")));
 
             // Hacer clic en el enlace una vez esté listo
             ListadoBoton.click();
@@ -165,14 +185,13 @@ public class FacturacionViajeComplemento {
     }
 
 
-
     @Step("Manejar Número de Viaje")
     private void NumeroViajeCliente() {
         try {
             WebElement folioField = wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("EDT_FOLIO")));
             String folioValue = folioField.getAttribute("value");
             WebElement numeroViajeField = wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("EDT_NOVIAJECLIENTE")));
-            numeroViajeCliente = "PAING" + folioValue; // Guarda el valor en la variable
+            numeroViajeCliente = folioValue + 1; // Guarda el valor en la variable
             numeroViajeField.clear();
             numeroViajeField.sendKeys(numeroViajeCliente);
         } catch (TimeoutException e) {
@@ -233,8 +252,6 @@ public class FacturacionViajeComplemento {
             System.out.println("Error al cambiar la moneda en MonedaCartaPorte: " + e.getMessage());
         }
     }
-
-
 
 
     @Step("Manejar Folio Ruta")
@@ -346,6 +363,7 @@ public class FacturacionViajeComplemento {
             UtilidadesAllure.manejoError(driver, e, "Error al hacer clic en el botón Aceptar después de la importación de materiales");
         }
     }
+
     @Step("Aceptar Viaje")
     private void BotonAceptarViaje() {
         try {
@@ -383,6 +401,7 @@ public class FacturacionViajeComplemento {
             UtilidadesAllure.manejoError(driver, e, "Error al elegir entre Sí o No para el envío del correo de timbre");
         }
     }
+
     @Step("Botón de Impresión")
     private void BotonImpresion() {
         try {
@@ -395,11 +414,12 @@ public class FacturacionViajeComplemento {
             UtilidadesAllure.manejoError(driver, e, "Error al hacer clic en el botón Regresar para impresión");
         }
     }
+
     private static void BotonModuloFacturacion() {
         try {
             // Espera explícita hasta que el botón que contiene la imagen de facturación sea clicable
             WebElement imageButton = wait.until(ExpectedConditions.elementToBeClickable(
-                    By.xpath("//img[contains(@src, '/GMTERPV8_WEB/Imagenes/FACTURACION1.jpg')]")));
+                    By.xpath("//img[contains(@src, '/GMTERPV8_WEB/Imagenes/FACTURACION1')]")));
 
             // Hacer clic en el botón una vez esté listo
             imageButton.click();
@@ -415,7 +435,7 @@ public class FacturacionViajeComplemento {
         try {
             // Espera explícita hasta que el botón que contiene la imagen de facturación por viaje sea clicable
             WebElement subMenuButton = wait.until(ExpectedConditions.elementToBeClickable(
-                    By.xpath("//img[contains(@src, '/GMTERPV8_WEB/Imagenes/FACTURACION/PORVIAJE1.jpg')]")));
+                    By.xpath("//img[contains(@src, '/GMTERPV8_WEB/Imagenes/FACTURACION/PORVIAJE1')]")));
 
             // Hacer clic en el botón una vez esté listo
             subMenuButton.click();
@@ -425,6 +445,7 @@ public class FacturacionViajeComplemento {
             System.out.println("Botón listado Facturas por Viaje no funciona.");
         }
     }
+
     private static void BotonAgregarFactura() {
         try {
             // Espera explícita hasta que el botón "Agregar" sea clicable
@@ -439,6 +460,19 @@ public class FacturacionViajeComplemento {
             System.out.println("Botón Agregar Factura no funciona.");
         }
     }
+
+    @Step("Manejar Número de Factura")
+    private void NumeroFactura() {
+        try {
+            WebElement folioField = wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("EDT_FOLIO")));
+            numeroFactura = folioField.getAttribute("value"); // Guarda el valor en la variable
+            System.out.println("El numero de factura es " + numeroFactura);
+
+        } catch (TimeoutException e) {
+            UtilidadesAllure.manejoError(driver, e, "Error al manejar el Número de Factura");
+        }
+    }
+
     private static void CodigoClienteFactura() {
         try {
             // Espera explícita hasta que el campo de texto del número de cliente sea visible
@@ -505,13 +539,36 @@ public class FacturacionViajeComplemento {
             WebElement filtroMonedaCombo = wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("COMBO_CATMONEDAS_FILTRO")));
             Select comboBox = new Select(filtroMonedaCombo);
 
+            // Obtener el valor inicial del combo box
             String valorInicialComboBox = comboBox.getFirstSelectedOption().getText().trim().toUpperCase();
             System.out.println("Valor actual del filtro de moneda leído: " + valorInicialComboBox);
 
+            // Validar que monedaSeleccionada tenga un valor válido
+            if (monedaSeleccionada == null || monedaSeleccionada.isEmpty()) {
+                System.out.println("monedaSeleccionada no tiene un valor válido. Se mantiene el valor actual del filtro.");
+                return;
+            }
+
+            monedaSeleccionada = monedaSeleccionada.trim().toUpperCase();
+
+            // Verificar si el valor inicial ya es el correcto
             if (!valorInicialComboBox.equals(monedaSeleccionada)) {
-                comboBox.selectByVisibleText(monedaSeleccionada);
-                wait.until(ExpectedConditions.textToBePresentInElement(filtroMonedaCombo, monedaSeleccionada));
-                System.out.println("Se seleccionó la opción de moneda en el filtro: " + monedaSeleccionada);
+                // Determinar la opción contraria
+                String opcionContraria = valorInicialComboBox.equals("PESOS") ? "DÓLARES" : "PESOS";
+
+                // Verificar si la opción contraria existe en el combo box antes de seleccionarla
+                boolean opcionExiste = comboBox.getOptions().stream()
+                        .anyMatch(option -> option.getText().trim().equalsIgnoreCase(opcionContraria));
+
+                if (opcionExiste) {
+                    comboBox.selectByVisibleText(opcionContraria);
+
+                    // Esperar a que el cambio se refleje
+                    wait.until(ExpectedConditions.textToBePresentInElement(filtroMonedaCombo, opcionContraria));
+                    System.out.println("Se seleccionó la opción contraria en el filtro de moneda: " + opcionContraria);
+                } else {
+                    System.out.println("No se encontró la opción contraria en el combo box.");
+                }
             } else {
                 System.out.println("El valor inicial del filtro de moneda ya coincide con el valor deseado: " + monedaSeleccionada);
             }
@@ -520,6 +577,7 @@ public class FacturacionViajeComplemento {
             System.out.println("Error al manejar el filtro de Moneda: " + e.getMessage());
         }
     }
+
 
 
     private static void CampoBusqueda() {
@@ -545,6 +603,7 @@ public class FacturacionViajeComplemento {
             System.out.println("Error al ingresar el valor en el campo de búsqueda general o al presionar el botón de búsqueda");
         }
     }
+
     private static void SelecionaFactura() {
         try {
             // Espera explícita hasta que el checkbox de la factura sea visible y clicable
@@ -580,6 +639,7 @@ public class FacturacionViajeComplemento {
             }
         }
     }
+
 
     private static void AceptarTimbre() {
         try {
@@ -653,4 +713,293 @@ public class FacturacionViajeComplemento {
         }
     }
 
+    private static void BusquedaFacturaListado() {
+        try {
+            // Espera explícita hasta que el campo de búsqueda sea visible
+            WebElement busquedaField = wait.until(ExpectedConditions.visibilityOfElementLocated(
+                    By.cssSelector("input[type='search'][aria-controls='TABLE_ProFacturasPorViaje']")));
+
+            // Llenar el campo con el número de viaje generado
+            busquedaField.clear();
+            busquedaField.sendKeys(numeroFactura);
+            System.out.println("Se ingresó el folio de la factura para su búsqueda: " + numeroFactura);
+
+            // Espera explícita hasta que el campo de búsqueda haya procesado la búsqueda (si corresponde)
+            WebElement buscarButton = wait.until(ExpectedConditions.elementToBeClickable(
+                    By.id("z_BTN_APLICAR_IMG")));
+
+            // Hacer clic en el botón de búsqueda
+            buscarButton.click();
+            System.out.println("Se presionó el botón de búsqueda");
+
+            // Esperar  a que aparezca un elemento que indique que la búsqueda terminó
+            WebElement resultadoBusqueda = wait.until(ExpectedConditions.visibilityOfElementLocated(
+                    By.xpath("//table[@id='TABLE_ProFacturasPorViaje']"))); // QWue el resultado se muestre en esta tabla
+
+            System.out.println("La búsqueda se completó y los resultados están visibles.");
+        } catch (Exception e) {
+            UtilidadesAllure.manejoError(driver, e, "Error al ingresar el valor en el campo de búsqueda general o al presionar el botón de búsqueda");
+            System.out.println("Error al ingresar el valor en el campo de búsqueda general o al presionar el botón de búsqueda");
+        }
+    }
+
+    @Step("Seleccionar Factura en el Listado")
+    private static void SeleccionarFactura() {
+        try {
+            // Buscar la fila que contiene el número de factura en la primera columna
+            WebElement fila = driver.findElement(By.xpath(
+                    "//table[@id='TABLE_ProFacturasPorViaje']//tr[td[1][contains(text(),'" + numeroFactura + "')]]"));
+
+            // Hacer clic en la fila para seleccionarla
+            fila.click();
+            System.out.println("Factura seleccionada: " + numeroFactura);
+        } catch (NoSuchElementException e) {
+            UtilidadesAllure.manejoError(driver, e, "No se encontró la factura con el número: " + numeroFactura);
+        } catch (Exception e) {
+            UtilidadesAllure.manejoError(driver, e, "Error al seleccionar la factura");
+        }
+    }
+
+    @Step("Cancelar Factura")
+    private static void CancelacionFactura() {
+        try {
+            // Espera explícita hasta que el botón de cancelar factura sea clicable
+            WebElement cancelarButton = wait.until(ExpectedConditions.elementToBeClickable(
+                    By.id("z_BTN_CANCELAR_IMG")));
+
+            // Hacer clic en el botón de cancelar factura
+            cancelarButton.click();
+            System.out.println("Se presionó el botón de cancelar factura");
+        } catch (Exception e) {
+            UtilidadesAllure.manejoError(driver, e, "Error al presionar el botón de cancelar factura");
+            System.out.println("Error al presionar el botón de cancelar factura");
+        }
+    }
+
+    public void SeleccionaMotivoCancelacion() {
+        try {
+            // Localizar el combo
+            WebElement combo = driver.findElement(By.id("COMBO_MOTIVOCANCELACION"));
+
+            // Seleccionar la primera opción
+            Select select = new Select(combo);
+            select.selectByIndex(0);
+
+            // Espera explícita hasta que el campo de comentario sea visible
+            WebElement comentarioField = driver.findElement(By.id("EDT_MOTIVO"));
+
+            // Agregar un comentario al campo
+            comentarioField.clear();
+            comentarioField.sendKeys("Cancelación de factura por motivo de prueba automática." + numeroFactura);
+            System.out.println(comentarioField);
+
+            // Confirmar la selección presionando el botón "Aceptar"
+            WebElement botonAceptar = driver.findElement(By.id("BTN_ACEPTAR"));
+            botonAceptar.click();
+
+        } catch (Exception e) {
+            System.out.println("Error al seleccionar la primera opción: " + e.getMessage());
+        }
+    }
+
+    @Step("Mensaje de Sustitución Requerida")
+    private static void MensajeSustitucionRequerida() {
+        try {
+            // Espera explícita hasta que el botón de Sí sea clicable
+            WebElement botonSi = wait.until(ExpectedConditions.elementToBeClickable(
+                    By.id("tzBTN_YES")));
+
+
+            botonSi.click();
+            System.out.println("Se presionó el botón de Sí para la sustitución requerida");
+        } catch (Exception e) {
+            UtilidadesAllure.manejoError(driver, e, "Error al presionar el botón de Sí para la sustitución requerida");
+            System.out.println("Error al presionar el botón de Sí para la sustitución requerida");
+        }
+    }
+
+    private static void FiltroMonedaSustitucion() {
+            try {
+                WebElement filtroMonedaCombo = wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("COMBO_CATMONEDAS_FILTRO")));
+                Select comboBox = new Select(filtroMonedaCombo);
+
+                // Obtener el valor inicial del combo box
+                String valorInicialComboBox = comboBox.getFirstSelectedOption().getText().trim().toUpperCase();
+                System.out.println("Valor actual del filtro de moneda leído: " + valorInicialComboBox);
+
+                // Validar que monedaSeleccionada tenga un valor válido
+                if (monedaSeleccionada == null || monedaSeleccionada.isEmpty()) {
+                    System.out.println("monedaSeleccionada no tiene un valor válido. Se mantiene el valor actual del filtro.");
+                    return;
+                }
+
+                monedaSeleccionada = monedaSeleccionada.trim().toUpperCase();
+
+                // Verificar si el valor inicial ya es el correcto
+                if (!valorInicialComboBox.equals(monedaSeleccionada)) {
+                    // Determinar la opción contraria
+                    String opcionContraria = valorInicialComboBox.equals("PESOS") ? "DÓLARES" : "PESOS";
+
+                    // Verificar si la opción contraria existe en el combo box antes de seleccionarla
+                    boolean opcionExiste = comboBox.getOptions().stream()
+                            .anyMatch(option -> option.getText().trim().equalsIgnoreCase(opcionContraria));
+
+                    if (opcionExiste) {
+                        comboBox.selectByVisibleText(opcionContraria);
+
+                        // Esperar a que el cambio se refleje
+                        wait.until(ExpectedConditions.textToBePresentInElement(filtroMonedaCombo, opcionContraria));
+                        System.out.println("Se seleccionó la opción contraria en el filtro de moneda: " + opcionContraria);
+                    } else {
+                        System.out.println("No se encontró la opción contraria en el combo box.");
+                    }
+                } else {
+                    System.out.println("El valor inicial del filtro de moneda ya coincide con el valor deseado: " + monedaSeleccionada);
+                }
+            } catch (NoSuchElementException | TimeoutException e) {
+                UtilidadesAllure.manejoError(driver, e, "Error al manejar el filtro de Moneda");
+                System.out.println("Error al manejar el filtro de Moneda: " + e.getMessage());
+            }
+        }
+
+
+        @Step("Seleccionar Factura para Sustitución")
+    private static void SeleccionFacturaSutitucion() {
+        try {
+            // Espera explícita hasta que el campo de búsqueda sea visible
+            WebElement busquedaField = wait.until(ExpectedConditions.visibilityOfElementLocated(
+                    By.id("EDT_BUSQUEDAGENERAL")));
+
+            // Llenar el campo con el número de viaje generado
+            busquedaField.clear();
+            busquedaField.sendKeys(numeroViajeCliente);
+            System.out.println("Se ingresó el valor de búsqueda: " + numeroViajeCliente);
+
+            // Espera explícita hasta que el botón de búsqueda sea clicable
+            WebElement buscarButton = wait.until(ExpectedConditions.elementToBeClickable(
+                    By.id("BTN_BUSCAR")));
+
+            // Hacer clic en el botón de búsqueda
+            buscarButton.click();
+            System.out.println("Se presionó el botón de búsqueda");
+
+            // Espera explícita hasta que el checkbox de la factura sea visible y clicable
+            WebElement facturaCheckbox = wait.until(ExpectedConditions.elementToBeClickable(
+                    By.id("_0_TABLE_PROVIAJES_0")));
+
+            // Seleccionar el checkbox de la factura
+            if (!facturaCheckbox.isSelected()) {
+                facturaCheckbox.click();
+            }
+            System.out.println("Se seleccionó la factura");
+
+        } catch (Exception e) {
+            UtilidadesAllure.manejoError(driver, e, "Error al ingresar el valor en el campo de búsqueda general o al presionar el botón de búsqueda");
+            System.out.println("Error al ingresar el valor en el campo de búsqueda general o al presionar el botón de búsqueda");
+        }
+    }
+
+    private static void AceptarFacturaSustituida() {
+        int intentos = 0;
+        boolean exito = false;
+        while (intentos < 3 && !exito) {
+            try {
+                WebElement aceptarButton = wait.until(ExpectedConditions.elementToBeClickable(By.id("z_BTN_ACEPTAR_IMG")));
+                aceptarButton.click();
+                System.out.println("Se presionó el botón de aceptar factura en el intento " + (intentos + 1));
+                exito = true;
+            } catch (Exception e) {
+                intentos++;
+                if (intentos == 3) {
+                    UtilidadesAllure.manejoError(driver, e, "Error al presionar el botón de aceptar factura");
+                    System.out.println("Error al presionar el botón de aceptar factura después de 3 intentos");
+                }
+            }
+        }
+    }
+
+    @Step("Enviar Correo Después de Sustitución")
+    private static void CorreoDesspuesSustitucion() {
+        try {
+            // Elegir aleatoriamente entre el botón Sí o No
+            Random random = new Random();
+            boolean elegirSi = random.nextBoolean();
+
+            WebElement boton;
+            if (elegirSi) {
+                // Espera a que el botón de Sí sea clicable
+                boton = wait.until(ExpectedConditions.elementToBeClickable(
+                        By.id("tzBTN_YES")));
+                System.out.println("Se eligió la opción Sí para el envío del correo después de la sustitución.");
+            } else {
+                // Espera a que el botón de No sea clicable
+                boton = wait.until(ExpectedConditions.elementToBeClickable(
+                        By.id("tzBTN_NO")));
+                System.out.println("Se eligió la opción No para el envío del correo después de la sustitución.");
+            }
+
+            // Hacer clic en el botón elegido
+            boton.click();
+        } catch (Exception e) {
+            UtilidadesAllure.manejoError(driver, e, "Error al elegir entre Sí o No para el envío del correo después de la sustitución");
+            System.out.println("Error al elegir entre Sí o No para el envío del correo después de la sustitución");
+        }
+    }
+
+    @Step("Aceptar Cancelación en el SAT")
+    private static void CancelacionSAT() {
+        try {
+            // Espera explícita hasta que el botón de aceptar sea clicable
+            WebElement aceptarButton = wait.until(ExpectedConditions.elementToBeClickable(
+                    By.id("tzBTN_YES")));
+
+            // Hacer clic en el botón de aceptar
+            aceptarButton.click();
+            System.out.println("Se presionó el botón de aceptar para la cancelación en el SAT");
+        } catch (Exception e) {
+            UtilidadesAllure.manejoError(driver, e, "Error al presionar el botón de aceptar para la cancelación en el SAT");
+            System.out.println("Error al presionar el botón de aceptar para la cancelación en el SAT");
+        }
+    }
+
+    @Step("Aceptar Cancelación en el SAT (Segundo Mensaje)")
+    private static void CancelacionSAT2() {
+        try {
+            // Espera explícita hasta que el botón de aceptar sea clicable
+            WebElement aceptarButton = wait.until(ExpectedConditions.elementToBeClickable(
+                    By.id("tzBTN_YES")));
+
+            // Hacer clic en el botón de aceptar
+            aceptarButton.click();
+            System.out.println("Se presionó el botón de aceptar para la cancelación en el SAT (segundo mensaje)");
+        } catch (Exception e) {
+            UtilidadesAllure.manejoError(driver, e, "Error al presionar el botón de aceptar para la cancelación en el SAT (segundo mensaje)");
+            System.out.println("Error al presionar el botón de aceptar para la cancelación en el SAT (segundo mensaje)");
+        }
+    }
+
+    @Step("Aceptar Cancelación en el SAT (Tercer Mensaje)")
+    private static void CancelacionSAT3() {
+        try {
+            // Intentar encontrar el botón inmediatamente sin esperar
+            WebElement aceptarButton = driver.findElement(By.id("BTN_OK"));
+
+            // Verificar si el botón es visible y habilitado antes de hacer clic
+            if (aceptarButton.isDisplayed() && aceptarButton.isEnabled()) {
+                aceptarButton.click();
+                System.out.println("Se hizo clic en el botón de aceptar para la cancelación en el SAT.");
+            } else {
+                System.out.println("El botón 'tzBTN_YES' está presente pero no es clicable.");
+            }
+
+        } catch (NoSuchElementException e) {
+            System.out.println("No se encontró el botón 'tzBTN_YES' en la página.");
+        } catch (Exception e) {
+            System.out.println(" Error inesperado al presionar el botón de aceptar en la cancelación SAT: " + e.getMessage());
+            UtilidadesAllure.manejoError(driver, e, "Error al presionar el botón en la cancelación SAT.");
+        }
+    }
+
 }
+
+
