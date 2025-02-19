@@ -31,13 +31,13 @@ public class InicioSesion {
         WebElement inputUsuario = driver.findElement(By.id("EDT_USUARIO"));
         WebElement inputContrasena = driver.findElement(By.id("EDT_CONTRASENA"));
 
-      //  inputEmpresa.sendKeys("TST050505000");
-       // inputUsuario.sendKeys("UsuarioPA");
-       // inputContrasena.sendKeys("Luis.0000");
+       inputEmpresa.sendKeys("TST050505000");
+       inputUsuario.sendKeys("UsuarioPA");
+       inputContrasena.sendKeys("Luis.0000");
 
-        inputEmpresa.sendKeys("KIJ0906199R1");
-        inputUsuario.sendKeys("LUIS");
-        inputContrasena.sendKeys("Luis.0000");
+       // inputEmpresa.sendKeys("KIJ0906199R1");
+       // inputUsuario.sendKeys("LUIS");
+        //inputContrasena.sendKeys("Luis.0000");
 
     }
 

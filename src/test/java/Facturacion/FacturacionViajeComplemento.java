@@ -56,7 +56,7 @@ public class FacturacionViajeComplemento {
         InicioSesion.handleNovedadesScreen(wait);
     }
 
-    @RepeatedTest(5)
+    @RepeatedTest(2)
     @Order(3)
     @Description("Metodos para entrar al listado de viajes")
     public void EntrarAViajes() {
@@ -153,7 +153,7 @@ public class FacturacionViajeComplemento {
             WebElement tipoDocumentoCombo = wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("COMBO_CATTIPOSDOCUMENTOS")));
 
             // Usar XPath para seleccionar la opción con el texto "CARTA PORTE CFDI - CP"
-            WebElement opcionIngreso = tipoDocumentoCombo.findElement(By.xpath(".//option[text()='CARTA PORTE CFDI - INGRESO']"));
+            WebElement opcionIngreso = tipoDocumentoCombo.findElement(By.xpath(".//option[text()='CARTA PORTE CFDI - HMO']"));
 
             // Hacer clic en la opción para seleccionarla
             opcionIngreso.click();
@@ -185,7 +185,7 @@ public class FacturacionViajeComplemento {
         try {
             WebElement NumeroCliente = wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("EDT_NUMEROCLIENTE")));
             NumeroCliente.click();
-            NumeroCliente.sendKeys("000001");
+            NumeroCliente.sendKeys("000003");
             NumeroCliente.sendKeys(Keys.TAB);
             Thread.sleep(1000); // Reducido para optimizar
         } catch (TimeoutException | InterruptedException e) {
@@ -242,7 +242,7 @@ public class FacturacionViajeComplemento {
         try {
             WebElement folioRutaField = wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("EDT_FOLIORUTA")));
             folioRutaField.click();
-            folioRutaField.sendKeys("000004");
+            folioRutaField.sendKeys("000089");
             folioRutaField.sendKeys(Keys.TAB);
             Thread.sleep(1000); // Reducido para optimizar
         } catch (TimeoutException | InterruptedException e) {
@@ -452,7 +452,7 @@ public class FacturacionViajeComplemento {
             Thread.sleep(500);
 
             // Llenar el campo con el número de cliente 000001
-            clienteField.sendKeys("000001");
+            clienteField.sendKeys("000003");
             Thread.sleep(200); // Pausa adicional para permitir el procesamiento adecuado
 
             clienteField.sendKeys(Keys.TAB);

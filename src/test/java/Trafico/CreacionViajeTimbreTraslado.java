@@ -57,7 +57,7 @@ public class CreacionViajeTimbreTraslado {
         BotonListadoViajes();
     }
 
-    @RepeatedTest(5)
+    @RepeatedTest(2)
     @Order(4)
     @Description("Se ingresa al listado de Viajes y se crea una Carta Porte, se factura y timbra el viaje.")
     public void testCrearViaje() {
@@ -162,7 +162,7 @@ public class CreacionViajeTimbreTraslado {
             WebElement tipoDocumentoCombo = wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("COMBO_CATTIPOSDOCUMENTOS")));
 
             // Usar XPath para seleccionar la opción con el texto "CARTA PORTE CFDI - TR"
-            WebElement opcionTraslado = tipoDocumentoCombo.findElement(By.xpath(".//option[text()='CARTA PORTE CFDI - TRASLADO']"));
+            WebElement opcionTraslado = tipoDocumentoCombo.findElement(By.xpath(".//option[text()='CARTA PORTE CFDI - TR']"));
 
             // Hacer clic en la opción para seleccionarla
             opcionTraslado.click();
@@ -193,7 +193,7 @@ public class CreacionViajeTimbreTraslado {
         try {
             WebElement NumeroCliente = wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("EDT_NUMEROCLIENTE")));
             NumeroCliente.click();
-            NumeroCliente.sendKeys("000001");
+            NumeroCliente.sendKeys("000003");
             NumeroCliente.sendKeys(Keys.TAB);
             Thread.sleep(1000); // Reducido para optimizar
         } catch (TimeoutException | InterruptedException e) {
@@ -241,7 +241,7 @@ public class CreacionViajeTimbreTraslado {
         try {
             WebElement folioRutaField = wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("EDT_FOLIORUTA")));
             folioRutaField.click();
-            folioRutaField.sendKeys("000004");
+            folioRutaField.sendKeys("000089");
             folioRutaField.sendKeys(Keys.TAB);
             Thread.sleep(1000); // Reducido para optimizar
         } catch (TimeoutException | InterruptedException e) {

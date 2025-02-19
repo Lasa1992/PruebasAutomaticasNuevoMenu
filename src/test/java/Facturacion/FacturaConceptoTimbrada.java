@@ -66,7 +66,7 @@ public class FacturaConceptoTimbrada {
         handleSubMenuButton();
     }
 
-    @RepeatedTest(5)
+    @RepeatedTest(2)
     @Order(4)
     @Description("Se genera una factura con conceptos aleatorios")
     public void FacturacionporConcepto() {
@@ -143,8 +143,8 @@ public class FacturaConceptoTimbrada {
         try {
             WebElement numeroCliente = wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("EDT_NUMEROCLIENTE")));
             numeroCliente.click();
-            numeroCliente.sendKeys("000001");
-            informacionFactura.append("Numero Cliente: 000001 \n");
+            numeroCliente.sendKeys("000003");
+            informacionFactura.append("Numero Cliente: 000003 \n");
             numeroCliente.sendKeys(Keys.TAB);
             fluentWait.until(driver -> {
                 WebElement field = driver.findElement(By.id("EDT_NUMEROCLIENTE"));

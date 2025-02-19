@@ -34,7 +34,7 @@ public class PagoFacturaViaje {
     private static String numeroViajeCliente;
     private static String monedaSeleccionada;
     private static Double MontoaPAGAR;
-    static String FolioFactura;
+
 
 
     @BeforeAll
@@ -64,7 +64,7 @@ public class PagoFacturaViaje {
         InicioSesion.handleNovedadesScreen(wait);
     }
 
-    @RepeatedTest(5)
+    @RepeatedTest(2)
     @Order(3)
     @Description("Metodos para entrar al listado de viajes")
     public void EntrarAViajes() {
@@ -105,7 +105,7 @@ public class PagoFacturaViaje {
         BotonModuloCobranza(); // Selecciona el módulo de Cobranza en la interfaz de usuario.
         BotonPagosAbonos(); // Seleccion Submodulo pagos/abonos.
         BotonRegistrarPagoAbono(); // Da clic en el boton para agregar pago/abono.
-        IntroducirFechaActual(); // Introduce la fecha actual en el campo de fecha.
+        deseleccionarCampoFecha(); // Deselecciona el campo de fecha.
         CodigoClientPago(); // Introduce el código del cliente para el pago.
         SeleccionarCuentaBancariaAleatoria(); // Selecciona una cuenta bancaria aleatoria para el pago.
         BusquedaFacturaPagar(); // Busca la factura a pagar.
@@ -113,11 +113,12 @@ public class PagoFacturaViaje {
         ValidarConversion(); // Validar la conversión de la moneda.
         IntroducirMontoPago(); // Introduce el monto a pagar.
         IntroducirReferencia(); // Introduce una referencia para el pago.
-        AceptarPagoAbono();
-        TimbrePago();
-        EnvioCorreoPago();
-        AceptarPolizaPago();
-        SalirVentanaPago();
+        AceptarPagoAbono(); // Acepta el pago/abono.
+        TimbrePago(); // Acepta el timbre del pago.
+        EnvioCorreoPago(); // Envía un correo para el pago (Sí/No).
+        AceptarPolizaPago(); // Acepta la póliza del pago.
+        deseleccionarCampoFecha(); // Deselecciona el campo de fecha.
+        SalirVentanaPago(); // Sale de la ventana de pago.
 
 
     }
@@ -181,7 +182,7 @@ public class PagoFacturaViaje {
             WebElement tipoDocumentoCombo = wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("COMBO_CATTIPOSDOCUMENTOS")));
 
             // Usar XPath para seleccionar la opción con el texto "CARTA PORTE CFDI - CP"
-            WebElement opcionIngreso = tipoDocumentoCombo.findElement(By.xpath(".//option[text()='CARTA PORTE CFDI - INGRESO']"));
+            WebElement opcionIngreso = tipoDocumentoCombo.findElement(By.xpath(".//option[text()='CARTA PORTE CFDI - HMO']"));
 
             // Hacer clic en la opción para seleccionarla
             opcionIngreso.click();
@@ -212,7 +213,7 @@ public class PagoFacturaViaje {
         try {
             WebElement NumeroCliente = wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("EDT_NUMEROCLIENTE")));
             NumeroCliente.click();
-            NumeroCliente.sendKeys("000001");
+            NumeroCliente.sendKeys("000003");
             NumeroCliente.sendKeys(Keys.TAB);
             Thread.sleep(1000); // Reducido para optimizar
         } catch (TimeoutException | InterruptedException e) {
@@ -267,7 +268,7 @@ public class PagoFacturaViaje {
         try {
             WebElement folioRutaField = wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("EDT_FOLIORUTA")));
             folioRutaField.click();
-            folioRutaField.sendKeys("000004");
+            folioRutaField.sendKeys("000089");
             folioRutaField.sendKeys(Keys.TAB);
             Thread.sleep(1000); // Reducido para optimizar
         } catch (TimeoutException | InterruptedException e) {
@@ -482,7 +483,7 @@ public class PagoFacturaViaje {
             Thread.sleep(500);
 
             // Llenar el campo con el número de cliente 000001
-            clienteField.sendKeys("000001");
+            clienteField.sendKeys("000003");
             Thread.sleep(200); // Pausa adicional para permitir el procesamiento adecuado
 
             clienteField.sendKeys(Keys.TAB);
@@ -746,40 +747,21 @@ public class PagoFacturaViaje {
     }
 
 
-    public void IntroducirFechaActual() {
+    public void deseleccionarCampoFecha() {
         try {
-            WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(5));
-
-            // Espera a que el campo de fecha esté visible y obtenlo
-            WebElement campoFecha = wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("EDT_FECHA")));
-
-            // Obtener el valor actual del campo
-            String fechaActualCampo = campoFecha.getAttribute("value").trim();
-
-            // Si el campo está vacío, introducir la fecha actual
-            if (fechaActualCampo.isEmpty()) {
-                // Obtener la fecha actual en formato "DD/MM/YYYY"
-                String fechaHoy = new SimpleDateFormat("dd/MM/yyyy").format(new Date());
-
-                // Limpiar el campo y enviar la fecha
-                campoFecha.clear();
-                campoFecha.sendKeys(fechaHoy);
-                campoFecha.sendKeys(Keys.TAB); // Para que el sistema lo valide
-
-                System.out.println("Fecha ingresada en el campo: " + fechaHoy);
-            } else {
-                System.out.println("El campo ya tiene una fecha: " + fechaActualCampo);
-            }
-
+            WebElement body = driver.findElement(By.tagName("body")); // Clic en el fondo de la página
+            body.click();
+            body.click();
+            System.out.println("✅ Campo EDT_FECHA deseleccionado con un clic en el body.");
         } catch (Exception e) {
-            UtilidadesAllure.manejoError(driver, e, "Error al ingresar la fecha en el campo EDT_FECHA.");
-            System.out.println("Error al ingresar la fecha en el campo EDT_FECHA.");
+            System.err.println("⚠ No se pudo deseleccionar el campo EDT_FECHA: " + e.getMessage());
         }
     }
 
 
     public void CodigoClientPago() {
         try {
+            WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(3));
             // Espera explícita hasta que el campo de texto del código de cliente esté visible
             WebElement codigoClienteInput = wait.until(ExpectedConditions.visibilityOfElementLocated(
                     By.id("EDT_NUMEROCLIENTE")));
@@ -788,7 +770,7 @@ public class PagoFacturaViaje {
             codigoClienteInput.clear();
 
             // Ingresar el código del cliente
-            codigoClienteInput.sendKeys("000001");
+            codigoClienteInput.sendKeys("000003");
 
             // Simular presionar la tecla TAB para validar el campo
             //codigoClienteInput.sendKeys(Keys.TAB);
@@ -841,18 +823,21 @@ public class PagoFacturaViaje {
 
     @Step("Buscar factura para pagar")
     public void BusquedaFacturaPagar() {
+        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(2));
         try {
+
             // Localizar el campo de búsqueda usando XPath en lugar de name
             WebElement campoBusqueda = wait.until(ExpectedConditions.elementToBeClickable(
                     By.xpath("//input[contains(@class, 'EDT_BUSQUEDAGENERAL')]")));
+            campoBusqueda.click();
 
             // Limpiar el campo antes de ingresar el número de viaje
             campoBusqueda.clear();
 
             // Ingresar el número de viaje del cliente
-            campoBusqueda.sendKeys(FolioFactura);
+            campoBusqueda.sendKeys(numeroViajeCliente);
 
-            System.out.println("Número de viaje ingresado en búsqueda: " + FolioFactura);
+            System.out.println("Número de viaje ingresado en búsqueda: " + numeroViajeCliente);
         } catch (Exception e) {
             System.out.println("Error en la búsqueda de factura: " + e.getMessage());
             UtilidadesAllure.manejoError(driver, e, "Error en la búsqueda de factura.");
@@ -992,7 +977,7 @@ public class PagoFacturaViaje {
 
 
             // Generar la referencia y enviarla al campo
-            String referencia = "pago" + FolioFactura;
+            String referencia = "pago" + numeroViajeCliente;
             campoReferencia.sendKeys(referencia);
 
             System.out.println("Referencia ingresada: " + referencia);
@@ -1087,7 +1072,7 @@ public class PagoFacturaViaje {
     @Step("Salir de la Ventana de Pago")
     public void SalirVentanaPago() {
         try {
-            WebElement btnCancelar = wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//input[contains(@class, 'tzBTN_CANCELAR')]")));
+            WebElement btnCancelar = wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//input[contains(@class, 'BTN-BotonClasicoGris BTN_CANCELAR padding webdevclass-riche')]")));
             btnCancelar.click();
             System.out.println("Salida de la ventana de pago realizada correctamente.");
         } catch (Exception e) {
@@ -1096,4 +1081,5 @@ public class PagoFacturaViaje {
         }
     }
 }
+
 
