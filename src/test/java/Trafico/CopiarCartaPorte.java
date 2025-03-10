@@ -20,7 +20,7 @@ import java.util.Random;
 import java.util.List;
 
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-public class CartaPorteSustitucion {
+public class CopiarCartaPorte {
 
     private static WebDriver driver;
     private static WebDriverWait wait;
@@ -91,15 +91,12 @@ public class CartaPorteSustitucion {
         EnvioCorreo(); // Envio de Correo Aleatorio
         BotonImpresion(); // Manejamos Mensaje de iMPRECION
         SelecionarCartaporteListado();  // Seleccionar Carta Porte del listado
-        SeleccionarOpcionCancelarSATCP(); // Seleccionar opción de Cancelar SAT CP
-        SeleccionaMotivoCancelacion(); // Elige un motivo de cancelacion aleatorio para realizar la sustitucion o no.
-        MensajeSustitucionRequerida(); // Acepta el mensaje de si se desea realizar la sustitucion.
+        BotonCopiar(); // Seleccionar la opcion de copiar
+        OpcionCopiar(); // Elige la opcion si para copiar lla carta porte.
         BotonAceptarViaje(); // Boton Aceptar Viaje
-        BotonTimbreSustitucion(); // Timbra la factura sustituida.
-        CancelacionSAT(); // Acepta la cancelacion de la factura anterior en el SAT.
-        CancelacionSAT2(); // Acepta la cancelacion de la factura anterion en el SAT mensaje 2.
-        CancelacionSAT3(); // Acepta el tercer mensaje de que sera sustituida la factura
-        CancelacionSAT4(); // Acepta el tercer mensaje de que sera sustituida la factura
+        AceptarMensajeTimbre(); // Timbramos el viaje
+        EnvioCorreo(); // Envio de Correo Aleatorio
+        BotonImpresion(); // Manejamos Mensaje de iMPRECION
 
 
 
@@ -454,182 +451,56 @@ public class CartaPorteSustitucion {
             UtilidadesAllure.manejoError(driver, e, "Error al seleccionar la Carta Porte del listado");
             System.out.println("Error al seleccionar la Carta Porte del listado: " + e.getMessage());
         }
+
     }
 
-    public void SeleccionarOpcionCancelarSATCP() {
-        try {
-            WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
-            Actions actions = new Actions(driver);
-            JavascriptExecutor js = (JavascriptExecutor) driver;
-
-            // 1️⃣ Esperar que el menú "Cancelar" sea visible
-            WebElement menuCancelar = wait.until(ExpectedConditions.presenceOfElementLocated(By.id("MENU_CANCELAR")));
-
-            // 2️⃣ Mover el cursor sobre el menú para desplegar opciones
-            actions.moveToElement(menuCancelar).perform();
-            Thread.sleep(1000); // Pequeña espera para asegurar el despliegue
-
-            // 3️⃣ Esperar que el submenú "Cancelar SAT CP" sea visible
-            WebElement opcionCancelarSATCP = wait.until(ExpectedConditions.presenceOfElementLocated(By.id("OPT_CANCELARSATCP")));
-
-            // 4️⃣ Hacer clic en la opción (con JavaScript como alternativa si es necesario)
-            try {
-                opcionCancelarSATCP.click();
-            } catch (Exception e) {
-                System.out.println("Click falló, intentando con JavaScript...");
-                js.executeScript("arguments[0].click();", opcionCancelarSATCP);
-            }
-
-            System.out.println("✅ Opción 'Cancelar SAT CP' seleccionada con éxito.");
-
-        } catch (Exception e) {
-            System.err.println("❌ Error al seleccionar 'Cancelar SAT CP': " + e.getMessage());
-        }
-    }
-
-    public void SeleccionaMotivoCancelacion() {
-        try {
-            // Localizar el combo
-            WebElement combo = driver.findElement(By.id("COMBO_MOTIVOCANCELACION"));
-
-            // Seleccionar la primera opción
-            Select select = new Select(combo);
-            select.selectByIndex(0);
-
-            // Espera explícita hasta que el campo de comentario sea visible
-            WebElement comentarioField = driver.findElement(By.id("EDT_MOTIVO"));
-
-            // Agregar un comentario al campo
-            comentarioField.clear();
-            comentarioField.sendKeys("Cancelación de Carta Porte por motivo de prueba automática." + folioGuardado);
-            System.out.println(comentarioField);
-
-            // Confirmar la selección presionando el botón "Aceptar"
-            WebElement botonAceptar = driver.findElement(By.id("BTN_ACEPTAR"));
-            botonAceptar.click();
-
-        } catch (Exception e) {
-            System.out.println("Error al seleccionar la primera opción: " + e.getMessage());
-        }
-    }
-
-    @Step("Mensaje de Sustitución Requerida")
-    private static void MensajeSustitucionRequerida() {
-        try {
-            // Espera explícita hasta que el botón de Sí sea clicable
-            WebElement botonSi = wait.until(ExpectedConditions.elementToBeClickable(
-                    By.id("tzBTN_YES")));
-
-
-            botonSi.click();
-            System.out.println("Se presionó el botón de Sí para la sustitución requerida");
-        } catch (Exception e) {
-            UtilidadesAllure.manejoError(driver, e, "Error al presionar el botón de Sí para la sustitución requerida");
-            System.out.println("Error al presionar el botón de Sí para la sustitución requerida");
-        }
-    }
-
-
-    private void BotonTimbreSustitucion() {
+    @Step("Manejar Botón Copiar")
+    private void BotonCopiar() {
         try {
             WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
 
-            // Espera 3 segundos antes de continuar
-            wait.until(ExpectedConditions.presenceOfElementLocated(By.tagName("body")));
+            // Esperar y encontrar el botón "Copiar"
+            WebElement botonCopiar = wait.until(ExpectedConditions.elementToBeClickable(
+                    By.xpath("/html/body/form/table/tbody/tr/td/div/table/tbody/tr[3]/td/div[1]/table/tbody/tr/td/table/tbody/tr[1]/td/div[3]/div[2]/div[1]/table/tbody/tr/td/table/tbody/tr[1]/td/div/div[6]/div/table/tbody/tr/td/button")
+            ));
 
-            // Intentar localizar el botón "Aceptar"
-            WebElement botonAceptar;
-            try {
-                botonAceptar = wait.until(ExpectedConditions.elementToBeClickable(By.id("BTN_YES")));
-            } catch (Exception noButton) {
-                System.out.println("El botón de aceptar Timbre no está disponible. Continuando...");
-                return;
-            }
+            // Log antes de hacer clic
+            System.out.println("Botón Copiar encontrado, intentando hacer clic...");
 
-            // Si el botón se encontró, hacer clic
-            botonAceptar.click();
-            System.out.println("Se presionó el botón de aceptar Timbre");
+            botonCopiar.click();
 
-        } catch (Exception e) {
-            System.out.println("Error al presionar el botón de aceptar Timbre. Continuando...");
-            e.printStackTrace();
+            // Confirmación post-clic
+            System.out.println("Botón Copiar clickeado correctamente.");
+
+        } catch (TimeoutException e) {
+            UtilidadesAllure.manejoError(driver, e, "Error: El botón Copiar no estuvo disponible a tiempo.");
+        } catch (NoSuchElementException | ElementNotInteractableException e) {
+            UtilidadesAllure.manejoError(driver, e, "Error: No se pudo interactuar con el botón Copiar.");
         }
     }
 
-
-    @Step("Aceptar Cancelación en el SAT")
-    private static void CancelacionSAT() {
+    @Step("Hacer clic en Opción Copiar")
+    private void OpcionCopiar() {
         try {
-            // Espera explícita hasta que el botón de aceptar sea clicable
-            WebElement aceptarButton = wait.until(ExpectedConditions.elementToBeClickable(
-                    By.id("tzBTN_YES")));
+            WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
 
-            // Hacer clic en el botón de aceptar
-            aceptarButton.click();
-            System.out.println("Se presionó el botón de aceptar para la cancelación en el SAT");
-        } catch (Exception e) {
-            UtilidadesAllure.manejoError(driver, e, "Error al presionar el botón de aceptar para la cancelación en el SAT");
-            System.out.println("Error al presionar el botón de aceptar para la cancelación en el SAT");
-        }
-    }
+            // Esperar y encontrar el elemento
+            WebElement opcionCopiar = wait.until(ExpectedConditions.elementToBeClickable(
+                    By.xpath("/html/body/form/table/tbody/tr/td/table/tbody/tr/td/div/table/tbody/tr[2]/td/div[1]/table/tbody/tr/td/div/div[3]/table/tbody/tr/td/table/tbody/tr[2]/td/div[2]/table/tbody/tr/td/input")
+            ));
 
-    @Step("Aceptar Cancelación en el SAT (Segundo Mensaje)")
-    private static void CancelacionSAT2() {
-        try {
-            // Espera explícita hasta que el botón de aceptar sea clicable
-            WebElement aceptarButton = wait.until(ExpectedConditions.elementToBeClickable(
-                    By.id("tzBTN_YES")));
+            // Log antes de hacer clic
+            System.out.println("Opción Copiar encontrada, intentando hacer clic...");
 
-            // Hacer clic en el botón de aceptar
-            aceptarButton.click();
-            System.out.println("Se presionó el botón de aceptar para la cancelación en el SAT (segundo mensaje)");
-        } catch (Exception e) {
-            UtilidadesAllure.manejoError(driver, e, "Error al presionar el botón de aceptar para la cancelación en el SAT (segundo mensaje)");
-            System.out.println("Error al presionar el botón de aceptar para la cancelación en el SAT (segundo mensaje)");
-        }
-    }
+            opcionCopiar.click();  // Solo hacer clic en el campo
 
-    @Step("Aceptar Cancelación en el SAT (Tercer Mensaje)")
-    private static void CancelacionSAT3() {
-        try {
-            // Intentar encontrar el botón inmediatamente sin esperar
-            WebElement aceptarButton = driver.findElement(By.id("BTN_OK"));
+            // Confirmación
+            System.out.println("Opción Copiar clickeada correctamente.");
 
-            // Verificar si el botón es visible y habilitado antes de hacer clic
-            if (aceptarButton.isDisplayed() && aceptarButton.isEnabled()) {
-                aceptarButton.click();
-                System.out.println("Se hizo clic en el botón de aceptar para la cancelación en el SAT.");
-            } else {
-                System.out.println("El botón 'tzBTN_YES' está presente pero no es clicable.");
-            }
-
-        } catch (NoSuchElementException e) {
-            System.out.println("No se encontró el botón 'tzBTN_YES' en la página.");
-        } catch (Exception e) {
-            System.out.println(" Error inesperado al presionar el botón de aceptar en la cancelación SAT: " + e.getMessage());
-            UtilidadesAllure.manejoError(driver, e, "Error al presionar el botón en la cancelación SAT.");
-        }
-    }
-
-    @Step("Aceptar Cancelación en el SAT (Cuarto Mensaje)")
-    private static void CancelacionSAT4() {
-        try {
-            // Intentar encontrar el botón inmediatamente sin esperar
-            WebElement aceptarButton = driver.findElement(By.id("BTN_OK"));
-
-            // Verificar si el botón es visible y habilitado antes de hacer clic
-            if (aceptarButton.isDisplayed() && aceptarButton.isEnabled()) {
-                aceptarButton.click();
-                System.out.println("Se hizo clic en el botón de aceptar para la cancelación en el SAT.");
-            } else {
-                System.out.println("El botón 'tzBTN_YES' está presente pero no es clicable.");
-            }
-
-        } catch (NoSuchElementException e) {
-            System.out.println("No se encontró el botón 'tzBTN_YES' en la página.");
-        } catch (Exception e) {
-            System.out.println(" Error inesperado al presionar el botón de aceptar en la cancelación SAT: " + e.getMessage());
-            UtilidadesAllure.manejoError(driver, e, "Error al presionar el botón en la cancelación SAT.");
+        } catch (TimeoutException e) {
+            UtilidadesAllure.manejoError(driver, e, "Error: La opción Copiar no estuvo disponible a tiempo.");
+        } catch (NoSuchElementException | ElementNotInteractableException e) {
+            UtilidadesAllure.manejoError(driver, e, "Error: No se pudo interactuar con la opción Copiar.");
         }
     }
 

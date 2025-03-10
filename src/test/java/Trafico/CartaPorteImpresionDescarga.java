@@ -2,7 +2,6 @@ package Trafico;
 import Indicadores.InicioSesion;
 import Indicadores.Variables;
 import Utilidades.UtilidadesAllure;
-import io.qameta.allure.Allure;
 import io.qameta.allure.Description;
 import io.qameta.allure.Step;
 import org.junit.jupiter.api.*;
@@ -20,11 +19,10 @@ import java.util.Random;
 import java.util.List;
 
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-public class CartaPorteSustitucion {
+public class CartaPorteImpresionDescarga {
 
     private static WebDriver driver;
     private static WebDriverWait wait;
-
 
     private static final String NUMERO_CLIENTE = Variables.CLIENTE;       // Número de cliente
     private static final String NUMERO_RUTA = Variables.RUTA;        // Número de ruta
@@ -91,15 +89,22 @@ public class CartaPorteSustitucion {
         EnvioCorreo(); // Envio de Correo Aleatorio
         BotonImpresion(); // Manejamos Mensaje de iMPRECION
         SelecionarCartaporteListado();  // Seleccionar Carta Porte del listado
-        SeleccionarOpcionCancelarSATCP(); // Seleccionar opción de Cancelar SAT CP
-        SeleccionaMotivoCancelacion(); // Elige un motivo de cancelacion aleatorio para realizar la sustitucion o no.
-        MensajeSustitucionRequerida(); // Acepta el mensaje de si se desea realizar la sustitucion.
-        BotonAceptarViaje(); // Boton Aceptar Viaje
-        BotonTimbreSustitucion(); // Timbra la factura sustituida.
-        CancelacionSAT(); // Acepta la cancelacion de la factura anterior en el SAT.
-        CancelacionSAT2(); // Acepta la cancelacion de la factura anterion en el SAT mensaje 2.
-        CancelacionSAT3(); // Acepta el tercer mensaje de que sera sustituida la factura
-        CancelacionSAT4(); // Acepta el tercer mensaje de que sera sustituida la factura
+        BotonImprimir(); // Boton de Impresion
+        SeleccionarFormato(); // Seleccionar Formato de Impresion
+        Imprimir(); // Imprimir
+        CerrarVistaPrevia(); // Cerrar Vista Previa
+        MarcarImpresion(); // Marcar Impresion
+
+        BotonDescargar(); // Descargar Carta Porte
+        SeleccionarOpcionDescarga(); // Seleccionar Opcion de Descarga
+
+
+
+
+
+
+
+
 
 
 
@@ -189,7 +194,7 @@ public class CartaPorteSustitucion {
     }
 
 
-    @Step("Manejar Número de Viaje")
+    @Step("Asignar Número de Viaje (concatena 'PA' al folio)")
     private void NumeroViajeCliente() {
         try {
             WebElement folioField = wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("EDT_FOLIO")));
@@ -456,181 +461,166 @@ public class CartaPorteSustitucion {
         }
     }
 
-    public void SeleccionarOpcionCancelarSATCP() {
+    @Step("Hacer clic en el botón de impresión")
+    public void BotonImprimir() {
         try {
-            WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
-            Actions actions = new Actions(driver);
-            JavascriptExecutor js = (JavascriptExecutor) driver;
+            // Localizar el botón de impresión usando el XPath proporcionado
+            WebElement botonImprimir = driver.findElement(
+                    By.xpath("/html/body/form/table/tbody/tr/td/div/table/tbody/tr[3]/td/div[1]/table/tbody/tr/td/table/tbody/tr[1]/td/div[3]/div[2]/div[1]/table/tbody/tr/td/table/tbody/tr[1]/td/div/div[7]/div/table/tbody/tr/td/button"));
 
-            // 1️⃣ Esperar que el menú "Cancelar" sea visible
-            WebElement menuCancelar = wait.until(ExpectedConditions.presenceOfElementLocated(By.id("MENU_CANCELAR")));
-
-            // 2️⃣ Mover el cursor sobre el menú para desplegar opciones
-            actions.moveToElement(menuCancelar).perform();
-            Thread.sleep(1000); // Pequeña espera para asegurar el despliegue
-
-            // 3️⃣ Esperar que el submenú "Cancelar SAT CP" sea visible
-            WebElement opcionCancelarSATCP = wait.until(ExpectedConditions.presenceOfElementLocated(By.id("OPT_CANCELARSATCP")));
-
-            // 4️⃣ Hacer clic en la opción (con JavaScript como alternativa si es necesario)
-            try {
-                opcionCancelarSATCP.click();
-            } catch (Exception e) {
-                System.out.println("Click falló, intentando con JavaScript...");
-                js.executeScript("arguments[0].click();", opcionCancelarSATCP);
-            }
-
-            System.out.println("✅ Opción 'Cancelar SAT CP' seleccionada con éxito.");
+            // Hacer clic en el botón
+            botonImprimir.click();
+            System.out.println("Se hizo clic en el botón de impresión.");
 
         } catch (Exception e) {
-            System.err.println("❌ Error al seleccionar 'Cancelar SAT CP': " + e.getMessage());
+            System.err.println("Error al hacer clic en el botón de impresión: " + e.getMessage());
         }
     }
 
-    public void SeleccionaMotivoCancelacion() {
+    @Step("Seleccionar el último formato de impresión")
+    public void SeleccionarFormato() {
         try {
-            // Localizar el combo
-            WebElement combo = driver.findElement(By.id("COMBO_MOTIVOCANCELACION"));
+            // Localizar el menú desplegable de formatos usando el XPath proporcionado
+            WebElement comboFormatos = driver.findElement(
+                    By.xpath("/html/body/form/table/tbody/tr/td/table/tbody/tr/td/div/table/tbody/tr[2]/td/div[1]/table/tbody/tr/td/table/tbody/tr[3]/td/div[1]/table/tbody/tr/td/div/div/table/tbody/tr/td/table/tbody/tr/td/ul/li[2]/table/tbody/tr/td/select"));
 
-            // Seleccionar la primera opción
-            Select select = new Select(combo);
-            select.selectByIndex(0);
+            // Crear un objeto Select para interactuar con el menú desplegable
+            Select selectFormato = new Select(comboFormatos);
 
-            // Espera explícita hasta que el campo de comentario sea visible
-            WebElement comentarioField = driver.findElement(By.id("EDT_MOTIVO"));
-
-            // Agregar un comentario al campo
-            comentarioField.clear();
-            comentarioField.sendKeys("Cancelación de Carta Porte por motivo de prueba automática." + folioGuardado);
-            System.out.println(comentarioField);
-
-            // Confirmar la selección presionando el botón "Aceptar"
-            WebElement botonAceptar = driver.findElement(By.id("BTN_ACEPTAR"));
-            botonAceptar.click();
+            // Seleccionar la última opción del menú desplegable
+            int ultimaOpcion = selectFormato.getOptions().size() - 1;
+            selectFormato.selectByIndex(ultimaOpcion);
+            System.out.println("Se seleccionó el último formato de impresión.");
 
         } catch (Exception e) {
-            System.out.println("Error al seleccionar la primera opción: " + e.getMessage());
+            System.err.println("Error al seleccionar el formato de impresión: " + e.getMessage());
         }
     }
 
-    @Step("Mensaje de Sustitución Requerida")
-    private static void MensajeSustitucionRequerida() {
+    @Step("Hacer clic en el botón de imprimir")
+    public void Imprimir() {
         try {
-            // Espera explícita hasta que el botón de Sí sea clicable
-            WebElement botonSi = wait.until(ExpectedConditions.elementToBeClickable(
-                    By.id("tzBTN_YES")));
+            // Localizar el botón de imprimir usando el XPath proporcionado
+            WebElement botonImprimir = driver.findElement(
+                    By.xpath("/html/body/form/table/tbody/tr/td/table/tbody/tr/td/div/table/tbody/tr[2]/td/div[1]/table/tbody/tr/td/table/tbody/tr[1]/td/div/div[2]/div/table/tbody/tr/td/input"));
 
+            // Hacer clic en el botón
+            botonImprimir.click();
+            System.out.println("Se hizo clic en el botón de imprimir.");
 
-            botonSi.click();
-            System.out.println("Se presionó el botón de Sí para la sustitución requerida");
+            Thread.sleep(3000);
+
         } catch (Exception e) {
-            UtilidadesAllure.manejoError(driver, e, "Error al presionar el botón de Sí para la sustitución requerida");
-            System.out.println("Error al presionar el botón de Sí para la sustitución requerida");
+            System.err.println("Error al hacer clic en el botón de imprimir: " + e.getMessage());
         }
     }
 
-
-    private void BotonTimbreSustitucion() {
+    @Step("Hacer clic en el botón para cerrar la vista previa")
+    public void CerrarVistaPrevia() {
         try {
-            WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
+            // Localizar el botón para cerrar la vista previa usando el XPath proporcionado
+            WebElement botonCerrar = driver.findElement(
+                    By.xpath("/html/body/form/table/tbody/tr/td/table/tbody/tr/td/div/table/tbody/tr[2]/td/div[1]/table/tbody/tr/td/table/tbody/tr[1]/td/div/div[1]/div[3]/div/table/tbody/tr/td/a/span/span"));
 
-            // Espera 3 segundos antes de continuar
-            wait.until(ExpectedConditions.presenceOfElementLocated(By.tagName("body")));
-
-            // Intentar localizar el botón "Aceptar"
-            WebElement botonAceptar;
-            try {
-                botonAceptar = wait.until(ExpectedConditions.elementToBeClickable(By.id("BTN_YES")));
-            } catch (Exception noButton) {
-                System.out.println("El botón de aceptar Timbre no está disponible. Continuando...");
-                return;
-            }
-
-            // Si el botón se encontró, hacer clic
-            botonAceptar.click();
-            System.out.println("Se presionó el botón de aceptar Timbre");
+            // Hacer clic en el botón
+            botonCerrar.click();
+            System.out.println("Se hizo clic en el botón para cerrar la vista previa.");
 
         } catch (Exception e) {
-            System.out.println("Error al presionar el botón de aceptar Timbre. Continuando...");
-            e.printStackTrace();
+            System.err.println("Error al hacer clic en el botón para cerrar la vista previa: " + e.getMessage());
         }
     }
 
-
-    @Step("Aceptar Cancelación en el SAT")
-    private static void CancelacionSAT() {
+    @Step("Marcar impresión eligiendo aleatoriamente entre dos opciones")
+    public void MarcarImpresion() {
         try {
-            // Espera explícita hasta que el botón de aceptar sea clicable
-            WebElement aceptarButton = wait.until(ExpectedConditions.elementToBeClickable(
-                    By.id("tzBTN_YES")));
+            // Generar un número aleatorio (0 o 1) para elegir entre las dos opciones
+            Random random = new Random();
+            int opcion = random.nextInt(2); // 0 o 1
 
-            // Hacer clic en el botón de aceptar
-            aceptarButton.click();
-            System.out.println("Se presionó el botón de aceptar para la cancelación en el SAT");
+            // Definir los XPath de las dos opciones
+            String xpathOpcion1 = "/html/body/form/table/tbody/tr/td/table/tbody/tr/td/div/table/tbody/tr[2]/td/div[1]/table/tbody/tr/td/div/div[3]/table/tbody/tr/td/table/tbody/tr[2]/td/div[2]/table/tbody/tr/td/input";
+            String xpathOpcion2 = "/html/body/form/table/tbody/tr/td/table/tbody/tr/td/div/table/tbody/tr[2]/td/div[1]/table/tbody/tr/td/div/div[3]/table/tbody/tr/td/table/tbody/tr[2]/td/div[3]/table/tbody/tr/td/input";
+
+            // Seleccionar la opción aleatoria
+            String xpathSeleccionado = (opcion == 0) ? xpathOpcion1 : xpathOpcion2;
+            WebElement opcionSeleccionada = driver.findElement(By.xpath(xpathSeleccionado));
+
+            // Hacer clic en la opción seleccionada
+            opcionSeleccionada.click();
+            System.out.println("Se marcó la impresión con la opción: " + (opcion + 1));
+
         } catch (Exception e) {
-            UtilidadesAllure.manejoError(driver, e, "Error al presionar el botón de aceptar para la cancelación en el SAT");
-            System.out.println("Error al presionar el botón de aceptar para la cancelación en el SAT");
+            System.err.println("Error al marcar la impresión: " + e.getMessage());
         }
     }
 
-    @Step("Aceptar Cancelación en el SAT (Segundo Mensaje)")
-    private static void CancelacionSAT2() {
+    @Step("Hacer clic en el botón de descargar carta porte")
+    public void BotonDescargar() {
         try {
-            // Espera explícita hasta que el botón de aceptar sea clicable
-            WebElement aceptarButton = wait.until(ExpectedConditions.elementToBeClickable(
-                    By.id("tzBTN_YES")));
+            // Localizar el botón de descargar usando el XPath proporcionado
+            WebElement botonDescargar = driver.findElement(
+                    By.xpath("/html/body/form/table/tbody/tr/td/div/table/tbody/tr[3]/td/div[1]/table/tbody/tr/td/table/tbody/tr[1]/td/div[3]/div[2]/div[1]/table/tbody/tr/td/table/tbody/tr[1]/td/div/div[9]/div/table/tbody/tr/td/button"));
 
-            // Hacer clic en el botón de aceptar
-            aceptarButton.click();
-            System.out.println("Se presionó el botón de aceptar para la cancelación en el SAT (segundo mensaje)");
+            // Hacer clic en el botón
+            botonDescargar.click();
+            System.out.println("Se hizo clic en el botón de descargar carta porte.");
+
         } catch (Exception e) {
-            UtilidadesAllure.manejoError(driver, e, "Error al presionar el botón de aceptar para la cancelación en el SAT (segundo mensaje)");
-            System.out.println("Error al presionar el botón de aceptar para la cancelación en el SAT (segundo mensaje)");
+            System.err.println("Error al hacer clic en el botón de descargar carta porte: " + e.getMessage());
         }
     }
 
-    @Step("Aceptar Cancelación en el SAT (Tercer Mensaje)")
-    private static void CancelacionSAT3() {
+    @Step("Seleccionar la opción de descarga y verificar si se descargó un archivo")
+    public void SeleccionarOpcionDescarga() {
         try {
-            // Intentar encontrar el botón inmediatamente sin esperar
-            WebElement aceptarButton = driver.findElement(By.id("BTN_OK"));
+            // Localizar la opción de descarga usando el XPath proporcionado
+            WebElement opcionDescarga = driver.findElement(
+                    By.xpath("/html/body/form/table/tbody/tr/td/table/tbody/tr/td/div/table/tbody/tr[2]/td/div[1]/table/tbody/tr/td/div/div[3]/table/tbody/tr/td/table/tbody/tr[2]/td/div[2]/table/tbody/tr/td/input"));
 
-            // Verificar si el botón es visible y habilitado antes de hacer clic
-            if (aceptarButton.isDisplayed() && aceptarButton.isEnabled()) {
-                aceptarButton.click();
-                System.out.println("Se hizo clic en el botón de aceptar para la cancelación en el SAT.");
+            // Hacer clic en la opción de descarga
+            opcionDescarga.click();
+            System.out.println("Se seleccionó la opción de descarga.");
+
+            // Esperar un tiempo razonable para que el archivo se descargue
+            Thread.sleep(5000); // Espera 5 segundos (ajusta según sea necesario)
+
+            // Verificar si se descargó un archivo
+            if (verificarDescarga()) {
+                System.out.println("El archivo se descargó correctamente.");
             } else {
-                System.out.println("El botón 'tzBTN_YES' está presente pero no es clicable.");
+                System.out.println("No se encontró el archivo descargado.");
             }
 
-        } catch (NoSuchElementException e) {
-            System.out.println("No se encontró el botón 'tzBTN_YES' en la página.");
+        } catch (InterruptedException e) {
+            // Si la pausa es interrumpida, restaurar el estado de la interrupción
+            Thread.currentThread().interrupt();
+            System.err.println("La pausa fue interrumpida: " + e.getMessage());
         } catch (Exception e) {
-            System.out.println(" Error inesperado al presionar el botón de aceptar en la cancelación SAT: " + e.getMessage());
-            UtilidadesAllure.manejoError(driver, e, "Error al presionar el botón en la cancelación SAT.");
+            System.err.println("Error al seleccionar la opción de descarga: " + e.getMessage());
         }
     }
 
-    @Step("Aceptar Cancelación en el SAT (Cuarto Mensaje)")
-    private static void CancelacionSAT4() {
-        try {
-            // Intentar encontrar el botón inmediatamente sin esperar
-            WebElement aceptarButton = driver.findElement(By.id("BTN_OK"));
+    // Método para verificar si se descargó un archivo
+    private boolean verificarDescarga() {
+        // Ruta de la carpeta de descargas
+        String rutaDescargas = System.getProperty("user.home") + "/Downloads/"; // Ajusta la ruta según tu sistema
 
-            // Verificar si el botón es visible y habilitado antes de hacer clic
-            if (aceptarButton.isDisplayed() && aceptarButton.isEnabled()) {
-                aceptarButton.click();
-                System.out.println("Se hizo clic en el botón de aceptar para la cancelación en el SAT.");
-            } else {
-                System.out.println("El botón 'tzBTN_YES' está presente pero no es clicable.");
+        // Obtener la lista de archivos en la carpeta de descargas
+        File carpetaDescargas = new File(rutaDescargas);
+        File[] archivos = carpetaDescargas.listFiles();
+
+        // Obtener la fecha y hora actual
+        long tiempoActual = System.currentTimeMillis();
+
+        // Verificar si hay un archivo nuevo descargado en los últimos 10 segundos
+        for (File archivo : archivos) {
+            if (archivo.isFile() && (tiempoActual - archivo.lastModified()) <= 10000) { // 10 segundos
+                System.out.println("Archivo descargado: " + archivo.getName());
+                return true;
             }
-
-        } catch (NoSuchElementException e) {
-            System.out.println("No se encontró el botón 'tzBTN_YES' en la página.");
-        } catch (Exception e) {
-            System.out.println(" Error inesperado al presionar el botón de aceptar en la cancelación SAT: " + e.getMessage());
-            UtilidadesAllure.manejoError(driver, e, "Error al presionar el botón en la cancelación SAT.");
         }
-    }
 
+        return false;
+    }
 }

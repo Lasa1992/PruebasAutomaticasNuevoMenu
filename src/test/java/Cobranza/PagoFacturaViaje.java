@@ -1,6 +1,7 @@
 package Cobranza;
 import Indicadores.InicioSesion;
 import Utilidades.UtilidadesAllure;
+import Indicadores.Variables;
 import io.qameta.allure.Description;
 import io.qameta.allure.Step;
 import org.junit.jupiter.api.*;
@@ -35,6 +36,11 @@ public class PagoFacturaViaje {
     private static String monedaSeleccionada;
     private static Double MontoaPAGAR;
 
+    private static final String NUMERO_CLIENTE = Variables.CLIENTE; // Número de cliente configurable
+    private static final String FOLIO_RUTA = Variables.RUTA; // Folio de la ruta configurable
+    private static final String TIPO_DOCUMENTO = Variables.DocumentoIngreso;
+
+
 
 
     @BeforeAll
@@ -67,7 +73,7 @@ public class PagoFacturaViaje {
     @RepeatedTest(2)
     @Order(3)
     @Description("Metodos para entrar al listado de viajes")
-    public void EntrarAViajes() {
+    public void EntrarAViajes() throws InterruptedException {
         BotonModuloTrafico(); // Selecciona el módulo de tráfico en la interfaz de usuario.
         BotonListadoViajes(); // Abre el listado de viajes en el módulo de tráfico.
         BotonAgregarCartaPorte(); // Agrega un nuevo 'Carta Porte' para crear un viaje.
@@ -117,7 +123,7 @@ public class PagoFacturaViaje {
         TimbrePago(); // Acepta el timbre del pago.
         EnvioCorreoPago(); // Envía un correo para el pago (Sí/No).
         AceptarPolizaPago(); // Acepta la póliza del pago.
-        deseleccionarCampoFecha(); // Deselecciona el campo de fecha.
+        deseleccionarCampoFecha2(); // Deselecciona el campo de fecha.
         SalirVentanaPago(); // Sale de la ventana de pago.
 
 
@@ -175,21 +181,16 @@ public class PagoFacturaViaje {
         }
     }
 
-    @Step("Manejar Tipo de Documento")
+    @Step("Seleccionar Tipo de Documento (variable TIPO_DOCUMENTO)")
     public void TipoDocumentoIngreso() {
         try {
-            // Espera que el combo box sea visible
-            WebElement tipoDocumentoCombo = wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("COMBO_CATTIPOSDOCUMENTOS")));
-
-            // Usar XPath para seleccionar la opción con el texto "CARTA PORTE CFDI - CP"
-            WebElement opcionIngreso = tipoDocumentoCombo.findElement(By.xpath(".//option[text()='CARTA PORTE CFDI - HMO']"));
-
-            // Hacer clic en la opción para seleccionarla
-            opcionIngreso.click();
-
+            WebElement comboTipoDoc = wait.until(ExpectedConditions.visibilityOfElementLocated(
+                    By.id("COMBO_CATTIPOSDOCUMENTOS")));
+            WebElement opcion = comboTipoDoc.findElement(
+                    By.xpath(".//option[text()='" + TIPO_DOCUMENTO + "']"));
+            opcion.click();
         } catch (Exception e) {
-            // Manejo del error utilizando la clase UtilidadesAllure
-            UtilidadesAllure.manejoError(driver, e, "No se pudo seleccionar el Tipo de Documento: CARTA PORTE CFDI - CP");
+            UtilidadesAllure.manejoError(driver, e, "No se pudo seleccionar el Tipo de Documento: " + TIPO_DOCUMENTO);
         }
     }
 
@@ -213,13 +214,14 @@ public class PagoFacturaViaje {
         try {
             WebElement NumeroCliente = wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("EDT_NUMEROCLIENTE")));
             NumeroCliente.click();
-            NumeroCliente.sendKeys("000003");
+            NumeroCliente.sendKeys(NUMERO_CLIENTE); // Usar la variable NUMERO_CLIENTE
             NumeroCliente.sendKeys(Keys.TAB);
             Thread.sleep(1000); // Reducido para optimizar
         } catch (TimeoutException | InterruptedException e) {
             UtilidadesAllure.manejoError(driver, e, "Error al asignar el cliente al viaje");
         }
     }
+
 
     @Step("Manejar Moneda")
     private void MonedaCartaPorte() {
@@ -268,13 +270,14 @@ public class PagoFacturaViaje {
         try {
             WebElement folioRutaField = wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("EDT_FOLIORUTA")));
             folioRutaField.click();
-            folioRutaField.sendKeys("000089");
+            folioRutaField.sendKeys(FOLIO_RUTA); // Usar la variable FOLIO_RUTA
             folioRutaField.sendKeys(Keys.TAB);
             Thread.sleep(1000); // Reducido para optimizar
         } catch (TimeoutException | InterruptedException e) {
             UtilidadesAllure.manejoError(driver, e, "Error al manejar el Folio Ruta");
         }
     }
+
 
     @Step("Manejar Número Económico Convoy")
     private void NumeroEconomicoConvoy() {
@@ -472,27 +475,17 @@ public class PagoFacturaViaje {
 
     private static void CodigoClienteFactura() {
         try {
-            // Espera explícita hasta que el campo de texto del número de cliente sea visible
-            WebElement clienteField = wait.until(ExpectedConditions.visibilityOfElementLocated(
-                    By.id("EDT_NUMEROCLIENTE")));
-
-            // Limpiar el campo
+            WebElement clienteField = wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("EDT_NUMEROCLIENTE")));
             clienteField.clear();
-
-            // Agregar una pequeña pausa antes de ingresar el valor para evitar que el script corra demasiado rápido
             Thread.sleep(500);
-
-            // Llenar el campo con el número de cliente 000001
-            clienteField.sendKeys("000003");
-            Thread.sleep(200); // Pausa adicional para permitir el procesamiento adecuado
-
+            clienteField.sendKeys(NUMERO_CLIENTE); // Usar la variable NUMERO_CLIENTE
+            Thread.sleep(200);
             clienteField.sendKeys(Keys.TAB);
         } catch (Exception e) {
-            // Manejo general de excepciones
             UtilidadesAllure.manejoError(driver, e, "Error al llenar el campo del número de cliente para la factura.");
-            System.out.println("Error al llenar el campo del número de cliente para la factura.");
         }
     }
+
 
     private static void MonedaAFacturar() {
         try {
@@ -759,56 +752,38 @@ public class PagoFacturaViaje {
     }
 
 
-    public void CodigoClientPago() {
+    @Step("Asignar Cliente al Pago")
+    private void CodigoClientPago() {
         try {
-            WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(3));
-            // Espera explícita hasta que el campo de texto del código de cliente esté visible
-            WebElement codigoClienteInput = wait.until(ExpectedConditions.visibilityOfElementLocated(
-                    By.id("EDT_NUMEROCLIENTE")));
-
-            // Limpiar el campo antes de ingresar un nuevo valor
-            codigoClienteInput.clear();
-
-            // Ingresar el código del cliente
-            codigoClienteInput.sendKeys("000003");
-
-            // Simular presionar la tecla TAB para validar el campo
-            //codigoClienteInput.sendKeys(Keys.TAB);
-
-            System.out.println("Código de Cliente ingresado correctamente.");
-        } catch (Exception e) {
-            // Manejo del error con captura de pantalla
-            UtilidadesAllure.manejoError(driver, e, "Error al ingresar el Código de Cliente.");
+            WebElement NumeroClientePago = wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("EDT_NUMEROCLIENTE")));
+            NumeroClientePago.click();
+            NumeroClientePago.sendKeys(NUMERO_CLIENTE);
+            NumeroClientePago.sendKeys(Keys.TAB);
+        } catch (TimeoutException e) {
+            UtilidadesAllure.manejoError(driver, e, "Error al asignar el cliente al pago");
         }
     }
 
     @Step("Seleccionar una cuenta bancaria aleatoria")
     public void SeleccionarCuentaBancariaAleatoria() {
         try {
-            // Localizar el combo box usando XPath en lugar de ID
+            // Localizar el combo box usando XPath
             WebElement comboBoxElement = wait.until(ExpectedConditions.visibilityOfElementLocated(
                     By.xpath("//select[contains(@class, 'COMBO_CATCUENTASBANCARIAS')]")));
-
             // Instanciar el objeto Select para manipular el dropdown
             Select comboBox = new Select(comboBoxElement);
-
             // Obtener todas las opciones disponibles en el combo box
             List<WebElement> opcionesDisponibles = comboBox.getOptions();
-
             // Verificar si hay opciones disponibles
             if (opcionesDisponibles.size() > 1) { // Excluye la primera opción si es un placeholder
                 // Generar un índice aleatorio para seleccionar una opción válida (excluyendo la primera)
                 Random random = new Random();
                 int indiceAleatorio = random.nextInt(opcionesDisponibles.size() - 1) + 1; // Evita seleccionar la opción 0 si es vacía
-
                 // Obtener la opción seleccionada
                 WebElement opcionSeleccionada = opcionesDisponibles.get(indiceAleatorio);
                 String textoSeleccionado = opcionSeleccionada.getText();
-
                 // Seleccionar la opción aleatoria por índice
                 comboBox.selectByIndex(indiceAleatorio);
-
-                // Confirmar la selección
                 System.out.println("Cuenta bancaria seleccionada: " + textoSeleccionado);
             } else {
                 System.out.println("No hay cuentas bancarias disponibles para seleccionar.");
@@ -872,51 +847,46 @@ public class PagoFacturaViaje {
             WebElement monedaElement = wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("tzSTC_MONEDA")));
             String monedaSeleccionada = monedaElement.getText().trim().toUpperCase();
             System.out.println("Moneda detectada: " + monedaSeleccionada);
-
             // Obtener valores de los campos relevantes
             WebElement montoPesosElement = wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("EDT_IMPORTEPESOS")));
             WebElement montoDolaresElement = wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("EDT_IMPORTEDLLS")));
             WebElement tipoCambioElement = wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("EDT_TIPOCAMBIO")));
             WebElement conversionMonedaElement = wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("tzSTC_CONVERSIONDEMONEDA")));
-
             // Obtener valores y limpiar caracteres extraños
             String valorPesos = montoPesosElement.getAttribute("value").trim().replace(",", "").replace("$", "");
             String valorDolares = montoDolaresElement.getAttribute("value").trim().replace(",", "").replace("$", "");
             String valorTipoCambio = tipoCambioElement.getAttribute("value").trim().replace(",", "").replace("$", "");
             String textoConversion = conversionMonedaElement.getText().trim();
-
-            // Extraer número de `tzSTC_CONVERSIONDEMONEDA`
+            // Extraer número de tzSTC_CONVERSIONDEMONEDA
             double conversionAutomatica = 0.0;
-            Pattern pattern = Pattern.compile("\\$([0-9]+\\.?[0-9]*)"); // Buscar "$" seguido de números
+            Pattern pattern = Pattern.compile("\\$([0-9]+\\.?[0-9]*)");
             Matcher matcher = pattern.matcher(textoConversion);
             if (matcher.find()) {
                 conversionAutomatica = Double.parseDouble(matcher.group(1));
             }
-
-            // Convertir valores a double (manejo de errores)
+            // Convertir valores a double
             double montoPesos = (!valorPesos.isEmpty() && !valorPesos.equals("0.00")) ? Double.parseDouble(valorPesos) : 0.0;
             double montoDolares = (!valorDolares.isEmpty() && !valorDolares.equals("0.00")) ? Double.parseDouble(valorDolares) : 0.0;
             double tipoCambio = (!valorTipoCambio.isEmpty() && !valorTipoCambio.equals("0.00")) ? Double.parseDouble(valorTipoCambio) : 1.0;
-
             // Lógica de cálculo basada en la moneda detectada
             if (monedaSeleccionada.equals("PESOS")) {
                 if (montoPesos > 0) {
-                    MontoaPAGAR = montoPesos; // Guardar directamente
+                    MontoaPAGAR = montoPesos;
                 } else if (montoDolares > 0) {
-                    MontoaPAGAR = montoDolares * tipoCambio; // Convertir si hay monto en dólares
+                    MontoaPAGAR = montoDolares * tipoCambio;
                 } else if (conversionAutomatica > 0) {
-                    MontoaPAGAR = conversionAutomatica * tipoCambio; // Usar conversión automática
+                    MontoaPAGAR = conversionAutomatica * tipoCambio;
                 } else {
                     System.out.println("Error: No hay monto válido en PESOS ni en DÓLARES.");
                     UtilidadesAllure.manejoError(driver, new Exception("Monto no válido"), "No hay monto ingresado.");
                 }
             } else if (monedaSeleccionada.equals("DÓLARES")) {
                 if (montoDolares > 0) {
-                    MontoaPAGAR = montoDolares; // Guardar directamente
+                    MontoaPAGAR = montoDolares;
                 } else if (montoPesos > 0) {
-                    MontoaPAGAR = montoPesos / tipoCambio; // Convertir si hay monto en pesos
+                    MontoaPAGAR = montoPesos / tipoCambio;
                 } else if (conversionAutomatica > 0) {
-                    MontoaPAGAR = conversionAutomatica; // Usar conversión automática
+                    MontoaPAGAR = conversionAutomatica;
                 } else {
                     System.out.println("Error: No hay monto válido en PESOS ni en DÓLARES.");
                     UtilidadesAllure.manejoError(driver, new Exception("Monto no válido"), "No hay monto ingresado.");
@@ -925,40 +895,25 @@ public class PagoFacturaViaje {
                 System.out.println("Error: Moneda no reconocida.");
                 UtilidadesAllure.manejoError(driver, new Exception("Moneda no válida"), "Error al validar la moneda.");
             }
-
-            // Imprimir el monto final
             System.out.println("Monto calculado: " + String.format(Locale.US, "%.2f", MontoaPAGAR));
-
         } catch (Exception e) {
             UtilidadesAllure.manejoError(driver, e, "Error al obtener la moneda y calcular el monto.");
             System.out.println("Error al validar la moneda y calcular el monto.");
         }
     }
 
-
-
     @Step("Introducir monto calculado en el campo de pago")
     public void IntroducirMontoPago() {
-        // Asegurar que la variable está inicializada con un valor válido
         if (MontoaPAGAR == 0.0) {
             System.out.println("Advertencia: El monto a pagar es inválido o cero, no se ingresará en el campo.");
             return;
         }
 
         try {
-            // Esperar hasta que el campo de importe sea visible
             WebElement campoImporte = wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("EDT_IMPORTE")));
-
-            // Limpiar cualquier valor previo en el campo
             campoImporte.clear();
-
-            // Convertir el monto a String correctamente formateado con dos decimales
             String montoFormateado = String.format(Locale.US, "%.2f", MontoaPAGAR);
-
-            // Ingresar el monto almacenado en la variable MontoaPAGAR
             campoImporte.sendKeys(montoFormateado);
-
-            // Confirmar que el monto ha sido ingresado
             System.out.println("Monto ingresado en el campo de pago: " + montoFormateado);
         } catch (NoSuchElementException | TimeoutException e) {
             UtilidadesAllure.manejoError(driver, e, "Error al ingresar el monto en el campo de pago.");
@@ -966,27 +921,19 @@ public class PagoFacturaViaje {
         }
     }
 
-
     @Step("Introducir referencia bancaria")
     public void IntroducirReferencia() {
         try {
             WebElement campoReferencia = wait.until(ExpectedConditions.visibilityOfElementLocated(By.name("EDT_REFERENCIABANCARIA")));
-
-            // Limpiar el campo antes de ingresar el valor
             campoReferencia.clear();
-
-
-            // Generar la referencia y enviarla al campo
             String referencia = "pago" + numeroViajeCliente;
             campoReferencia.sendKeys(referencia);
-
             System.out.println("Referencia ingresada: " + referencia);
         } catch (NoSuchElementException | TimeoutException e) {
             UtilidadesAllure.manejoError(driver, e, "Error al ingresar la referencia bancaria.");
             System.out.println("Error al ingresar la referencia bancaria.");
         }
     }
-
 
     @Step("Aceptar Pago o Abono")
     public void AceptarPagoAbono() {
@@ -1016,32 +963,20 @@ public class PagoFacturaViaje {
     public void EnvioCorreoPago() {
         try {
             WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
-
-            // Buscar todos los botones con "onclick"
             List<WebElement> botones = wait.until(
                     ExpectedConditions.presenceOfAllElementsLocatedBy(By.xpath("//input[@onclick]")));
-
-            // Filtrar botones que son visibles y clickeables
             List<WebElement> botonesValidos = botones.stream()
                     .filter(b -> b.isDisplayed() && b.isEnabled())
                     .collect(Collectors.toList());
-
-            // Si no hay botones disponibles, continuar sin fallar
             if (botonesValidos.isEmpty()) {
                 System.out.println("No hay botones visibles y clickeables. Continuando...");
                 return;
             }
-
-            // Imprimir información de los botones válidos
             System.out.println("Botones válidos encontrados:");
             for (WebElement boton : botonesValidos) {
-
+                // Se pueden agregar detalles adicionales si es necesario
             }
-
-            // Seleccionar aleatoriamente un botón de la lista de botones válidos
             WebElement botonSeleccionado = botonesValidos.get(new Random().nextInt(botonesValidos.size()));
-
-            // Intentar hacer clic en el botón seleccionado
             try {
                 System.out.println("Se hizo clic en el botón con ID: " + botonSeleccionado.getAttribute("id"));
                 botonSeleccionado.click();
@@ -1050,7 +985,6 @@ public class PagoFacturaViaje {
                 ((JavascriptExecutor) driver).executeScript("arguments[0].click();", botonSeleccionado);
                 System.out.println("Click ejecutado con JavaScript en el botón con ID: " + botonSeleccionado.getAttribute("id"));
             }
-
         } catch (Exception e) {
             System.err.println("Error al hacer clic en el botón. Continuando...");
             e.printStackTrace();
@@ -1060,24 +994,37 @@ public class PagoFacturaViaje {
     @Step("Aceptar Póliza Contable del Pago")
     public void AceptarPolizaPago() {
         try {
-            WebElement btnOk = wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//input[contains(@class, 'BTN_OK')]")));
-            btnOk.click();
-            System.out.println("Póliza contable del pago aceptada.");
+            // Localizar el botón de aceptar póliza usando el nuevo XPath
+            WebElement btnAceptar = driver.findElement(
+                    By.xpath("/html/body/form/table/tbody/tr/td/table/tbody/tr/td/div/table/tbody/tr[2]/td/div[1]/table/tbody/tr/td/div/div[3]/table/tbody/tr/td/table/tbody/tr[2]/td/div[1]/table/tbody/tr/td/input"));
+
+            // Hacer clic en el botón
+            btnAceptar.click();
+            System.out.println("Póliza contable aceptada.");
+
         } catch (Exception e) {
-            UtilidadesAllure.manejoError(driver, e, "Error al aceptar la póliza contable del pago.");
-            System.out.println("Error al aceptar la póliza contable del pago.");
+            System.err.println("Error al aceptar la póliza: " + e.getMessage());
+        }
+    }
+
+    public void deseleccionarCampoFecha2() {
+        try {
+            WebElement body = driver.findElement(By.tagName("body"));
+            body.click();
+            body.click();
+            System.out.println("Campo EDT_FECHA deseleccionado con un clic en el body.");
+        } catch (Exception e) {
+            System.err.println("No se pudo deseleccionar el campo EDT_FECHA: " + e.getMessage());
         }
     }
 
     @Step("Salir de la Ventana de Pago")
     public void SalirVentanaPago() {
         try {
-            WebElement btnCancelar = wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//input[contains(@class, 'BTN-BotonClasicoGris BTN_CANCELAR padding webdevclass-riche')]")));
-            btnCancelar.click();
-            System.out.println("Salida de la ventana de pago realizada correctamente.");
+            wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//input[contains(@class, 'BTN-BotonClasicoGris BTN_CANCELAR')]"))).click();
+            System.out.println("Salida de la ventana realizada.");
         } catch (Exception e) {
-            UtilidadesAllure.manejoError(driver, e, "Error al salir de la ventana de pago.");
-            System.out.println("Error al salir de la ventana de pago.");
+            System.err.println("Error al salir de la ventana: " + e.getMessage());
         }
     }
 }

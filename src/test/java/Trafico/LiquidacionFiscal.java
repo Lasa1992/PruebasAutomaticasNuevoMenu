@@ -1,6 +1,7 @@
 package Trafico;
 
 import Indicadores.InicioSesion;
+import Indicadores.Variables;
 import Utilidades.UtilidadesAllure;
 import io.qameta.allure.Description;
 import io.qameta.allure.Step;
@@ -20,6 +21,10 @@ public class LiquidacionFiscal {
     private static WebDriver driver;
     private static WebDriverWait wait;
     private static String folioLiquidacion; // Para almacenar el folio de la liquidación
+
+
+    // Variables definidas a nivel de clase (por ejemplo, en la parte superior del script)
+    private static final String VALOR_OPERADOR = Variables.Operador; // Se toma de la clase Variables
 
     @BeforeAll
     public static void setup() {
@@ -122,11 +127,12 @@ public class LiquidacionFiscal {
         }
     }
 
+
     private void Operador() {
         try {
             WebElement campoOperador = wait.until(ExpectedConditions.elementToBeClickable(By.id("EDT_NUMEROOPERADOR")));
-            campoOperador.sendKeys("024518");
-            System.out.println("Se ingresó el número de operador.");
+            campoOperador.sendKeys(VALOR_OPERADOR);
+            System.out.println("Se ingresó el operador: " + VALOR_OPERADOR);
         } catch (Exception e) {
             System.err.println("Error al ingresar el operador: " + e.getMessage());
         }

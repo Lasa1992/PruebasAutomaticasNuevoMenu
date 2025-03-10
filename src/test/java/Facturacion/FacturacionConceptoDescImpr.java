@@ -14,6 +14,7 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 import org.openqa.selenium.support.ui.Select;
 import org.openqa.selenium.support.ui.FluentWait;
 
+import java.io.File;
 import java.time.Duration;
 import java.util.List;
 import java.util.Objects;
@@ -21,7 +22,7 @@ import java.util.Random;
 import java.util.stream.Collectors;
 
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-public class FacturacionConceptoSustitucion {
+public class FacturacionConceptoDescImpr {
 
     private static WebDriver driver;
     private static WebDriverWait wait;
@@ -100,16 +101,15 @@ public class FacturacionConceptoSustitucion {
         // Bloque donde se sustituirá la factura
         BusquedaFacturaListado();
         SeleccionarFactura();
-        CancelacionFactura();
-        SeleccionaMotivoCancelacion();
-        MensajeSustitucionRequerida();
-        MonedaSustitucion();
-        AceptarFacturaSustituida();
-        BotonTimbreSustitucion();
-        CorreoDesspuesSustitucion();
-        CancelacionSAT();
-        CancelacionSAT2();
-        CancelacionSAT3();
+        BotonImprimir();
+        SeleccionarFormato();
+        Imprimir();
+        CerrarVistaPrevia();
+        MarcarImpresion();
+        BotonDescargar();
+        SeleccionarOpcionDescarga();
+        // Pausa de 3 segundos
+        try { Thread.sleep(3000); } catch (InterruptedException e) { e.printStackTrace(); }
     }
 
     @AfterAll
@@ -472,168 +472,134 @@ public class FacturacionConceptoSustitucion {
         }
     }
 
-    @Step("Cancelar Factura")
-    private static void CancelacionFactura() {
+    // ------------------ Impresión y Descarga ------------------
+
+    @Step("Hacer clic en el botón de impresión")
+    public void BotonImprimir() {
         try {
-            WebElement cancelarButton = wait.until(ExpectedConditions.elementToBeClickable(
-                    By.id("z_BTN_CANCELAR_IMG")));
-            cancelarButton.click();
-            System.out.println("Se presionó el botón de cancelar factura");
+            WebElement botonImprimir = driver.findElement(
+                    By.xpath("/html/body/form/table/tbody/tr/td/div/table/tbody/tr/td/table/tbody/tr/td/table/tbody/tr[1]/td/div[3]/div[2]/div[1]/table/tbody/tr/td/table/tbody/tr[1]/td/div/div[5]/div/table/tbody/tr/td/a/span/span"));
+            botonImprimir.click();
+            System.out.println("Se hizo clic en el botón de impresión.");
+            Thread.sleep(3000);
         } catch (Exception e) {
-            UtilidadesAllure.manejoError(driver, e, "Error al presionar el botón de cancelar factura");
-            System.out.println("Error al presionar el botón de cancelar factura");
+            System.err.println("Error al hacer clic en el botón de impresión: " + e.getMessage());
         }
     }
 
-    public void SeleccionaMotivoCancelacion() {
+    @Step("Seleccionar el último formato de impresión")
+    public void SeleccionarFormato() {
         try {
-            WebElement combo = driver.findElement(By.id("COMBO_MOTIVOCANCELACION"));
-            Select select = new Select(combo);
-            select.selectByIndex(0);
-
-            WebElement comentarioField = driver.findElement(By.id("EDT_MOTIVO"));
-            comentarioField.clear();
-            comentarioField.sendKeys("Cancelación de factura por motivo de prueba automática. " + FolioFactura);
-            System.out.println(comentarioField);
-
-            WebElement botonAceptar = driver.findElement(By.id("BTN_ACEPTAR"));
-            botonAceptar.click();
+            WebElement comboFormatos = driver.findElement(
+                    By.xpath("/html/body/form/table/tbody/tr/td/table/tbody/tr/td/div/table/tbody/tr[2]/td/div[1]/table/tbody/tr/td/table/tbody/tr[3]/td/div[1]/table/tbody/tr/td/div/div/table/tbody/tr/td/table/tbody/tr/td/ul/li[2]/table/tbody/tr/td/select"));
+            Select selectFormato = new Select(comboFormatos);
+            int ultimaOpcion = selectFormato.getOptions().size() - 1;
+            selectFormato.selectByIndex(ultimaOpcion);
+            System.out.println("Se seleccionó el último formato de impresión.");
+            Thread.sleep(3000);
         } catch (Exception e) {
-            System.out.println("Error al seleccionar la primera opción: " + e.getMessage());
+            System.err.println("Error al seleccionar el formato de impresión: " + e.getMessage());
         }
     }
 
-    @Step("Mensaje de Sustitución Requerida")
-    private static void MensajeSustitucionRequerida() {
+    @Step("Hacer clic en el botón de imprimir")
+    public void Imprimir() {
         try {
-            WebElement botonSi = wait.until(ExpectedConditions.elementToBeClickable(By.id("tzBTN_YES")));
-            botonSi.click();
-            System.out.println("Se presionó el botón de Sí para la sustitución requerida");
+            WebElement botonImprimir = driver.findElement(
+                    By.xpath("/html/body/form/table/tbody/tr/td/table/tbody/tr/td/div/table/tbody/tr[2]/td/div[1]/table/tbody/tr/td/table/tbody/tr[1]/td/div/div[2]/div/table/tbody/tr/td/input"));
+            botonImprimir.click();
+            System.out.println("Se hizo clic en el botón de imprimir.");
+            Thread.sleep(3000);
         } catch (Exception e) {
-            UtilidadesAllure.manejoError(driver, e, "Error al presionar el botón de Sí para la sustitución requerida");
-            System.out.println("Error al presionar el botón de Sí para la sustitución requerida");
+            System.err.println("Error al hacer clic en el botón de imprimir: " + e.getMessage());
         }
     }
 
-    private void MonedaSustitucion() {
+    @Step("Hacer clic en el botón para cerrar la vista previa")
+    public void CerrarVistaPrevia() {
         try {
-            Select primerComboBox = new Select(driver.findElement(By.id("COMBO_CATMONEDAS")));
-            List<String> opciones = List.of("PESOS", "DÓLARES");
-
-            Random random = new Random();
-            String opcionSeleccionada = opciones.get(random.nextInt(opciones.size()));
-
-            primerComboBox.selectByVisibleText(opcionSeleccionada);
-
-            System.out.println("La Moneda es: " + opcionSeleccionada);
-            informacionFactura.append("Moneda: ").append(opcionSeleccionada).append("\n\n");
-            Allure.addAttachment("Informacion Factura", informacionFactura.toString());
+            WebElement botonCerrar = driver.findElement(
+                    By.xpath("/html/body/form/table/tbody/tr/td/table/tbody/tr/td/div/table/tbody/tr[2]/td/div[1]/table/tbody/tr/td/table/tbody/tr[1]/td/div/div[1]/div[3]/div/table/tbody/tr/td/a/span/span"));
+            botonCerrar.click();
+            System.out.println("Se hizo clic en el botón para cerrar la vista previa.");
+            Thread.sleep(3000);
         } catch (Exception e) {
-            UtilidadesAllure.manejoError(driver, e, "Se ha producido un error: " + e.getMessage());
-            System.out.println("Se ha producido un error: " + e.getMessage());
-            e.printStackTrace();
+            System.err.println("Error al hacer clic en el botón para cerrar la vista previa: " + e.getMessage());
         }
     }
 
-    private static void AceptarFacturaSustituida() {
-        int intentos = 0;
-        boolean exito = false;
-        while (intentos < 3 && !exito) {
-            try {
-                WebElement aceptarButton = wait.until(ExpectedConditions.elementToBeClickable(By.id("BTN_ACEPTAR")));
-                aceptarButton.click();
-                System.out.println("Se presionó el botón de aceptar factura en el intento " + (intentos + 1));
-                exito = true;
-            } catch (Exception e) {
-                intentos++;
-                if (intentos == 3) {
-                    UtilidadesAllure.manejoError(driver, e, "Error al presionar el botón de aceptar factura");
-                    System.out.println("Error al presionar el botón de aceptar factura después de 3 intentos");
-                }
-            }
-        }
-    }
-
-    private void BotonTimbreSustitucion() {
-        try {
-            WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
-            wait.until(ExpectedConditions.presenceOfElementLocated(By.tagName("body")));
-
-            WebElement botonAceptar;
-            try {
-                botonAceptar = wait.until(ExpectedConditions.elementToBeClickable(By.id("BTN_YES")));
-            } catch (Exception noButton) {
-                System.out.println("El botón de aceptar Timbre no está disponible. Continuando...");
-                return;
-            }
-            botonAceptar.click();
-            System.out.println("Se presionó el botón de aceptar Timbre");
-        } catch (Exception e) {
-            System.out.println("Error al presionar el botón de aceptar Timbre. Continuando...");
-            e.printStackTrace();
-        }
-    }
-
-    @Step("Enviar Correo Después de Sustitución")
-    private static void CorreoDesspuesSustitucion() {
+    @Step("Marcar impresión eligiendo aleatoriamente entre dos opciones")
+    public void MarcarImpresion() {
         try {
             Random random = new Random();
-            boolean elegirSi = random.nextBoolean();
+            int opcion = random.nextInt(2);
 
-            WebElement boton;
-            if (elegirSi) {
-                boton = wait.until(ExpectedConditions.elementToBeClickable(By.id("tzBTN_YES")));
-                System.out.println("Se eligió la opción Sí para el envío del correo después de la sustitución.");
+            String xpathOpcion1 = "/html/body/form/table/tbody/tr/td/table/tbody/tr/td/div/table/tbody/tr[2]/td/div[1]/table/tbody/tr/td/div/div[3]/table/tbody/tr/td/table/tbody/tr[2]/td/div[2]/table/tbody/tr/td/input";
+            String xpathOpcion2 = "/html/body/form/table/tbody/tr/td/table/tbody/tr/td/div/table/tbody/tr[2]/td/div[1]/table/tbody/tr/td/div/div[3]/table/tbody/tr/td/table/tbody/tr[2]/td/div[3]/table/tbody/tr/td/input";
+
+            String xpathSeleccionado = (opcion == 0) ? xpathOpcion1 : xpathOpcion2;
+            WebElement opcionSeleccionada = driver.findElement(By.xpath(xpathSeleccionado));
+            opcionSeleccionada.click();
+            System.out.println("Se marcó la impresión con la opción: " + (opcion + 1));
+            Thread.sleep(3000);
+        } catch (Exception e) {
+            System.err.println("Error al marcar la impresión: " + e.getMessage());
+        }
+    }
+
+    @Step("Hacer clic en el botón de descargar carta porte")
+    public void BotonDescargar() {
+        try {
+            WebElement botonDescargar = driver.findElement(
+                    By.xpath("/html/body/form/table/tbody/tr/td/div/table/tbody/tr/td/table/tbody/tr/td/table/tbody/tr[1]/td/div[3]/div[2]/div[1]/table/tbody/tr/td/table/tbody/tr[2]/td/div/table/tbody/tr/td/table/tbody/tr[1]/td[2]"));
+            botonDescargar.click();
+            System.out.println("Se hizo clic en el botón de descargar carta porte.");
+            Thread.sleep(3000);
+        } catch (Exception e) {
+            System.err.println("Error al hacer clic en el botón de descargar carta porte: " + e.getMessage());
+        }
+    }
+
+    @Step("Seleccionar la opción de descarga y verificar si se descargó un archivo")
+    public void SeleccionarOpcionDescarga() {
+        try {
+            WebElement opcionDescarga = driver.findElement(
+                    By.xpath("/html/body/form/table/tbody/tr/td/div/table/tbody/tr/td/table/tbody/tr/td/table/tbody/tr[1]/td/div[3]/div[2]/div[1]/table/tbody/tr/td/table/tbody/tr[2]/td/div/table/tbody/tr/td/table/tbody/tr[2]/td/div/table/tbody/tr[1]/td[2]/a"));
+            opcionDescarga.click();
+            System.out.println("Se seleccionó la opción de descarga.");
+            Thread.sleep(5000);
+
+            if (verificarDescarga()) {
+                System.out.println("El archivo se descargó correctamente.");
             } else {
-                boton = wait.until(ExpectedConditions.elementToBeClickable(By.id("tzBTN_NO")));
-                System.out.println("Se eligió la opción No para el envío del correo después de la sustitución.");
+                System.out.println("No se encontró el archivo descargado.");
             }
-            boton.click();
+            Thread.sleep(3000);
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+            System.err.println("La pausa fue interrumpida: " + e.getMessage());
         } catch (Exception e) {
-            UtilidadesAllure.manejoError(driver, e, "Error al elegir entre Sí o No para el envío del correo después de la sustitución");
-            System.out.println("Error al elegir entre Sí o No para el envío del correo después de la sustitución");
+            System.err.println("Error al seleccionar la opción de descarga: " + e.getMessage());
         }
     }
 
-    @Step("Aceptar Cancelación en el SAT")
-    private static void CancelacionSAT() {
-        try {
-            WebElement aceptarButton = wait.until(ExpectedConditions.elementToBeClickable(By.id("tzBTN_YES")));
-            aceptarButton.click();
-            System.out.println("Se presionó el botón de aceptar para la cancelación en el SAT");
-        } catch (Exception e) {
-            UtilidadesAllure.manejoError(driver, e, "Error al presionar el botón de aceptar para la cancelación en el SAT");
-            System.out.println("Error al presionar el botón de aceptar para la cancelación en el SAT");
-        }
-    }
+    // Método auxiliar para verificar si se descargó un archivo recientemente
+    private boolean verificarDescarga() {
+        String rutaDescargas = System.getProperty("user.home") + "/Downloads/";
+        File carpetaDescargas = new File(rutaDescargas);
+        File[] archivos = carpetaDescargas.listFiles();
+        long tiempoActual = System.currentTimeMillis();
 
-    @Step("Aceptar Cancelación en el SAT (Segundo Mensaje)")
-    private static void CancelacionSAT2() {
-        try {
-            WebElement aceptarButton = wait.until(ExpectedConditions.elementToBeClickable(By.id("tzBTN_YES")));
-            aceptarButton.click();
-            System.out.println("Se presionó el botón de aceptar para la cancelación en el SAT (segundo mensaje)");
-        } catch (Exception e) {
-            UtilidadesAllure.manejoError(driver, e, "Error al presionar el botón de aceptar para la cancelación en el SAT (segundo mensaje)");
-            System.out.println("Error al presionar el botón de aceptar para la cancelación en el SAT (segundo mensaje)");
+        if (archivos == null) {
+            return false;
         }
-    }
 
-    @Step("Aceptar Cancelación en el SAT (Tercer Mensaje)")
-    private static void CancelacionSAT3() {
-        try {
-            WebElement aceptarButton = driver.findElement(By.id("BTN_OK"));
-            if (aceptarButton.isDisplayed() && aceptarButton.isEnabled()) {
-                aceptarButton.click();
-                System.out.println("Se hizo clic en el botón de aceptar para la cancelación en el SAT.");
-            } else {
-                System.out.println("El botón 'tzBTN_YES' está presente pero no es clicable.");
+        for (File archivo : archivos) {
+            if (archivo.isFile() && (tiempoActual - archivo.lastModified()) <= 10000) {
+                System.out.println("Archivo descargado: " + archivo.getName());
+                return true;
             }
-        } catch (NoSuchElementException e) {
-            System.out.println("No se encontró el botón 'tzBTN_YES' en la página.");
-        } catch (Exception e) {
-            System.out.println("Error inesperado al presionar el botón de aceptar en la cancelación SAT: " + e.getMessage());
-            UtilidadesAllure.manejoError(driver, e, "Error al presionar el botón en la cancelación SAT.");
         }
+        return false;
     }
 }

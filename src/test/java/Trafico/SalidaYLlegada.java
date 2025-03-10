@@ -1,7 +1,6 @@
 package Trafico;
 
 import Indicadores.InicioSesion;
-import Indicadores.Variables;
 import Utilidades.UtilidadesAllure;
 import io.qameta.allure.Allure;
 import io.qameta.allure.Description;
@@ -18,7 +17,7 @@ import java.util.List;
 import java.util.Random;
 
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-public class CreacionViajeTimbreIngreso {
+public class SalidaYLlegada {
 
     private static WebDriver driver;
     private static WebDriverWait wait;
@@ -26,14 +25,13 @@ public class CreacionViajeTimbreIngreso {
     // =========================================================================
     // VARIABLES CONFIGURABLES
     // =========================================================================
-    private static final String NUMERO_CLIENTE   = Variables.CLIENTE;  // Número de cliente
-    private static final String NUMERO_RUTA      = Variables.RUTA;  // Número de ruta
-    private static final String TIPO_DOCUMENTO   = Variables.DocumentoIngreso;
+    private static final String NUMERO_CLIENTE = "000003"; // Número de cliente
+    private static final String NUMERO_RUTA = "000089";    // Número de ruta
+    private static final String TIPO_DOCUMENTO = "CARTA PORTE CFDI - TR";
     // =========================================================================
 
-    // Variables para almacenar valores reutilizables
-    private static String numeroViajeCliente;
-    private static String monedaSeleccionada;
+    // Variable para almacenar el folio del viaje
+    private static String folioGuardado;
 
     @BeforeAll
     public static void setup() {
@@ -69,12 +67,13 @@ public class CreacionViajeTimbreIngreso {
         BotonListadoViajes();
     }
 
-    @Test
+    @RepeatedTest(2)
     @Order(4)
-    @Description("Se ingresa al listado de Viajes y se crea una Carta Porte, se factura y timbra el viaje.")
+    @Description("Crear y timbrar el viaje con Carta Porte CFDI - TR")
     public void testCrearViaje() {
         BotonAgregarCartaPorte();
-        TipoDocumentoIngreso();
+        TipoDocumentoTraslado();
+        GuardarFolio();
         NumeroViajeCliente();
         CodigoCliente();
         MonedaCartaPorte();
@@ -85,8 +84,18 @@ public class CreacionViajeTimbreIngreso {
         ImportacionMaterial();
         BotonAceptarImportacion();
         BotonAceptarViaje();
+        AceptarMensajeTimbre();
         EnvioCorreo();
         BotonImpresion();
+        SelecionarCartaporteListado();
+        Darsalida();
+        Aceptarsalida();
+        EnvioCorreoseguimiento();
+        Darllegada();
+        Aceptarllegada();
+        EnvioCorreoseguimientollegada();
+
+
     }
 
     @AfterAll
@@ -103,10 +112,14 @@ public class CreacionViajeTimbreIngreso {
         }
     }
 
+    // =====================================================
+    // MÉTODOS DE FLUJO
+    // =====================================================
+
     private static void BotonModuloTrafico() {
         try {
-            WebElement ModuloBotonTrafico = wait.until(ExpectedConditions
-                    .elementToBeClickable(By.xpath("//img[contains(@src, '/GMTERPV8_WEB/Imagenes/TRAFICO1.jpg')]")));
+            WebElement ModuloBotonTrafico = wait.until(ExpectedConditions.elementToBeClickable(
+                    By.xpath("//img[contains(@src, '/GMTERPV8_WEB/Imagenes/TRAFICO1.jpg')]")));
             ModuloBotonTrafico.click();
         } catch (Exception e) {
             UtilidadesAllure.manejoError(driver, e, "Botón Módulo Tráfico no funciona.");
@@ -125,39 +138,53 @@ public class CreacionViajeTimbreIngreso {
 
     private static void BotonAgregarCartaPorte() {
         try {
-            WebElement additionalButton = wait.until(ExpectedConditions.elementToBeClickable(By.id("BTN_AGREGAR")));
+            WebElement additionalButton = wait.until(ExpectedConditions.elementToBeClickable(
+                    By.id("BTN_AGREGAR")));
             additionalButton.click();
         } catch (TimeoutException e) {
             UtilidadesAllure.manejoError(driver, e, "Botón Agregar Carta Porte no funciona.");
         }
     }
 
-    @Step("Manejar Tipo de Documento (variable TIPO_DOCUMENTO)")
-    public void TipoDocumentoIngreso() {
+    @Step("Seleccionar Tipo de Documento (variable TIPO_DOCUMENTO)")
+    public void TipoDocumentoTraslado() {
         try {
             WebElement tipoDocumentoCombo = wait.until(ExpectedConditions.visibilityOfElementLocated(
                     By.id("COMBO_CATTIPOSDOCUMENTOS")));
-            Select comboBox = new Select(tipoDocumentoCombo);
-
-            // Se usa la variable TIPO_DOCUMENTO
-            comboBox.selectByVisibleText(TIPO_DOCUMENTO);
+            WebElement opcionTraslado = tipoDocumentoCombo.findElement(
+                    By.xpath(".//option[text()='" + TIPO_DOCUMENTO + "']"));
+            opcionTraslado.click();
         } catch (Exception e) {
             UtilidadesAllure.manejoError(driver, e,
                     "No se pudo seleccionar el Tipo de Documento: " + TIPO_DOCUMENTO);
         }
     }
 
-    @Step("Manejar Número de Viaje")
+    @Step("Guardar Folio del Viaje")
+    private void GuardarFolio() {
+        try {
+            WebElement folioField = wait.until(ExpectedConditions.visibilityOfElementLocated(
+                    By.id("EDT_FOLIO")));
+            folioGuardado = folioField.getAttribute("value"); // Guardar el valor del folio
+            System.out.println("El folio guardado es: " + folioGuardado);
+        } catch (NoSuchElementException | TimeoutException e) {
+            UtilidadesAllure.manejoError(driver, e, "Error al guardar el folio del viaje");
+            System.out.println("Error al guardar el folio del viaje: " + e.getMessage());
+        }
+    }
+
+    @Step("Asignar Número de Viaje (concatena 'PA' al folio)")
     private void NumeroViajeCliente() {
         try {
-            WebElement folioField = wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("EDT_FOLIO")));
+            WebElement folioField = wait.until(ExpectedConditions.visibilityOfElementLocated(
+                    By.id("EDT_FOLIO")));
             String folioValue = folioField.getAttribute("value");
 
             WebElement numeroViajeField = wait.until(ExpectedConditions.visibilityOfElementLocated(
                     By.id("EDT_NOVIAJECLIENTE")));
-            numeroViajeCliente = "PAING" + folioValue;
+            String numeroViaje = "PA" + folioValue;
             numeroViajeField.clear();
-            numeroViajeField.sendKeys(numeroViajeCliente);
+            numeroViajeField.sendKeys(numeroViaje);
         } catch (TimeoutException e) {
             UtilidadesAllure.manejoError(driver, e, "Error al manejar el Número de Viaje");
         }
@@ -166,8 +193,8 @@ public class CreacionViajeTimbreIngreso {
     @Step("Asignar Cliente al Viaje (variable NUMERO_CLIENTE)")
     private void CodigoCliente() {
         try {
-            WebElement NumeroClienteField = wait.until(ExpectedConditions
-                    .visibilityOfElementLocated(By.id("EDT_NUMEROCLIENTE")));
+            WebElement NumeroClienteField = wait.until(ExpectedConditions.visibilityOfElementLocated(
+                    By.id("EDT_NUMEROCLIENTE")));
             NumeroClienteField.click();
             NumeroClienteField.sendKeys(NUMERO_CLIENTE);
             NumeroClienteField.sendKeys(Keys.TAB);
@@ -177,7 +204,7 @@ public class CreacionViajeTimbreIngreso {
         }
     }
 
-    @Step("Manejar Moneda (PESOS / DÓLARES)")
+    @Step("Seleccionar Moneda (PESOS / DÓLARES)")
     private void MonedaCartaPorte() {
         try {
             WebElement tipoDocumentoCombo = wait.until(ExpectedConditions.visibilityOfElementLocated(
@@ -185,12 +212,12 @@ public class CreacionViajeTimbreIngreso {
             Select comboBox = new Select(tipoDocumentoCombo);
 
             List<WebElement> opcionesDisponibles = comboBox.getOptions();
+            // Lista de monedas que se consideran válidas:
             List<String> opcionesValidas = List.of("PESOS", "DÓLARES");
             List<WebElement> opcionesValidasDisponibles = new ArrayList<>();
 
             for (WebElement opcion : opcionesDisponibles) {
-                String textoOpcion = opcion.getText().trim().toUpperCase();
-                if (opcionesValidas.contains(textoOpcion)) {
+                if (opcionesValidas.contains(opcion.getText().trim().toUpperCase())) {
                     opcionesValidasDisponibles.add(opcion);
                 }
             }
@@ -200,8 +227,7 @@ public class CreacionViajeTimbreIngreso {
                 WebElement opcionAleatoria = opcionesValidasDisponibles
                         .get(random.nextInt(opcionesValidasDisponibles.size()));
                 comboBox.selectByVisibleText(opcionAleatoria.getText());
-                monedaSeleccionada = opcionAleatoria.getText();
-                System.out.println("Se seleccionó la opción: " + monedaSeleccionada);
+                System.out.println("Se seleccionó la opción: " + opcionAleatoria.getText());
             }
         } catch (Exception e) {
             UtilidadesAllure.manejoError(driver, e, "Error al manejar la Moneda");
@@ -231,7 +257,8 @@ public class CreacionViajeTimbreIngreso {
             numeroEconomicoConvoyField.sendKeys(Keys.ENTER);
             Thread.sleep(1000);
         } catch (TimeoutException | InterruptedException e) {
-            UtilidadesAllure.manejoError(driver, e, "Error al manejar el Número Económico del Convoy");
+            UtilidadesAllure.manejoError(driver, e,
+                    "Error al manejar el Número Económico del Convoy");
         }
     }
 
@@ -244,18 +271,20 @@ public class CreacionViajeTimbreIngreso {
             linkPestana.click();
             Thread.sleep(1000);
         } catch (Exception e) {
-            UtilidadesAllure.manejoError(driver, e, "Error al seleccionar la pestaña de Materiales Carga");
+            UtilidadesAllure.manejoError(driver, e,
+                    "Error al seleccionar la pestaña de Materiales Carga");
         }
     }
 
-    @Step("Botón Importar Materiales")
+    @Step("Manejar Botón Importar Materiales")
     private void BotonImportarMaterial() {
         try {
             WebElement botonImportar = wait.until(ExpectedConditions.elementToBeClickable(
                     By.id("BTN_IMPORTARMATERIALES")));
             botonImportar.click();
         } catch (Exception e) {
-            UtilidadesAllure.manejoError(driver, e, "Error al hacer clic en el botón Importar Materiales");
+            UtilidadesAllure.manejoError(driver, e,
+                    "Error al hacer clic en el botón Importar Materiales");
         }
     }
 
@@ -265,7 +294,7 @@ public class CreacionViajeTimbreIngreso {
             WebElement inputArchivo = wait.until(ExpectedConditions.visibilityOfElementLocated(
                     By.id("EDT_IMPORTARMATERIALES_ARCHIVO")));
 
-            // Ajusta la ruta a tu archivo local
+            // Ajusta la ruta del archivo a tu escenario
             String rutaArchivo = "C:\\Users\\UsuarioY\\Desktop\\Pruebas Automaticas\\XLSXPruebas\\ImportarMaterialesPA.xlsx";
             File archivo = new File(rutaArchivo);
             if (!archivo.exists()) {
@@ -280,7 +309,6 @@ public class CreacionViajeTimbreIngreso {
 
             Thread.sleep(3000);
 
-            // Verificar si la importación fue exitosa
             try {
                 WebElement iconoExito = wait.until(ExpectedConditions.visibilityOfElementLocated(
                         By.id("IMG_ICONO_EXITO")));
@@ -296,7 +324,8 @@ public class CreacionViajeTimbreIngreso {
                 }
             }
         } catch (Exception e) {
-            UtilidadesAllure.manejoError(driver, e, "Error al importar el archivo de materiales");
+            UtilidadesAllure.manejoError(driver, e,
+                    "Error al importar el archivo de materiales");
         }
     }
 
@@ -324,7 +353,19 @@ public class CreacionViajeTimbreIngreso {
         }
     }
 
-    @Step("Enviar Por Correo (Sí/No)")
+    @Step("Aceptar Mensaje de Timbre (BTN_YES)")
+    private void AceptarMensajeTimbre() {
+        try {
+            WebElement botonAceptarTimbre = wait.until(ExpectedConditions.elementToBeClickable(
+                    By.id("BTN_YES")));
+            botonAceptarTimbre.click();
+        } catch (Exception e) {
+            UtilidadesAllure.manejoError(driver, e,
+                    "Error al hacer clic en el botón Sí para aceptar el mensaje de timbre");
+        }
+    }
+
+    @Step("Enviar Correo de Timbre (Sí/No)")
     private void EnvioCorreo() {
         try {
             Random random = new Random();
@@ -356,4 +397,135 @@ public class CreacionViajeTimbreIngreso {
                     "Error al hacer clic en el botón Regresar para impresión");
         }
     }
+
+
+    @Step("Seleccionar Carta Porte Listado")
+    private void SelecionarCartaporteListado() {
+        try {
+            // Buscar el campo de búsqueda y llenar con el valor del folio guardado
+            WebElement campoBusqueda = wait.until(ExpectedConditions.visibilityOfElementLocated(
+                    By.cssSelector("#TABLE_ProViajes_filter input[type='search']")));
+            campoBusqueda.clear();
+            campoBusqueda.sendKeys(folioGuardado);
+            System.out.println("Folio ingresado en la búsqueda: " + folioGuardado);
+
+            // Esperar un momento para que la tabla se filtre
+            Thread.sleep(2000);
+
+            // Buscar en la tabla el elemento que contenga el folio
+            WebElement tablaViajes = driver.findElement(By.id("TABLE_ProViajes"));
+            List<WebElement> filas = tablaViajes.findElements(By.tagName("tr"));
+
+            // Iterar por las filas para encontrar el folio y hacer clic
+            for (WebElement fila : filas) {
+                if (fila.getText().contains(folioGuardado)) {
+                    fila.click();
+                    System.out.println("Se seleccionó el folio en la tabla: " + folioGuardado);
+                    break;
+                }
+            }
+
+        } catch (NoSuchElementException | TimeoutException | InterruptedException e) {
+            UtilidadesAllure.manejoError(driver, e, "Error al seleccionar la Carta Porte del listado");
+            System.out.println("Error al seleccionar la Carta Porte del listado: " + e.getMessage());
+        }
+    }
+
+    public void Darsalida() {
+        try {
+            // Localiza el <a> que contiene la palabra "Salida"
+            WebElement linkSalida = wait.until(
+                    ExpectedConditions.elementToBeClickable(
+                            By.xpath("//td[contains(@class,'COL_SALIDA1')]//a[contains(text(),'Salida')]")
+                    )
+            );
+            linkSalida.click();
+        } catch (Exception e) {
+            // Manejo de error (usando tu clase UtilidadesAllure o un simple e.printStackTrace())
+            e.printStackTrace();
+        }
+    }
+
+    public void Aceptarsalida() {
+        try {
+            // Localiza el primer botón con id = BTN_ACEPTAR
+            // asumiendo que es el primero en el DOM ( [1] ) en ese momento
+            WebElement btnAceptarSalida = wait.until(
+                    ExpectedConditions.elementToBeClickable(
+                            By.xpath("(//input[@id='BTN_ACEPTAR'])[1]")
+                    )
+            );
+            btnAceptarSalida.click();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+    @Step("Enviar Correo de Timbre (Sí/No)")
+    private void EnvioCorreoseguimiento() {
+        try {
+            Random random = new Random();
+            boolean elegirSi = random.nextBoolean();
+
+            WebElement boton;
+            if (elegirSi) {
+                boton = wait.until(ExpectedConditions.elementToBeClickable(By.id("BTN_YES")));
+                System.out.println("Se eligió la opción Sí para el envío del correo.");
+            } else {
+                boton = wait.until(ExpectedConditions.elementToBeClickable(By.id("BTN_NO")));
+                System.out.println("Se eligió la opción No para el envío del correo.");
+            }
+            boton.click();
+        } catch (Exception e) {
+            UtilidadesAllure.manejoError(driver, e,
+                    "Error al elegir entre Sí o No para el envío del correo de timbre");
+        }
+    }
+
+    public void Darllegada() {
+        try {
+            // Localiza el <a> que contiene la palabra "Llegada"
+            WebElement linkLlegada = wait.until(
+                    ExpectedConditions.elementToBeClickable(
+                            By.xpath("//td[contains(@class,'COL_LLEGADA1')]//a[contains(text(),'Llegada')]")
+                    )
+            );
+            linkLlegada.click();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void Aceptarllegada() {
+        try {
+            WebElement btnAceptarLlegada = wait.until(ExpectedConditions.elementToBeClickable(
+                    By.id("BTN_ACEPTAR")
+            ));
+            btnAceptarLlegada.click();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+
+    @Step("Enviar Correo de Timbre (Sí/No)")
+    private void EnvioCorreoseguimientollegada() {
+        try {
+            Random random = new Random();
+            boolean elegirSi = random.nextBoolean();
+
+            WebElement boton;
+            if (elegirSi) {
+                boton = wait.until(ExpectedConditions.elementToBeClickable(By.id("BTN_YES")));
+                System.out.println("Se eligió la opción Sí para el envío del correo.");
+            } else {
+                boton = wait.until(ExpectedConditions.elementToBeClickable(By.id("BTN_NO")));
+                System.out.println("Se eligió la opción No para el envío del correo.");
+            }
+            boton.click();
+        } catch (Exception e) {
+            UtilidadesAllure.manejoError(driver, e,
+                    "Error al elegir entre Sí o No para el envío del correo de timbre");
+        }
+    }
+
 }

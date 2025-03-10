@@ -31,7 +31,7 @@ public class InicioSesion {
         WebElement inputUsuario = driver.findElement(By.id("EDT_USUARIO"));
         WebElement inputContrasena = driver.findElement(By.id("EDT_CONTRASENA"));
 
-       inputEmpresa.sendKeys("TST050505000");
+       inputEmpresa.sendKeys("IIA040805DZ4");
        inputUsuario.sendKeys("UsuarioPA");
        inputContrasena.sendKeys("Luis.0000");
 

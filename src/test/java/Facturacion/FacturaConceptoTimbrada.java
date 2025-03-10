@@ -1,6 +1,7 @@
 package Facturacion;
 import Indicadores.InicioSesion;
 import Utilidades.UtilidadesAllure;
+import Indicadores.Variables;
 import io.qameta.allure.Allure;
 import io.qameta.allure.Description;
 import io.qameta.allure.Step;
@@ -29,6 +30,10 @@ public class FacturaConceptoTimbrada {
     static StringBuilder informacionFactura = new StringBuilder();
     static StringBuilder informacionConcepto = new StringBuilder();
     static StringBuilder informacionTimbrado = new StringBuilder();
+
+
+    private static final String NUMERO_CLIENTE = Variables.CLIENTE; // Cambia el número aquí según sea necesario
+
 
 
     @BeforeAll
@@ -74,6 +79,7 @@ public class FacturaConceptoTimbrada {
         informacionFactura.setLength(0);
         informacionConcepto.setLength(0);
         informacionTimbrado.setLength(0);
+
 
         // Comienza el flujo de facturación
         BotonAgregarListado();
@@ -133,7 +139,7 @@ public class FacturaConceptoTimbrada {
         }
     }
 
-    @Step("Asignar El cliente que se le va Facturar")
+    @Step("Asignar El cliente que se le va a Facturar")
     private static void AsignarCliente() {
         FluentWait<WebDriver> fluentWait = new FluentWait<>(driver)
                 .withTimeout(Duration.ofSeconds(10))
@@ -143,8 +149,8 @@ public class FacturaConceptoTimbrada {
         try {
             WebElement numeroCliente = wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("EDT_NUMEROCLIENTE")));
             numeroCliente.click();
-            numeroCliente.sendKeys("000003");
-            informacionFactura.append("Numero Cliente: 000003 \n");
+            numeroCliente.sendKeys(NUMERO_CLIENTE); // Usa la variable aquí
+            informacionFactura.append("Numero Cliente: ").append(NUMERO_CLIENTE).append("\n");
             numeroCliente.sendKeys(Keys.TAB);
             fluentWait.until(driver -> {
                 WebElement field = driver.findElement(By.id("EDT_NUMEROCLIENTE"));
@@ -153,13 +159,12 @@ public class FacturaConceptoTimbrada {
 
             System.out.println("El campo de cliente tiene información.");
         } catch (Exception e) {
-            //Captura el mensaje de error, toma una captura de pantalla y lo despliega en el reporte de Allure.
             UtilidadesAllure.manejoError(driver, e, "Error al realizar la acción en el campo 'Número de Cliente'.");
-
             System.out.println("Error al realizar la acción en el campo 'Número de Cliente'.");
             e.printStackTrace();
         }
     }
+
 
 
     private static void MonedaFactura() {
