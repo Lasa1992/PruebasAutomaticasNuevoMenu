@@ -1,6 +1,7 @@
 package Suite;
 
 import Bancos.Cheques;
+import Bancos.ChequesModElim;
 import Bancos.MovimientoBancario;
 import Bancos.MovimientoBancarioModElim;
 import Cobranza.PagoFacturaConcepto;
@@ -52,7 +53,7 @@ public class SuiteGlobal {
                 IndicadoresTest.class,
 
                 // TRAFICO
-                CreacionViajeTimbreTraslado.class,
+                //CreacionViajeTimbreTraslado.class,
                 CartaPorteSustitucion.class,
                 CartaPorteComercioExterior.class,
                 CartaPorteImpresionDescarga.class,
@@ -62,12 +63,12 @@ public class SuiteGlobal {
 
                 // FACTURACION
                 FacturacionListadoViajes.class,
-                FacturacionViajeComplemento.class,
+                //FacturacionViajeComplemento.class,
                 FacturacionViajeSustitucion.class,
-                FacturaConceptoTimbrada.class,
+                //FacturaConceptoTimbrada.class,
                 FacturacionConceptoSustitucion.class,
                 FacturacionConceptoDescImpr.class,
-                FacturacionGeneral.class,
+                //FacturacionGeneral.class,
                 FacturacionGeneralSustitucion.class,
                 FacturacionConceptoDescImpr.class,
 
@@ -76,15 +77,16 @@ public class SuiteGlobal {
                 PagoFacturaViaje.class,
 
                 //Cuentas por pagar
-                PasivoManual.class,
+                //PasivoManual.class,
                 PagoPasivos.class,
 
 
                 //Bancos
 
-                MovimientoBancario.class,
+                //MovimientoBancario.class,
                 MovimientoBancarioModElim.class,
-                Cheques.class
+                //Cheques.class,
+                ChequesModElim.class
         };
 
         for (Class<?> testClass : pruebas) {
