@@ -62,7 +62,7 @@ public class ParametrosGenerales {
 
     private static void handleImageButton() {
         try {
-            WebElement imageButton = wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//img[contains(@src, '/GMTERPV8_WEB/Imagenes/CONFIGURACION1.jpg')]")));
+            WebElement imageButton = wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//img[contains(@src, '/GMTERPV8_WEB/Imagenes/CONFIGURACION1')]")));
             imageButton.click();
         } catch (Exception e) {
             UtilidadesAllure.manejoError(driver, e, "Botón Módulo Facturación no funciona.");
@@ -71,7 +71,7 @@ public class ParametrosGenerales {
     }
     private static void handleSubMenuButton() {
         try {
-            WebElement subMenuButton = wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//img[contains(@src, '/GMTERPV8_WEB/Imagenes/CONFIGURACION/PARAMETROSGENERALES1.jpg')]")));
+            WebElement subMenuButton = wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//img[contains(@src, '/GMTERPV8_WEB/Imagenes/CONFIGURACION/PARAMETROSGENERALES1')]")));
             subMenuButton.click();
         } catch (Exception e) {
             //Captura el mensaje de error, toma una captura de pantalla y lo despliega en el reporte de Allure.
