@@ -73,7 +73,7 @@ public class PagoPasivos {
     public void PagoPasivo() {
 
         AgregarPasivo();
-        QuitarCampoFecha();
+        //QuitarCampoFecha();
         CodigoProveedor();
         NoDocumento();
         CopiarFolio();
@@ -181,7 +181,7 @@ public class PagoPasivos {
 
     public void QuitarCampoFecha() {
         try {
-            WebElement body = driver.findElement(By.tagName("body")); // Clic en el fondo de la página
+            WebElement body = driver.findElement(By.id("tzSTC_TITULO1")); // Clic en el fondo de la página
             body.click();
             body.click();
             System.out.println("Campo EDT_FECHA deseleccionado con un clic en el body.");
@@ -195,7 +195,8 @@ public class PagoPasivos {
     public void CodigoProveedor() {
         try {
             WebElement inputCodigo = wait.until(ExpectedConditions.presenceOfElementLocated(By.xpath(
-                    "/html/body/form/table/tbody/tr/td/table/tbody/tr/td/div/table/tbody/tr[2]/td/div[1]/table/tbody/tr/td/table/tbody/tr[2]/td/div[12]/table/tbody/tr/td/table/tbody/tr[2]/td/div[18]/table/tbody/tr/td/ul/li[2]/input")));
+                    "/html/body/form/table/tbody/tr/td/table/tbody/tr/td/div/table/tbody/tr[2]/td/div[1]/table/tbody/tr/td/table/tbody/tr[2]/td/div[12]/table/tbody/tr/td/table/tbody/tr[2]/td/div[19]/table/tbody/tr/td/ul/li[2]/input"
+            )));
             inputCodigo.clear();
             inputCodigo.sendKeys(CODIGO_PROVEEDOR);
             System.out.println("Se ingresó el número " + CODIGO_PROVEEDOR + " en el campo Código de Proveedor.");
