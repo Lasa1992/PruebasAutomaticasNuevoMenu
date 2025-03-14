@@ -71,6 +71,8 @@ public class CartaPorteImpresionDescarga {
     @Order(4)
     @Description("Se ingresa al listado de Viajes y se crea una Carta Porte, se factura y timbra el viaje.")
     public void testCrearViaje() {
+
+
         // Ejecuta el flujo de pruebas repetidamente para crear un viaje
         BotonAgregarCartaPorte(); // Maneja el botón adicional
         TipoDocumentoTraslado(); // Maneja el tipo de documento
@@ -85,6 +87,7 @@ public class CartaPorteImpresionDescarga {
         ImportacionMaterial(); // MMetodo que importa Materiales desde un excel
         BotonAceptarImportacion(); // Aceptamos la ventana dell importacion
         BotonAceptarViaje(); // Boton Aceptar Viaje
+        BotonConcurrencia(); // Manejamos el mensaje de concurrencia
         AceptarMensajeTimbre(); // Timbramos el viaje
         EnvioCorreo(); // Envio de Correo Aleatorio
         BotonImpresion(); // Manejamos Mensaje de iMPRECION
@@ -94,19 +97,8 @@ public class CartaPorteImpresionDescarga {
         Imprimir(); // Imprimir
         CerrarVistaPrevia(); // Cerrar Vista Previa
         MarcarImpresion(); // Marcar Impresion
-
         BotonDescargar(); // Descargar Carta Porte
         SeleccionarOpcionDescarga(); // Seleccionar Opcion de Descarga
-
-
-
-
-
-
-
-
-
-
 
     }
 
@@ -378,6 +370,31 @@ public class CartaPorteImpresionDescarga {
             UtilidadesAllure.manejoError(driver, e, "Error al hacer clic en el botón Aceptar para confirmar el viaje");
         }
     }
+
+    @Step("Aceptar mensaje de concurrencia si aparece")
+    private void BotonConcurrencia() {
+        try {
+            // Esperar unos segundos para ver si aparece el mensaje de concurrencia
+            WebElement botonAceptarConcurrencia = wait.until(ExpectedConditions.elementToBeClickable(
+                    By.xpath("/html/body/form/table/tbody/tr/td/table/tbody/tr/td/div/table/tbody/tr[2]/td/div[1]/table/tbody/tr/td/div/div[3]/table/tbody/tr/td/table/tbody/tr[2]/td/div[1]/table/tbody/tr/td/input")));
+
+            // Si el botón está disponible, hacer clic en él
+            botonAceptarConcurrencia.click();
+            System.out.println("Mensaje de concurrencia detectado y aceptado.");
+
+            // Llamar a los métodos que deben repetirse
+            GuardarFolio();
+            NumeroViajeCliente();
+            BotonAceptarViaje();
+        } catch (TimeoutException e) {
+            // Si no aparece el mensaje, continuar normalmente
+            System.out.println("No se detectó mensaje de concurrencia.");
+        } catch (Exception e) {
+            UtilidadesAllure.manejoError(driver, e, "Error al manejar el mensaje de concurrencia");
+        }
+    }
+
+
 
     @Step("Aceptar Mensaje Timbre")
     private void AceptarMensajeTimbre() {

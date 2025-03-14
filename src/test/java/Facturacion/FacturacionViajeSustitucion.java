@@ -83,6 +83,7 @@ public class FacturacionViajeSustitucion {
         ImportacionMaterial();
         BotonAceptarImportacion();
         BotonAceptarViaje();
+        BotonConcurrencia();
         EnvioCorreo();
         BotonImpresion();
 
@@ -99,6 +100,7 @@ public class FacturacionViajeSustitucion {
         CampoBusqueda();
         SelecionaFactura();
         AceptarFactura();
+        BotonConcurrenciaFactura();
         AceptarTimbre();
         EnvioCorreoFactura();
         AceptarPoliza();
@@ -115,6 +117,7 @@ public class FacturacionViajeSustitucion {
         FiltroMonedaSustitucion();
         SeleccionFacturaSutitucion();
         AceptarFacturaSustituida();
+        BotonConcurrenciaFacturaSustituida();
         CorreoDesspuesSustitucion();
         CancelacionSAT();
         CancelacionSAT2();
@@ -363,6 +366,28 @@ public class FacturacionViajeSustitucion {
         }
     }
 
+    @Step("Aceptar mensaje de concurrencia si aparece")
+    private void BotonConcurrencia() {
+        try {
+            // Esperar unos segundos para ver si aparece el mensaje de concurrencia
+            WebElement botonAceptarConcurrencia = wait.until(ExpectedConditions.elementToBeClickable(
+                    By.xpath("/html/body/form/table/tbody/tr/td/table/tbody/tr/td/div/table/tbody/tr[2]/td/div[1]/table/tbody/tr/td/div/div[3]/table/tbody/tr/td/table/tbody/tr[2]/td/div[1]/table/tbody/tr/td/input")));
+
+            // Si el botón está disponible, hacer clic en él
+            botonAceptarConcurrencia.click();
+            System.out.println("Mensaje de concurrencia detectado y aceptado.");
+
+            // Llamar a los métodos que deben repetirse
+            NumeroViajeCliente();
+            BotonAceptarViaje();
+        } catch (TimeoutException e) {
+            // Si no aparece el mensaje, continuar normalmente
+            System.out.println("No se detectó mensaje de concurrencia.");
+        } catch (Exception e) {
+            UtilidadesAllure.manejoError(driver, e, "Error al manejar el mensaje de concurrencia");
+        }
+    }
+
     @Step("Enviar Por Correo (Sí/No)")
     private void EnvioCorreo() {
         try {
@@ -565,6 +590,31 @@ public class FacturacionViajeSustitucion {
             }
         }
     }
+
+    @Step("Aceptar mensaje de concurrencia si aparece")
+    private void BotonConcurrenciaFactura() {
+        try {
+            // Esperar unos segundos para ver si aparece el mensaje de concurrencia
+            WebElement botonAceptarConcurrencia = wait.until(ExpectedConditions.elementToBeClickable(
+                    By.xpath("/html/body/form/table/tbody/tr/td/table/tbody/tr/td/div/table/tbody/tr[2]/td/div[1]/table/tbody/tr/td/div/div[3]/table/tbody/tr/td/table/tbody/tr[2]/td/div[1]/table/tbody/tr/td/input")));
+
+            // Si el botón está disponible, hacer clic en él
+            botonAceptarConcurrencia.click();
+            System.out.println("Mensaje de concurrencia detectado y aceptado.");
+
+            // Llamar a los métodos que deben repetirse
+
+            NumeroFactura();
+            AceptarFactura();
+        } catch (TimeoutException e) {
+            // Si no aparece el mensaje, continuar normalmente
+            System.out.println("No se detectó mensaje de concurrencia.");
+        } catch (Exception e) {
+            UtilidadesAllure.manejoError(driver, e, "Error al manejar el mensaje de concurrencia");
+        }
+    }
+
+
 
     private static void AceptarTimbre() {
         try {
@@ -780,6 +830,28 @@ public class FacturacionViajeSustitucion {
                     UtilidadesAllure.manejoError(driver, e, "Error al presionar el botón de aceptar factura (sustitución)");
                 }
             }
+        }
+    }
+
+    @Step("Aceptar mensaje de concurrencia si aparece")
+    private void BotonConcurrenciaFacturaSustituida() {
+        try {
+            // Esperar unos segundos para ver si aparece el mensaje de concurrencia
+            WebElement botonAceptarConcurrencia = wait.until(ExpectedConditions.elementToBeClickable(
+                    By.xpath("/html/body/form/table/tbody/tr/td/table/tbody/tr/td/div/table/tbody/tr[2]/td/div[1]/table/tbody/tr/td/div/div[3]/table/tbody/tr/td/table/tbody/tr[2]/td/div[1]/table/tbody/tr/td/input")));
+
+            // Si el botón está disponible, hacer clic en él
+            botonAceptarConcurrencia.click();
+            System.out.println("Mensaje de concurrencia detectado y aceptado.");
+
+            // Llamar a los métodos que deben repetirse
+
+            AceptarFacturaSustituida();
+        } catch (TimeoutException e) {
+            // Si no aparece el mensaje, continuar normalmente
+            System.out.println("No se detectó mensaje de concurrencia.");
+        } catch (Exception e) {
+            UtilidadesAllure.manejoError(driver, e, "Error al manejar el mensaje de concurrencia");
         }
     }
 

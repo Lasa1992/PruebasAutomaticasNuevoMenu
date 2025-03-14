@@ -81,6 +81,7 @@ public class CreacionViajeTimbreTraslado {
         ImportacionMaterial();
         BotonAceptarImportacion();
         BotonAceptarViaje();
+        BotonConcurrencia();
         AceptarMensajeTimbre();
         EnvioCorreo();
         BotonImpresion();
@@ -326,6 +327,29 @@ public class CreacionViajeTimbreTraslado {
                     "Error al hacer clic en el botón Aceptar para confirmar el viaje");
         }
     }
+
+    @Step("Aceptar mensaje de concurrencia si aparece")
+    private void BotonConcurrencia() {
+        try {
+            // Esperar unos segundos para ver si aparece el mensaje de concurrencia
+            WebElement botonAceptarConcurrencia = wait.until(ExpectedConditions.elementToBeClickable(
+                    By.xpath("/html/body/form/table/tbody/tr/td/table/tbody/tr/td/div/table/tbody/tr[2]/td/div[1]/table/tbody/tr/td/div/div[3]/table/tbody/tr/td/table/tbody/tr[2]/td/div[1]/table/tbody/tr/td/input")));
+
+            // Si el botón está disponible, hacer clic en él
+            botonAceptarConcurrencia.click();
+            System.out.println("Mensaje de concurrencia detectado y aceptado.");
+
+            // Llamar a los métodos que deben repetirse
+            NumeroViajeCliente();
+            BotonAceptarViaje();
+        } catch (TimeoutException e) {
+            // Si no aparece el mensaje, continuar normalmente
+            System.out.println("No se detectó mensaje de concurrencia.");
+        } catch (Exception e) {
+            UtilidadesAllure.manejoError(driver, e, "Error al manejar el mensaje de concurrencia");
+        }
+    }
+
 
     @Step("Aceptar Mensaje de Timbre (BTN_YES)")
     private void AceptarMensajeTimbre() {

@@ -111,6 +111,7 @@ public class ImportacionPolizasYPrepolizas {
         CerrarVistaPrevia();
 
         EliminarPoliza();
+        AceptarAlertaEliminacion();
 
 
 
@@ -526,6 +527,19 @@ public class ImportacionPolizasYPrepolizas {
             UtilidadesAllure.manejoError(driver, e, "Error al presionar el botón de eliminar póliza.");
         }
     }
+
+    @Step("Aceptar alerta de eliminación")
+    private void AceptarAlertaEliminacion() {
+        try {
+            Alert alert = driver.switchTo().alert();
+            alert.accept();
+            System.out.println("AceptarAlertaEliminacion: Alerta aceptada correctamente.");
+            Thread.sleep(1000);
+        } catch (Exception e) {
+            UtilidadesAllure.manejoError(driver, e, "Error al aceptar la alerta de eliminación.");
+        }
+    }
+
 
 
 }

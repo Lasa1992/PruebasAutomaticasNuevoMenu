@@ -92,6 +92,7 @@ public class FacturacionConceptoSustitucion {
         BotonAgregarConcepto();
         ObtenerFolioFactura();
         AceptarFactura();
+        BotonConcurrenciaFactura();
         BotonTimbre();
         ValidarYEnviarCorreo();
         BotonPoliza();
@@ -105,6 +106,7 @@ public class FacturacionConceptoSustitucion {
         MensajeSustitucionRequerida();
         MonedaSustitucion();
         AceptarFacturaSustituida();
+        BotonConcurrenciaFacturaSustituida();
         BotonTimbreSustitucion();
         CorreoDesspuesSustitucion();
         CancelacionSAT();
@@ -337,6 +339,29 @@ public class FacturacionConceptoSustitucion {
         }
     }
 
+    @Step("Aceptar mensaje de concurrencia si aparece")
+    private void BotonConcurrenciaFactura() {
+        try {
+            // Esperar unos segundos para ver si aparece el mensaje de concurrencia
+            WebElement botonAceptarConcurrencia = wait.until(ExpectedConditions.elementToBeClickable(
+                    By.xpath("/html/body/form/table/tbody/tr/td/table/tbody/tr/td/div/table/tbody/tr[2]/td/div[1]/table/tbody/tr/td/div/div[3]/table/tbody/tr/td/table/tbody/tr[2]/td/div[1]/table/tbody/tr/td/input")));
+
+            // Si el botón está disponible, hacer clic en él
+            botonAceptarConcurrencia.click();
+            System.out.println("Mensaje de concurrencia detectado y aceptado.");
+
+            // Llamar a los métodos que deben repetirse
+
+            ObtenerFolioFactura();
+            AceptarFactura();
+        } catch (TimeoutException e) {
+            // Si no aparece el mensaje, continuar normalmente
+            System.out.println("No se detectó mensaje de concurrencia.");
+        } catch (Exception e) {
+            UtilidadesAllure.manejoError(driver, e, "Error al manejar el mensaje de concurrencia");
+        }
+    }
+
     private void BotonTimbre() {
         try {
             WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
@@ -551,6 +576,28 @@ public class FacturacionConceptoSustitucion {
                     System.out.println("Error al presionar el botón de aceptar factura después de 3 intentos");
                 }
             }
+        }
+    }
+
+    @Step("Aceptar mensaje de concurrencia si aparece")
+    private void BotonConcurrenciaFacturaSustituida() {
+        try {
+            // Esperar unos segundos para ver si aparece el mensaje de concurrencia
+            WebElement botonAceptarConcurrencia = wait.until(ExpectedConditions.elementToBeClickable(
+                    By.xpath("/html/body/form/table/tbody/tr/td/table/tbody/tr/td/div/table/tbody/tr[2]/td/div[1]/table/tbody/tr/td/div/div[3]/table/tbody/tr/td/table/tbody/tr[2]/td/div[1]/table/tbody/tr/td/input")));
+
+            // Si el botón está disponible, hacer clic en él
+            botonAceptarConcurrencia.click();
+            System.out.println("Mensaje de concurrencia detectado y aceptado.");
+
+            // Llamar a los métodos que deben repetirse
+
+            AceptarFacturaSustituida();
+        } catch (TimeoutException e) {
+            // Si no aparece el mensaje, continuar normalmente
+            System.out.println("No se detectó mensaje de concurrencia.");
+        } catch (Exception e) {
+            UtilidadesAllure.manejoError(driver, e, "Error al manejar el mensaje de concurrencia");
         }
     }
 
