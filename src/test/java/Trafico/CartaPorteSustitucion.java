@@ -48,17 +48,17 @@ public class CartaPorteSustitucion {
     @Order(1)
     @Description("Prueba de Inicio de Sesion - Se utiliza usuario GM")
     public void inicioSesion() {
-        InicioSesion.fillForm(driver);
-        InicioSesion.submitForm(wait);
-        InicioSesion.handleAlert(wait);
+        InicioSesion.fillForm();
+        InicioSesion.submitForm();
+        InicioSesion.handleAlert();
     }
 
     @Test
     @Order(2)
     @Description("Prueba para el manejo del tipo de Cambio y de la ventana de novedades.")
     public void alertaTipoCambio() {
-        InicioSesion.handleTipoCambio(driver, wait);
-        InicioSesion.handleNovedadesScreen(wait);
+        InicioSesion.handleTipoCambio();
+        InicioSesion.handleNovedadesScreen();
     }
 
     @Test
@@ -313,7 +313,7 @@ public class CartaPorteSustitucion {
             WebElement inputArchivo = wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("EDT_IMPORTARMATERIALES_ARCHIVO")));
 
             // Especifica la ruta al archivo que deseas importar
-            String rutaArchivo = "C:\\Users\\UsuarioY\\Desktop\\Pruebas Automaticas\\XLSXPruebas\\ImportarMaterialesPA.xlsx";
+            String rutaArchivo = "C:\\Users\\Lasa9\\Desktop\\XLSXPruebas\\ImportarMaterialesPA.xlsx";
             File archivo = new File(rutaArchivo);
             if (archivo.exists()) {
                 // Enviar la ruta del archivo al campo de tipo "file"

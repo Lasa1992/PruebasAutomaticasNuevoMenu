@@ -36,31 +36,33 @@ public class FacturaConceptoTimbrada {
 
 
 
-    @BeforeAll
-    public static void setup() {
-        //System.setProperty("webdriver.chrome.driver", "C:\\RepositorioPrueAuto\\Chromedriver\\chromedriver.exe");
-        driver = new ChromeDriver();
-        wait = new WebDriverWait(driver, Duration.ofSeconds(10));
-        driver.manage().window().maximize(); // Maximizar la ventana para evitar problemas de visibilidad
+    @BeforeEach
+    public void setup() {
+        // 🛠️ Obtener el navegador dinámicamente desde la variable del sistema
+        String navegador = System.getProperty("navegador", "chrome"); // Si no se especifica, usa Chrome
+        System.out.println("🌍 Configurando pruebas en: " + navegador.toUpperCase());
 
-        driver.get("https://www.softwareparatransporte.com/GMTERPV8_WEB/ES/PAGE_CatUsuariosLoginAWP.awp");
+        // 🛠️ Configurar el WebDriver con el navegador correcto
+        InicioSesion.setup(navegador);
+        driver = InicioSesion.getDriver();
+        wait = InicioSesion.getWait();
     }
 
     @Test
     @Order(1)
     @Description("Prueba de Inicio de Sesion - Se utiliza usuario GM")
     public void inicioSesion() {
-        InicioSesion.fillForm(driver);
-        InicioSesion.submitForm(wait);
-        InicioSesion.handleAlert(wait);
+        InicioSesion.fillForm();
+        InicioSesion.submitForm();
+        InicioSesion.handleAlert();
     }
 
     @Test
     @Order(2)
     @Description("Prueba para el manejo del tipo de Cambio y de la ventana de novedades.")
     public void AlertaTipoCambio() {
-        InicioSesion.handleTipoCambio(driver, wait);
-        InicioSesion.handleNovedadesScreen(wait);
+        InicioSesion.handleTipoCambio();
+        InicioSesion.handleNovedadesScreen();
     }
 
     @Test
@@ -102,9 +104,8 @@ public class FacturaConceptoTimbrada {
 
     @AfterAll
     public static void tearDown() {
-        if (driver != null) {
-            driver.quit();
-        }
+        System.out.println("🔒 Cerrando sesión y liberando WebDriver desde FacturacionGeneral...");
+        InicioSesion.cerrarSesion(); // Asegurar que se libere el WebDriver correctamente
     }
 
     private static void handleImageButton() {

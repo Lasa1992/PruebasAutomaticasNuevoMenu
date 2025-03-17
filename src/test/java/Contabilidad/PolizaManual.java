@@ -43,32 +43,21 @@ public class PolizaManual {
 
     @Test
     @Order(1)
-    @Description("Inicio de Sesión - Usuario GM")
-    public void testInicioSesion() {
-        try {
-            InicioSesion.fillForm(driver);
-            InicioSesion.submitForm(wait);
-            InicioSesion.handleAlert(wait);
-            System.out.println("Inicio de Sesión: Sesión iniciada exitosamente.");
-            Thread.sleep(1000);
-        } catch (Exception e) {
-            UtilidadesAllure.manejoError(driver, e, "Error al iniciar sesión.");
-        }
+    @Description("Prueba de Inicio de Sesión - Se utiliza un usuario disponible en la cola")
+    public void inicioSesion() {
+        InicioSesion.fillForm();   // ✅ Sin parámetros
+        InicioSesion.submitForm(); // ✅ Sin parámetros
+        InicioSesion.handleAlert(); // ✅ Sin parámetros
     }
 
     @Test
     @Order(2)
-    @Description("Manejo del tipo de Cambio y la ventana de novedades")
-    public void testAlertaTipoCambio() {
-        try {
-            InicioSesion.handleTipoCambio(driver, wait);
-            InicioSesion.handleNovedadesScreen(wait);
-            System.out.println("Tipo de Cambio y Novedades: Manejo realizado exitosamente.");
-            Thread.sleep(1000);
-        } catch (Exception e) {
-            UtilidadesAllure.manejoError(driver, e, "Error en el manejo de tipo de cambio y novedades.");
-        }
+    @Description("Prueba para el manejo del tipo de Cambio y de la ventana de novedades.")
+    public void alertaTipoCambio() {
+        InicioSesion.handleTipoCambio();       // ✅ Sin parámetros
+        InicioSesion.handleNovedadesScreen();  // ✅ Sin parámetros
     }
+
 
     @Test
     @Order(3)

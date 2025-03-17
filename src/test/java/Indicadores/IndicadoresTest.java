@@ -28,22 +28,21 @@ public class IndicadoresTest {
 
     @Test
     @Order(1)
-    @DisplayName("Inicio de Sesion")
-    @Description("Prueba de Inicio de Sesion - Se utiliza usuario GM")
+    @Description("Prueba de Inicio de Sesión - Se utiliza un usuario disponible en la cola")
     public void inicioSesion() {
-        InicioSesion.fillForm(driver);
-        InicioSesion.submitForm(wait);
-        InicioSesion.handleAlert(wait);
+        InicioSesion.fillForm();   // ✅ Sin parámetros
+        InicioSesion.submitForm(); // ✅ Sin parámetros
+        InicioSesion.handleAlert(); // ✅ Sin parámetros
     }
 
     @Test
     @Order(2)
-    @DisplayName("Alertas - Inicio Sesion")
     @Description("Prueba para el manejo del tipo de Cambio y de la ventana de novedades.")
-    public void AlertaTipoCambio() {
-        InicioSesion.handleTipoCambio(driver, wait);
-        InicioSesion.handleNovedadesScreen(wait);
+    public void alertaTipoCambio() {
+        InicioSesion.handleTipoCambio();       // ✅ Sin parámetros
+        InicioSesion.handleNovedadesScreen();  // ✅ Sin parámetros
     }
+
 
     @RepeatedTest(13) //MAX 13 repeticiones ya que cada repeticion suma al ciclo.
     @Order(3)
@@ -119,16 +118,16 @@ public class IndicadoresTest {
 
     public void validarIndicador() {
         try {
-            InicioSesion.handleNovedadesScreen(wait);
+            InicioSesion.handleNovedadesScreen();
             botonQuitarIndicador = driver.findElement(By.id("BTN_CERRARFRAME1"));
             Thread.sleep(2500);
             UtilidadesAllure.capturaImagen(driver);
             if (botonQuitarIndicador.isDisplayed()) {
                 System.out.println("Indicador encontrado");
                 botonQuitarIndicador.click();
-                InicioSesion.handleAlert(wait);
+                InicioSesion.handleAlert();
                 System.out.println("Se quitó correctamente el indicador.");
-                InicioSesion.handleNovedadesScreen(wait);
+                InicioSesion.handleNovedadesScreen();
             }
         } catch (Exception e) {
             UtilidadesAllure.manejoError(driver,e,"Error al quitar el indicador: ");

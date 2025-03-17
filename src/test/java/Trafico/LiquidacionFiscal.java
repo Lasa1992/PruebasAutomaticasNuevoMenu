@@ -37,20 +37,21 @@ public class LiquidacionFiscal {
 
     @Test
     @Order(1)
-    @Description("Prueba de Inicio de Sesión - Se utiliza usuario GM")
+    @Description("Prueba de Inicio de Sesión - Se utiliza un usuario disponible en la cola")
     public void inicioSesion() {
-        InicioSesion.fillForm(driver);
-        InicioSesion.submitForm(wait);
-        InicioSesion.handleAlert(wait);
+        InicioSesion.fillForm();   // ✅ Sin parámetros
+        InicioSesion.submitForm(); // ✅ Sin parámetros
+        InicioSesion.handleAlert(); // ✅ Sin parámetros
     }
 
     @Test
     @Order(2)
-    @Description("Manejo del tipo de cambio y ventana de novedades")
-    public void AlertaTipoCambio() {
-        InicioSesion.handleTipoCambio(driver, wait);
-        InicioSesion.handleNovedadesScreen(wait);
+    @Description("Prueba para el manejo del tipo de Cambio y de la ventana de novedades.")
+    public void alertaTipoCambio() {
+        InicioSesion.handleTipoCambio();       // ✅ Sin parámetros
+        InicioSesion.handleNovedadesScreen();  // ✅ Sin parámetros
     }
+
 
     @Test
     @Order(3)

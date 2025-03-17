@@ -28,22 +28,21 @@ public class ParametrosGenerales {
 
     @Test
     @Order(1)
-    @DisplayName("Inicio de Sesion")
-    @Description("Prueba de Inicio de Sesion - Se utiliza usuario GM")
+    @Description("Prueba de Inicio de Sesión - Se utiliza un usuario disponible en la cola")
     public void inicioSesion() {
-        InicioSesion.fillForm(driver);
-        InicioSesion.submitForm(wait);
-        InicioSesion.handleAlert(wait);
+        InicioSesion.fillForm();   // ✅ Sin parámetros
+        InicioSesion.submitForm(); // ✅ Sin parámetros
+        InicioSesion.handleAlert(); // ✅ Sin parámetros
     }
 
     @Test
     @Order(2)
-    @DisplayName("Alertas - Inicio Sesion")
     @Description("Prueba para el manejo del tipo de Cambio y de la ventana de novedades.")
-    public void AlertaTipoCambio() {
-        InicioSesion.handleTipoCambio(driver, wait);
-        InicioSesion.handleNovedadesScreen(wait);
+    public void alertaTipoCambio() {
+        InicioSesion.handleTipoCambio();       // ✅ Sin parámetros
+        InicioSesion.handleNovedadesScreen();  // ✅ Sin parámetros
     }
+
     @Test()
     @Order(3)
     @DisplayName("Ingresar a Configuracion")

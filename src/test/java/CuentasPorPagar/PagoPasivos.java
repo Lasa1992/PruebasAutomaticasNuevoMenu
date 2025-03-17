@@ -50,14 +50,15 @@ public class PagoPasivos {
 
     @Test
     @Order(1)
-    @Description("Prueba de Inicio de Sesion - Se utiliza usuario GM")
+    @Description("Prueba de Inicio de Sesión - Se utiliza un usuario disponible en la cola")
     public void inicioSesion() {
-        InicioSesion.fillForm(driver);
-        InicioSesion.submitForm(wait);
-        InicioSesion.handleAlert(wait);
-        InicioSesion.handleTipoCambio(driver, wait);
-        InicioSesion.handleNovedadesScreen(wait);
+        InicioSesion.fillForm();   // ✅ Sin parámetros
+        InicioSesion.submitForm(); // ✅ Sin parámetros
+        InicioSesion.handleAlert(); // ✅ Sin parámetros
+        InicioSesion.handleTipoCambio();       // ✅ Sin parámetros
+        InicioSesion.handleNovedadesScreen();  // ✅ Sin parámetros
     }
+
 
     @Test
     @Order(2)

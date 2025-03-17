@@ -34,21 +34,25 @@ public class FacturacionGeneralDescImpr {
 
     private static String numeroFactura;
 
-    @BeforeAll
-    public static void setup() {
-        driver = new ChromeDriver();
-        wait = new WebDriverWait(driver, Duration.ofSeconds(10));
-        driver.manage().window().maximize();
-        driver.get("https://www.softwareparatransporte.com/GMTERPV8_WEB/ES/PAGE_CatUsuariosLoginAWP.awp");
+    @BeforeEach
+    public void setup() {
+        // 🛠️ Obtener el navegador dinámicamente desde la variable del sistema
+        String navegador = System.getProperty("navegador", "chrome"); // Si no se especifica, usa Chrome
+        System.out.println("🌍 Configurando pruebas en: " + navegador.toUpperCase());
+
+        // 🛠️ Configurar el WebDriver con el navegador correcto
+        InicioSesion.setup(navegador);
+        driver = InicioSesion.getDriver();
+        wait = InicioSesion.getWait();
     }
 
     @Test
     @Order(1)
     @Description("Prueba de Inicio de Sesión - Se utiliza usuario GM")
     public void InicioSesion() {
-        InicioSesion.fillForm(driver);
-        InicioSesion.submitForm(wait);
-        InicioSesion.handleAlert(wait);
+        InicioSesion.fillForm();
+        InicioSesion.submitForm();
+        InicioSesion.handleAlert();
         // Pausa de 3 segundos
         try { Thread.sleep(3000); } catch (InterruptedException e) { e.printStackTrace(); }
     }
@@ -57,8 +61,8 @@ public class FacturacionGeneralDescImpr {
     @Order(2)
     @Description("Prueba para el manejo del tipo de Cambio y de la ventana de novedades.")
     public void AlertaTipoCambio() {
-        InicioSesion.handleTipoCambio(driver, wait);
-        InicioSesion.handleNovedadesScreen(wait);
+        InicioSesion.handleTipoCambio();
+        InicioSesion.handleNovedadesScreen();
         // Pausa de 3 segundos
         try { Thread.sleep(3000); } catch (InterruptedException e) { e.printStackTrace(); }
     }
@@ -112,15 +116,8 @@ public class FacturacionGeneralDescImpr {
 
     @AfterAll
     public static void tearDown() {
-        if (driver != null) {
-            try {
-                Thread.sleep(3000);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            } finally {
-                driver.quit();
-            }
-        }
+        System.out.println("🔒 Cerrando sesión y liberando WebDriver desde FacturacionGeneral...");
+        InicioSesion.cerrarSesion(); // Asegurar que se libere el WebDriver correctamente
     }
 
     // --------------------- Métodos del script ---------------------
