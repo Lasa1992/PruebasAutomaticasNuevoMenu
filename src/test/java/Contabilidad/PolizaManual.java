@@ -27,18 +27,16 @@ public class PolizaManual {
     private static WebDriverWait wait;
     private static String FolioPoliza = "";
 
-    @BeforeAll
-    public static void setup() {
-        driver = new ChromeDriver();
-        wait = new WebDriverWait(driver, Duration.ofSeconds(10));
-        driver.manage().window().maximize();
-        driver.get("https://www.softwareparatransporte.com/GMTERPV8_WEB/ES/PAGE_CatUsuariosLoginAWP.awp");
-        System.out.println("Setup: Navegador iniciado y URL cargada correctamente.");
-        try {
-            Thread.sleep(1000);
-        } catch (InterruptedException e) {
-            Thread.currentThread().interrupt();
-        }
+    @BeforeEach
+    public void setup() {
+        // 🛠️ Obtener el navegador dinámicamente desde la variable del sistema
+        String navegador = System.getProperty("navegador", "chrome"); // Si no se especifica, usa Chrome
+        System.out.println("🌍 Configurando pruebas en: " + navegador.toUpperCase());
+
+        // 🛠️ Configurar el WebDriver con el navegador correcto
+        InicioSesion.setup(navegador);
+        driver = InicioSesion.getDriver();
+        wait = InicioSesion.getWait();
     }
 
     @Test
@@ -92,11 +90,10 @@ public class PolizaManual {
 
     @AfterAll
     public static void tearDown() {
-        if (driver != null) {
-            driver.quit();
-            System.out.println("TearDown: Navegador cerrado correctamente.");
-        }
+        System.out.println("🔒 Cerrando sesión y liberando WebDriver desde FacturacionGeneral...");
+        InicioSesion.cerrarSesion(); // Asegurar que se libere el WebDriver correctamente
     }
+
 
     @Step("Abrir el módulo de Bancos")
     private void ingresarModuloBancos() {

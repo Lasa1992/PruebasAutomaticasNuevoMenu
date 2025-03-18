@@ -39,13 +39,16 @@ public class CartaPorteComercioExterior {
     private String folioCartaPorte; // Variable global para almacenar el folio
 
 
-    @BeforeAll
-    public static void setup() {
-        System.setProperty("webdriver.chrome.driver", "C:\\RepositorioPrueAuto\\Chromedriver\\chromedriver.exe");
-        driver = new ChromeDriver();
-        wait = new WebDriverWait(driver, Duration.ofSeconds(10));
-        driver.manage().window().maximize();
-        driver.get("https://www.softwareparatransporte.com/");
+    @BeforeEach
+    public void setup() {
+        // 🛠️ Obtener el navegador dinámicamente desde la variable del sistema
+        String navegador = System.getProperty("navegador", "chrome"); // Si no se especifica, usa Chrome
+        System.out.println("🌍 Configurando pruebas en: " + navegador.toUpperCase());
+
+        // 🛠️ Configurar el WebDriver con el navegador correcto
+        InicioSesion.setup(navegador);
+        driver = InicioSesion.getDriver();
+        wait = InicioSesion.getWait();
     }
 
     @Test
@@ -134,16 +137,8 @@ public class CartaPorteComercioExterior {
 
     @AfterAll
     public static void tearDown() {
-        try {
-            Thread.sleep(5000);
-        } catch (InterruptedException e) {
-            Thread.currentThread().interrupt();
-            e.printStackTrace();
-        } finally {
-            if (driver != null) {
-                driver.quit();
-            }
-        }
+        System.out.println("🔒 Cerrando sesión y liberando WebDriver desde FacturacionGeneral...");
+        InicioSesion.cerrarSesion(); // Asegurar que se libere el WebDriver correctamente
     }
 
     // =====================================================

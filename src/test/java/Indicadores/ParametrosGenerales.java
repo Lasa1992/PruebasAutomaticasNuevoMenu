@@ -18,12 +18,16 @@ public class ParametrosGenerales {
     public static WebDriver driver;
     public static WebDriverWait wait;
 
-    @BeforeAll
-    public static void setup() {
-        driver = new ChromeDriver();
-        wait = new WebDriverWait(driver, Duration.ofSeconds(10));
+    @BeforeEach
+    public void setup() {
+        // 🛠️ Obtener el navegador dinámicamente desde la variable del sistema
+        String navegador = System.getProperty("navegador", "chrome"); // Si no se especifica, usa Chrome
+        System.out.println("🌍 Configurando pruebas en: " + navegador.toUpperCase());
 
-        driver.get("https://www.softwareparatransporte.com/GMTERPV8_WEB/ES/PAGE_CatUsuariosLoginAWP.awp");
+        // 🛠️ Configurar el WebDriver con el navegador correcto
+        InicioSesion.setup(navegador);
+        driver = InicioSesion.getDriver();
+        wait = InicioSesion.getWait();
     }
 
     @Test
@@ -137,8 +141,8 @@ public class ParametrosGenerales {
 
     @AfterAll
     public static void tearDown() {
-        if (driver != null) {
-            driver.quit();
-        }
+        System.out.println("🔒 Cerrando sesión y liberando WebDriver desde FacturacionGeneral...");
+        InicioSesion.cerrarSesion(); // Asegurar que se libere el WebDriver correctamente
     }
+
 }

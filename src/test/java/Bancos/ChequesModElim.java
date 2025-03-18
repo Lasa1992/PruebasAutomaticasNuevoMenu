@@ -25,12 +25,16 @@ public class ChequesModElim {
     private static WebDriverWait wait;
     private static String folioCheque = ""; // Variable global para el número de cheque
 
-    @BeforeAll
-    public static void setup() {
-        driver = new ChromeDriver();
-        wait = new WebDriverWait(driver, Duration.ofSeconds(10));
-        driver.manage().window().maximize();
-        driver.get("https://www.softwareparatransporte.com/GMTERPV8_WEB/ES/PAGE_CatUsuariosLoginAWP.awp");
+    @BeforeEach
+    public void setup() {
+        // 🛠️ Obtener el navegador dinámicamente desde la variable del sistema
+        String navegador = System.getProperty("navegador", "chrome"); // Si no se especifica, usa Chrome
+        System.out.println("🌍 Configurando pruebas en: " + navegador.toUpperCase());
+
+        // 🛠️ Configurar el WebDriver con el navegador correcto
+        InicioSesion.setup(navegador);
+        driver = InicioSesion.getDriver();
+        wait = InicioSesion.getWait();
     }
 
     @Test
@@ -91,9 +95,8 @@ public class ChequesModElim {
 
     @AfterAll
     public static void tearDown() {
-        if (driver != null) {
-            driver.quit();
-        }
+        System.out.println("🔒 Cerrando sesión y liberando WebDriver desde FacturacionGeneral...");
+        InicioSesion.cerrarSesion(); // Asegurar que se libere el WebDriver correctamente
     }
 
     @Step("Abrir el módulo de Bancos")

@@ -18,12 +18,16 @@ public class IndicadoresTest {
     public String nombreIndicador;
     public WebElement botonQuitarIndicador;
 
-    @BeforeAll
-    public static void setup() {
-        driver = new ChromeDriver();
-        wait = new WebDriverWait(driver, Duration.ofSeconds(10));
+    @BeforeEach
+    public void setup() {
+        // 🛠️ Obtener el navegador dinámicamente desde la variable del sistema
+        String navegador = System.getProperty("navegador", "chrome"); // Si no se especifica, usa Chrome
+        System.out.println("🌍 Configurando pruebas en: " + navegador.toUpperCase());
 
-        driver.get("https://www.softwareparatransporte.com/GMTERPV8_WEB/ES/PAGE_CatUsuariosLoginAWP.awp");
+        // 🛠️ Configurar el WebDriver con el navegador correcto
+        InicioSesion.setup(navegador);
+        driver = InicioSesion.getDriver();
+        wait = InicioSesion.getWait();
     }
 
     @Test
@@ -52,19 +56,19 @@ public class IndicadoresTest {
     @Story("Indicadores de Cobranza, Mapa ubicaciones, Viajes, etc")
     public void agregarYSeleccionarIndicadorCiclo(RepetitionInfo repetitionInfo) {
         // Definir el número de repeticiones
-            try {
-                agregarIndicador();
-                seleccionarIndicador(repetitionInfo.getCurrentRepetition());
-                validarIndicador();
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
+        try {
+            agregarIndicador();
+            seleccionarIndicador(repetitionInfo.getCurrentRepetition());
+            validarIndicador();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     public void agregarIndicador() {
         try {
             botonQuitarIndicador = driver.findElement(By.id("dwwBTN_CERRARFRAME1"));
-            if (botonQuitarIndicador.isDisplayed()){
+            if (botonQuitarIndicador.isDisplayed()) {
                 validarIndicador();
                 //InicioSesion.handleNovedadesScreen(wait);
             }
@@ -72,7 +76,7 @@ public class IndicadoresTest {
             botonIndicador.click();
             System.out.println("Se dio clic correctamente en el botón de agregar indicador.");
         } catch (Exception e) {
-            UtilidadesAllure.manejoError(driver,e,"Error al agregar indicador: ");
+            UtilidadesAllure.manejoError(driver, e, "Error al agregar indicador: ");
             System.out.println("No se encontró el botón para agregar el Indicador.");
         }
     }
@@ -130,15 +134,15 @@ public class IndicadoresTest {
                 InicioSesion.handleNovedadesScreen();
             }
         } catch (Exception e) {
-            UtilidadesAllure.manejoError(driver,e,"Error al quitar el indicador: ");
+            UtilidadesAllure.manejoError(driver, e, "Error al quitar el indicador: ");
             System.out.println("No se encontró el indicador.");
         }
     }
 
     @AfterAll
     public static void tearDown() {
-        if (driver != null) {
-            driver.quit();
-        }
+        System.out.println("🔒 Cerrando sesión y liberando WebDriver desde FacturacionGeneral...");
+        InicioSesion.cerrarSesion(); // Asegurar que se libere el WebDriver correctamente
     }
 }
+

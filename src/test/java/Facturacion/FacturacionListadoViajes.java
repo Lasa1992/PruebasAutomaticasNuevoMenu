@@ -37,14 +37,16 @@ public class FacturacionListadoViajes {
     private static String monedaSeleccionada;
     private static String folioGuardado;
 
-    @BeforeAll
-    public static void setup() {
-        // Puedes ajustar la ruta del driver si lo requieres o removerla si ya la tienes configurada
-        System.setProperty("webdriver.chrome.driver", "C:\\RepositorioPrueAuto\\Chromedriver\\chromedriver.exe");
-        driver = new ChromeDriver();
-        wait = new WebDriverWait(driver, Duration.ofSeconds(10));
-        driver.get("https://www.softwareparatransporte.com/");
-        driver.manage().window().maximize(); // Maximizar la ventana para evitar problemas de visibilidad
+    @BeforeEach
+    public void setup() {
+        // 🛠️ Obtener el navegador dinámicamente desde la variable del sistema
+        String navegador = System.getProperty("navegador", "chrome"); // Si no se especifica, usa Chrome
+        System.out.println("🌍 Configurando pruebas en: " + navegador.toUpperCase());
+
+        // 🛠️ Configurar el WebDriver con el navegador correcto
+        InicioSesion.setup(navegador);
+        driver = InicioSesion.getDriver();
+        wait = InicioSesion.getWait();
     }
 
     @Test
@@ -93,17 +95,8 @@ public class FacturacionListadoViajes {
 
     @AfterAll
     public static void tearDown() {
-        // Cierra el navegador después de que todas las pruebas han terminado
-        try {
-            Thread.sleep(5000); // Reducido a 5 segundos para optimizar el tiempo de prueba
-        } catch (InterruptedException e) {
-            Thread.currentThread().interrupt(); // Reestablecer el estado de interrupción
-            e.printStackTrace();
-        } finally {
-            if (driver != null) {
-                driver.quit();
-            }
-        }
+        System.out.println("🔒 Cerrando sesión y liberando WebDriver desde FacturacionGeneral...");
+        InicioSesion.cerrarSesion(); // Asegurar que se libere el WebDriver correctamente
     }
 
     // =======================================================================================
