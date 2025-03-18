@@ -1,8 +1,12 @@
+
+
 package Suite;
 
 import Bancos.ChequesModElim;
 import Cobranza.PagoFacturaConcepto;
 import Cobranza.PagoFacturaViaje;
+import Contabilidad.ImportacionPolizasYPrepolizas;
+import Contabilidad.PolizaManual;
 import CuentasPorPagar.PagoPasivos;
 import Facturacion.*;
 import Indicadores.InicioSesion;
@@ -21,62 +25,55 @@ import java.util.concurrent.*;
 public class SuiteGlobal {
 
     private static final String[] NAVEGADORES = {"chrome", "firefox", "edge"};
-    private static final int NUMERO_HILOS = 3; // Asegurar que el número de hilos sea suficiente
+    private static final int NUMERO_HILOS = 4;
     private static final ExecutorService executorService = Executors.newFixedThreadPool(NUMERO_HILOS);
 
-    private static final Map<String, Map<String, TestResult>> resultadosGlobales = new ConcurrentHashMap<>();
+    // Mapa global para almacenar los resultados de todas las pruebas en todos los navegadores
+    private static final Map<String, Map<String, TestResult>> resultadosGlobales = new LinkedHashMap<>();
 
     @Test
     @Order(1)
-    public void ejecutarPruebasEnTodosLosNavegadores() throws InterruptedException {
-        List<Callable<Void>> tareasNavegador = new ArrayList<>();
-
+    public void ejecutarPruebasEnTodosLosNavegadores() {
         for (String navegador : NAVEGADORES) {
-            tareasNavegador.add(() -> {
-                ejecutarPruebasEnNavegador(navegador);
-                return null;
-            });
+            System.out.println("\n======================================");
+            System.out.println("🚀 Ejecutando pruebas en: " + navegador.toUpperCase());
+            System.out.println("======================================");
+
+            long inicioNavegador = System.nanoTime(); // Inicia el temporizador del navegador
+            Map<String, TestResult> resultadosPorPrueba = ejecutarPruebasEnNavegador(navegador);
+            long duracionNavegador = (System.nanoTime() - inicioNavegador) / 1_000_000; // Convertir a milisegundos
+
+            resultadosGlobales.put(navegador, resultadosPorPrueba);
+
+            // Almacenar duración total del navegador
+            resultadosGlobales.get(navegador).put("TOTAL", new TestResult(true, duracionNavegador));
         }
 
-        // Ejecutamos todas las tareas en paralelo
-        executorService.invokeAll(tareasNavegador);
-        executorService.shutdown(); // Cerramos los hilos después de todas las pruebas
+        // Una vez ejecutadas todas las pruebas, mostramos el resumen global
         mostrarResumenGlobal();
     }
 
-    private void ejecutarPruebasEnNavegador(String navegador) {
-        System.out.println("\n======================================");
-        System.out.println("🚀 Ejecutando pruebas en: " + navegador.toUpperCase());
-        System.out.println("======================================");
-
-        long inicioNavegador = System.nanoTime();
-
+    private Map<String, TestResult> ejecutarPruebasEnNavegador(String navegador) {
         Class<?>[] pruebas = {
-
                 // Indicadores
-
                 InicioSesion.class,
                 ParametrosGenerales.class,
 
                 // Bancos
-
                 ChequesModElim.class,
 
                 // Cobranza
-
                 PagoFacturaConcepto.class,
                 PagoFacturaViaje.class,
 
                 // Cuentas por pagar
-
                 PagoPasivos.class,
 
                 // Contabilidad
+                ImportacionPolizasYPrepolizas.class,
+                PolizaManual.class,
 
-
-
-                //Facturacion
-
+                // Facturación
                 FacturacionGeneral.class,
                 FacturacionGeneralDescImpr.class,
                 FacturacionGeneralSustitucion.class,
@@ -86,8 +83,7 @@ public class SuiteGlobal {
                 FacturacionListadoViajes.class,
                 FacturacionViajeSustitucion.class,
 
-                // Trafico
-
+                // Tráfico
                 CartaPorteComercioExterior.class,
                 CartaPorteImpresionDescarga.class,
                 CartaPorteSustitucion.class,
@@ -95,14 +91,13 @@ public class SuiteGlobal {
                 ViajeACartaPorte.class,
                 LiquidacionFiscal.class,
                 LiquidacionOperativa.class
-
-
         };
 
-        Map<String, TestResult> resultadosPorPrueba = new ConcurrentHashMap<>();
+        Map<String, TestResult> resultados = new LinkedHashMap<>();
         List<Callable<TestResult>> tareas = new ArrayList<>();
 
         for (Class<?> testClass : pruebas) {
+            String nombrePrueba = testClass.getSimpleName();
             tareas.add(() -> ejecutarClaseJUnit(testClass, navegador));
         }
 
@@ -110,19 +105,17 @@ public class SuiteGlobal {
             List<Future<TestResult>> futuros = executorService.invokeAll(tareas);
             for (int i = 0; i < pruebas.length; i++) {
                 TestResult resultado = futuros.get(i).get();
-                resultadosPorPrueba.put(pruebas[i].getSimpleName(), resultado);
+                resultados.put(pruebas[i].getSimpleName(), resultado);
             }
         } catch (Exception e) {
             System.err.println("❌ ERROR en ejecución en " + navegador.toUpperCase() + ": " + e.getMessage());
         }
 
-        double duracionNavegador = (System.nanoTime() - inicioNavegador) / 1_000_000_000.0; // Convertir a segundos
-        resultadosPorPrueba.put("TOTAL", new TestResult(true, duracionNavegador));
-        resultadosGlobales.put(navegador, resultadosPorPrueba);
+        return resultados;
     }
 
     private TestResult ejecutarClaseJUnit(Class<?> testClass, String navegador) {
-        long inicioPrueba = System.nanoTime();
+        long inicioPrueba = System.nanoTime(); // Inicia el temporizador de la prueba
         try {
             System.out.println("🚀 Iniciando prueba: " + testClass.getSimpleName() + " en " + navegador.toUpperCase());
 
@@ -136,11 +129,11 @@ public class SuiteGlobal {
             launcher.execute(request);
 
             InicioSesion.cerrarSesion();
-            double duracionPrueba = (System.nanoTime() - inicioPrueba) / 1_000_000_000.0; // Convertir a segundos
+            long duracionPrueba = (System.nanoTime() - inicioPrueba) / 1_000_000; // Convertir a milisegundos
             return new TestResult(true, duracionPrueba);
         } catch (Exception e) {
             System.err.println("⚠ ERROR en " + testClass.getSimpleName() + " en " + navegador.toUpperCase() + ": " + e.getMessage());
-            double duracionPrueba = (System.nanoTime() - inicioPrueba) / 1_000_000_000.0; // Convertir a segundos
+            long duracionPrueba = (System.nanoTime() - inicioPrueba) / 1_000_000; // Convertir a milisegundos
             return new TestResult(false, duracionPrueba);
         }
     }
@@ -150,35 +143,53 @@ public class SuiteGlobal {
         System.out.println("📊 RESUMEN GLOBAL DE PRUEBAS");
         System.out.println("======================================");
 
-        double tiempoTotal = 0.0;
+        int totalExitosas = 0;
+        int totalFallidas = 0;
+        long tiempoTotal = 0;
 
         for (String navegador : resultadosGlobales.keySet()) {
             Map<String, TestResult> resultadosPorNavegador = resultadosGlobales.get(navegador);
-            System.out.println("\n🌐 Navegador: " + navegador.toUpperCase());
+            int exitosas = 0;
+            int fallidas = 0;
 
+            System.out.println("\n🌐 Navegador: " + navegador.toUpperCase());
             for (Map.Entry<String, TestResult> entry : resultadosPorNavegador.entrySet()) {
-                if (entry.getKey().equals("TOTAL")) continue;
+                if (entry.getKey().equals("TOTAL")) continue; // Saltar el tiempo total del navegador aquí
 
                 TestResult result = entry.getValue();
                 String estado = result.exito ? "✅ EXITOSA" : "❌ FALLIDA";
-                System.out.printf("%s - %s (⏱ %.2f s)%n", estado, entry.getKey(), result.duracion);
+                System.out.printf("%s - %s (⏱ %d ms)%n", estado, entry.getKey(), result.duracion);
+
+                if (result.exito) {
+                    exitosas++;
+                } else {
+                    fallidas++;
+                }
             }
 
-            double tiempoNavegador = resultadosPorNavegador.get("TOTAL").duracion;
+            long tiempoNavegador = resultadosPorNavegador.get("TOTAL").duracion;
             tiempoTotal += tiempoNavegador;
-            System.out.printf("⏳ Tiempo total en %s: %.2f s%n", navegador.toUpperCase(), tiempoNavegador);
+
+            System.out.println("📌 Resumen en " + navegador.toUpperCase() + ": " + exitosas + " exitosas, " + fallidas + " fallidas.");
+            System.out.println("⏳ Tiempo total en " + navegador.toUpperCase() + ": " + tiempoNavegador + " ms");
+            totalExitosas += exitosas;
+            totalFallidas += fallidas;
         }
 
         System.out.println("\n======================================");
-        System.out.printf("⏳ Tiempo total de ejecución: %.2f s%n", tiempoTotal);
+        System.out.println("📊 RESUMEN FINAL");
+        System.out.println("✅ Total pruebas exitosas: " + totalExitosas);
+        System.out.println("❌ Total pruebas fallidas: " + totalFallidas);
+        System.out.println("⏳ Tiempo total de ejecución: " + tiempoTotal + " ms");
         System.out.println("======================================\n");
     }
 
+    // Clase para almacenar el resultado y duración de cada prueba
     private static class TestResult {
         boolean exito;
-        double duracion;
+        long duracion; // Duración en milisegundos
 
-        public TestResult(boolean exito, double duracion) {
+        public TestResult(boolean exito, long duracion) {
             this.exito = exito;
             this.duracion = duracion;
         }

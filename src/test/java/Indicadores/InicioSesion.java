@@ -42,14 +42,14 @@ public class InicioSesion {
                     driver = new FirefoxDriver();
                     break;
                 case "edge":
+                    System.out.println("🌐 Iniciando pruebas en Edge...");
+                    System.setProperty("webdriver.edge.driver", "C:\\RepositorioPrueAuto\\Edge\\msedgedriver.exe");
                     EdgeOptions edgeOptions = new EdgeOptions();
                     edgeOptions.addArguments("--inprivate");  // Modo incógnito
                     edgeOptions.addArguments("--disable-features=EdgeSignin"); // Desactiva autenticación automática
 
                     driver = new EdgeDriver(edgeOptions);
-
                     break;
-
                 case "chrome":
                 default:
                     System.out.println("🔵 Iniciando pruebas en Chrome...");
