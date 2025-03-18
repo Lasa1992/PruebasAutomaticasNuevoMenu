@@ -324,7 +324,7 @@ public class PagoFacturaViaje {
             WebElement inputArchivo = wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("EDT_IMPORTARMATERIALES_ARCHIVO")));
 
             // Especifica la ruta al archivo que deseas importar
-            String rutaArchivo = "C:\\Users\\UsuarioY\\Desktop\\Pruebas Automaticas\\XLSXPruebas\\ImportarMaterialesPA.xlsx";
+            String rutaArchivo = "C:\\Users\\usuariocalidad02\\Desktop\\Pruebas Automaticas\\XLSXPruebas\\ImportarMaterialesPA.xlsx";
             File archivo = new File(rutaArchivo);
             if (archivo.exists()) {
                 // Enviar la ruta del archivo al campo de tipo "file"
@@ -848,7 +848,7 @@ public class PagoFacturaViaje {
             WebElement facturaCheckbox = wait.until(ExpectedConditions.elementToBeClickable(
                     By.id("_0_TABLE_PROFACTURAS_0")));
 
-            // Seleccionar el checkbox de la factura\]
+            // Seleccionar el checkbox de la factura
             if (!facturaCheckbox.isSelected()) {
                 facturaCheckbox.click();
             }

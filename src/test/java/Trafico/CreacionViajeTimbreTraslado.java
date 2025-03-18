@@ -266,7 +266,7 @@ public class CreacionViajeTimbreTraslado {
             WebElement inputArchivo = wait.until(ExpectedConditions.visibilityOfElementLocated(
                     By.id("EDT_IMPORTARMATERIALES_ARCHIVO")));
 
-            String rutaArchivo = "C:\\Users\\UsuarioY\\Desktop\\Pruebas Automaticas\\XLSXPruebas\\ImportarMaterialesPA.xlsx";
+            String rutaArchivo = "C:\\Users\\usuariocalidad02\\Desktop\\Pruebas Automaticas\\XLSXPruebas\\ImportarMaterialesPA.xlsx";
             File archivo = new File(rutaArchivo);
             if (!archivo.exists()) {
                 throw new Exception("El archivo especificado no existe: " + rutaArchivo);

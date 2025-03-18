@@ -923,7 +923,7 @@ public class PagoFacturaContraRecibos {
                 WebElement iconoBuscar = wait.until(ExpectedConditions.elementToBeClickable(
                         By.id("TABLE_PROPASIVOSPENDIENTESDEPAGO_TITRES_RECH_3")));
                 iconoBuscar.click();
-                System.out.println("Se hizo clic en el ícono de búsqueda.");
+                System.out.println("Se hizo clic en el ícono de búsqueda de facturas para seleccionarlas y agregarlas al contra recibo.");
                 Thread.sleep(500);
 
                 // **Interacción con el campo de búsqueda**
