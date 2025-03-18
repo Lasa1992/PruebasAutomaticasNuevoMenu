@@ -1,191 +1,186 @@
 package Suite;
 
-import Bancos.Cheques;
 import Bancos.ChequesModElim;
-import Bancos.MovimientoBancario;
-import Bancos.MovimientoBancarioModElim;
 import Cobranza.PagoFacturaConcepto;
 import Cobranza.PagoFacturaViaje;
 import CuentasPorPagar.PagoPasivos;
-import CuentasPorPagar.PasivoManual;
 import Facturacion.*;
-import Indicadores.IndicadoresTest;
+import Indicadores.InicioSesion;
 import Indicadores.ParametrosGenerales;
 import Trafico.*;
-import org.junit.jupiter.api.MethodOrderer;
-import org.junit.jupiter.api.Order;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestInstance;
-import org.junit.jupiter.api.TestMethodOrder;
-import org.junit.platform.engine.discovery.DiscoverySelectors;
+import org.junit.jupiter.api.*;
 import org.junit.platform.launcher.*;
 import org.junit.platform.launcher.core.LauncherDiscoveryRequestBuilder;
 import org.junit.platform.launcher.core.LauncherFactory;
-import org.junit.platform.launcher.listeners.SummaryGeneratingListener;
-import org.junit.platform.launcher.listeners.TestExecutionSummary;
+import org.junit.platform.engine.discovery.DiscoverySelectors;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.concurrent.TimeUnit;
+import java.util.*;
+import java.util.concurrent.*;
 
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class SuiteGlobal {
 
-    private static final String ANSI_RESET  = "\u001B[0m";
-    private static final String ANSI_GREEN  = "\u001B[32m";
-    private static final String ANSI_RED    = "\u001B[31m";
-    private static final String ANSI_YELLOW = "\u001B[33m";
+    private static final String[] NAVEGADORES = {"chrome", "firefox", "edge"};
+    private static final int NUMERO_HILOS = 3; // Asegurar que el número de hilos sea suficiente
+    private static final ExecutorService executorService = Executors.newFixedThreadPool(NUMERO_HILOS);
 
-    private final List<String> pruebasExitosas = new ArrayList<>();
-    private final List<String> pruebasFallidas = new ArrayList<>();
+    private static final Map<String, Map<String, TestResult>> resultadosGlobales = new ConcurrentHashMap<>();
 
     @Test
     @Order(1)
-    public void ejecutarPruebasEnCadena() {
+    public void ejecutarPruebasEnTodosLosNavegadores() throws InterruptedException {
+        List<Callable<Void>> tareasNavegador = new ArrayList<>();
+
+        for (String navegador : NAVEGADORES) {
+            tareasNavegador.add(() -> {
+                ejecutarPruebasEnNavegador(navegador);
+                return null;
+            });
+        }
+
+        // Ejecutamos todas las tareas en paralelo
+        executorService.invokeAll(tareasNavegador);
+        executorService.shutdown(); // Cerramos los hilos después de todas las pruebas
+        mostrarResumenGlobal();
+    }
+
+    private void ejecutarPruebasEnNavegador(String navegador) {
+        System.out.println("\n======================================");
+        System.out.println("🚀 Ejecutando pruebas en: " + navegador.toUpperCase());
         System.out.println("======================================");
-        System.out.println("       INICIANDO SUITE DE PRUEBAS     ");
-        System.out.println("======================================");
+
+        long inicioNavegador = System.nanoTime();
 
         Class<?>[] pruebas = {
-                // GENERALES
+
+                // Indicadores
+
+                InicioSesion.class,
                 ParametrosGenerales.class,
-                IndicadoresTest.class,
 
-                // TRAFICO
-                //CreacionViajeTimbreTraslado.class,
-                CartaPorteSustitucion.class,
-                CartaPorteComercioExterior.class,
-                CartaPorteImpresionDescarga.class,
-                CopiarCartaPorte.class,
-                LiquidacionFiscal.class,
-                LiquidacionOperativa.class,
+                // Bancos
 
-                // FACTURACION
-                FacturacionListadoViajes.class,
-                //FacturacionViajeComplemento.class,
-                FacturacionViajeSustitucion.class,
-                //FacturaConceptoTimbrada.class,
-                FacturacionConceptoSustitucion.class,
-                FacturacionConceptoDescImpr.class,
-                //FacturacionGeneral.class,
-                FacturacionGeneralSustitucion.class,
-                FacturacionConceptoDescImpr.class,
+                ChequesModElim.class,
 
-                // COBRANZA
+                // Cobranza
+
                 PagoFacturaConcepto.class,
                 PagoFacturaViaje.class,
 
-                //Cuentas por pagar
-                //PasivoManual.class,
+                // Cuentas por pagar
+
                 PagoPasivos.class,
 
+                // Contabilidad
 
-                //Bancos
 
-                //MovimientoBancario.class,
-                MovimientoBancarioModElim.class,
-                //Cheques.class,
-                ChequesModElim.class
+
+                //Facturacion
+
+                FacturacionGeneral.class,
+                FacturacionGeneralDescImpr.class,
+                FacturacionGeneralSustitucion.class,
+                FacturaConceptoTimbrada.class,
+                FacturacionConceptoSustitucion.class,
+                FacturacionConceptoDescImpr.class,
+                FacturacionListadoViajes.class,
+                FacturacionViajeSustitucion.class,
+
+                // Trafico
+
+                CartaPorteComercioExterior.class,
+                CartaPorteImpresionDescarga.class,
+                CartaPorteSustitucion.class,
+                CopiarCartaPorte.class,
+                ViajeACartaPorte.class,
+                LiquidacionFiscal.class,
+                LiquidacionOperativa.class
+
+
         };
 
+        Map<String, TestResult> resultadosPorPrueba = new ConcurrentHashMap<>();
+        List<Callable<TestResult>> tareas = new ArrayList<>();
+
         for (Class<?> testClass : pruebas) {
-            try {
-                System.out.println("\n" + ANSI_YELLOW
-                        + "=== EJECUTANDO CLASE: " + testClass.getSimpleName()
-                        + ANSI_RESET);
-
-                boolean resultado = ejecutarClaseJUnit(testClass);
-
-                if (resultado) {
-                    pruebasExitosas.add(testClass.getSimpleName());
-                    System.out.println(ANSI_GREEN
-                            + "=== FIN: " + testClass.getSimpleName() + " => ÉXITO"
-                            + ANSI_RESET);
-                } else {
-                    pruebasFallidas.add(testClass.getSimpleName());
-                    System.err.println(ANSI_RED
-                            + "=== FIN: " + testClass.getSimpleName() + " => FALLÓ"
-                            + ANSI_RESET);
-                }
-
-            } catch (Exception e) {
-                pruebasFallidas.add(testClass.getSimpleName());
-                System.err.println(ANSI_RED
-                        + "❌ ERROR en " + testClass.getSimpleName() + ": " + e.getMessage()
-                        + ANSI_RESET);
-            }
-
-            esperarSiguientePrueba();
+            tareas.add(() -> ejecutarClaseJUnit(testClass, navegador));
         }
 
-        mostrarResumenFinal();
+        try {
+            List<Future<TestResult>> futuros = executorService.invokeAll(tareas);
+            for (int i = 0; i < pruebas.length; i++) {
+                TestResult resultado = futuros.get(i).get();
+                resultadosPorPrueba.put(pruebas[i].getSimpleName(), resultado);
+            }
+        } catch (Exception e) {
+            System.err.println("❌ ERROR en ejecución en " + navegador.toUpperCase() + ": " + e.getMessage());
+        }
+
+        double duracionNavegador = (System.nanoTime() - inicioNavegador) / 1_000_000_000.0; // Convertir a segundos
+        resultadosPorPrueba.put("TOTAL", new TestResult(true, duracionNavegador));
+        resultadosGlobales.put(navegador, resultadosPorPrueba);
     }
 
-    private boolean ejecutarClaseJUnit(Class<?> testClass) {
+    private TestResult ejecutarClaseJUnit(Class<?> testClass, String navegador) {
+        long inicioPrueba = System.nanoTime();
         try {
-            Launcher launcher = LauncherFactory.create();
-            SummaryGeneratingListener listener = new SummaryGeneratingListener();
-            launcher.registerTestExecutionListeners(listener);
+            System.out.println("🚀 Iniciando prueba: " + testClass.getSimpleName() + " en " + navegador.toUpperCase());
+
+            System.setProperty("navegador", navegador);
 
             LauncherDiscoveryRequest request = LauncherDiscoveryRequestBuilder.request()
                     .selectors(DiscoverySelectors.selectClass(testClass))
                     .build();
 
+            Launcher launcher = LauncherFactory.create();
             launcher.execute(request);
-            TestExecutionSummary summary = listener.getSummary();
 
-            if (summary.getFailures().isEmpty()) {
-                return true;
-            } else {
-                summary.getFailures().forEach(failure -> {
-                    System.err.println("   ❌ "
-                            + failure.getTestIdentifier().getDisplayName()
-                            + " - " + failure.getException().getMessage());
-                });
-                return false;
-            }
+            InicioSesion.cerrarSesion();
+            double duracionPrueba = (System.nanoTime() - inicioPrueba) / 1_000_000_000.0; // Convertir a segundos
+            return new TestResult(true, duracionPrueba);
         } catch (Exception e) {
-            return false;
+            System.err.println("⚠ ERROR en " + testClass.getSimpleName() + " en " + navegador.toUpperCase() + ": " + e.getMessage());
+            double duracionPrueba = (System.nanoTime() - inicioPrueba) / 1_000_000_000.0; // Convertir a segundos
+            return new TestResult(false, duracionPrueba);
         }
     }
 
-    private void esperarSiguientePrueba() {
-        try {
-            System.out.println(ANSI_YELLOW
-                    + "⏳ Esperando 3 segundos antes de la siguiente clase de pruebas..."
-                    + ANSI_RESET);
-            TimeUnit.SECONDS.sleep(3);
-        } catch (InterruptedException e) {
-            System.err.println("⚠ Error en la espera entre pruebas: " + e.getMessage());
-            Thread.currentThread().interrupt();
-        }
-    }
-
-    private void mostrarResumenFinal() {
-        System.out.println();
-        System.out.println("======================================");
-        System.out.println("       RESUMEN FINAL DE PRUEBAS       ");
+    private void mostrarResumenGlobal() {
+        System.out.println("\n======================================");
+        System.out.println("📊 RESUMEN GLOBAL DE PRUEBAS");
         System.out.println("======================================");
 
-        if (!pruebasExitosas.isEmpty()) {
-            System.out.println(ANSI_GREEN + "✅ PRUEBAS EXITOSAS (" + pruebasExitosas.size() + "):" + ANSI_RESET);
-            pruebasExitosas.forEach(prueba -> System.out.println("   - " + ANSI_GREEN + prueba + ANSI_RESET));
-        } else {
-            System.out.println(ANSI_RED + "❌ NO HUBO PRUEBAS EXITOSAS" + ANSI_RESET);
-        }
+        double tiempoTotal = 0.0;
 
-        if (!pruebasFallidas.isEmpty()) {
-            System.out.println(ANSI_RED + "\n❌ PRUEBAS FALLIDAS (" + pruebasFallidas.size() + "):" + ANSI_RESET);
-            pruebasFallidas.forEach(prueba -> System.out.println("   - " + ANSI_RED + prueba + ANSI_RESET));
-        } else {
-            System.out.println(ANSI_GREEN + "\n✅ TODAS LAS PRUEBAS PASARON EXITOSAMENTE" + ANSI_RESET);
+        for (String navegador : resultadosGlobales.keySet()) {
+            Map<String, TestResult> resultadosPorNavegador = resultadosGlobales.get(navegador);
+            System.out.println("\n🌐 Navegador: " + navegador.toUpperCase());
+
+            for (Map.Entry<String, TestResult> entry : resultadosPorNavegador.entrySet()) {
+                if (entry.getKey().equals("TOTAL")) continue;
+
+                TestResult result = entry.getValue();
+                String estado = result.exito ? "✅ EXITOSA" : "❌ FALLIDA";
+                System.out.printf("%s - %s (⏱ %.2f s)%n", estado, entry.getKey(), result.duracion);
+            }
+
+            double tiempoNavegador = resultadosPorNavegador.get("TOTAL").duracion;
+            tiempoTotal += tiempoNavegador;
+            System.out.printf("⏳ Tiempo total en %s: %.2f s%n", navegador.toUpperCase(), tiempoNavegador);
         }
 
         System.out.println("\n======================================");
-        System.out.println("TOTAL EJECUTADAS: " + (pruebasExitosas.size() + pruebasFallidas.size()));
-        System.out.println("✅ EXITOSAS: " + pruebasExitosas.size());
-        System.out.println("❌ FALLIDAS: " + pruebasFallidas.size());
-        System.out.println("======================================");
+        System.out.printf("⏳ Tiempo total de ejecución: %.2f s%n", tiempoTotal);
+        System.out.println("======================================\n");
+    }
+
+    private static class TestResult {
+        boolean exito;
+        double duracion;
+
+        public TestResult(boolean exito, double duracion) {
+            this.exito = exito;
+            this.duracion = duracion;
+        }
     }
 }

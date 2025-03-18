@@ -26,7 +26,6 @@ public class PolizaManual {
     private static WebDriver driver;
     private static WebDriverWait wait;
     private static String FolioPoliza = "";
-    private static String ConceptoPoliza = "";
 
     @BeforeAll
     public static void setup() {
@@ -71,6 +70,14 @@ public class PolizaManual {
         }
     }
 
+    @Test
+    @Order(3)
+    @Description("Acceder al módulo de Bancos")
+    public void testIngresarModuloBancos() {
+        ingresarModuloBancos();
+        submoduloCheques();
+    }
+
     @RepeatedTest(2)
     @Order(4)
     @Description("Importación de Pólizas y Prepólizas")
@@ -79,7 +86,6 @@ public class PolizaManual {
 
         BotonAgregarManuamente();
         TipoPoliza();
-        FolioPolizaManual();
         ConceptoPoliza();
         AgregarMovimiento();
         CuentaContable();
@@ -91,26 +97,6 @@ public class PolizaManual {
         AceptarPoliza();
         AceptarAlerta();
 
-        BuscarPoliza();
-        SeleccionarPoliza();
-        BotonModificar();
-        CampoConcepto();
-        BotonModificarMovimientos();
-        CampoReferenciaMov();
-        AceptarModMovimiento();
-        AceptarModificacionPoliza();
-
-        BotonConsultar();
-        CapturarConcepto();
-        SalirConsultar();
-
-        BotonImprimir();
-        SeleccionarFormato();
-        Imprimir();
-        CerrarVistaPrevia();
-
-        EliminarPoliza();
-        AceptarAlertaEliminarP();
 
 
     }
@@ -123,7 +109,35 @@ public class PolizaManual {
         }
     }
 
-    @Step("Registrar una póliza manual")
+    @Step("Abrir el módulo de Bancos")
+    private void ingresarModuloBancos() {
+        try {
+            WebElement botonBancos = wait.until(ExpectedConditions.elementToBeClickable(
+                    By.xpath("//img[contains(@src, '/GMTERPV8_WEB/Imagenes/CONTABILIDAD1')]")
+            ));
+            botonBancos.click();
+            System.out.println("Módulo Bancos: Módulo de Bancos abierto correctamente.");
+            Thread.sleep(1000);
+        } catch (Exception e) {
+            UtilidadesAllure.manejoError(driver, e, "Error al abrir el módulo de Contabilidad.");
+        }
+    }
+
+    @Step("Abrir submódulo de Cheques")
+    private void submoduloCheques() {
+        try {
+            WebElement subPolizascontables = wait.until(ExpectedConditions.elementToBeClickable(
+                    By.xpath("//img[contains(@src, '/GMTERPV8_WEB/Imagenes/CONTABILIDAD/POLIZASCONTABLES')]")
+            ));
+            subPolizascontables.click();
+            System.out.println("Submódulo Cheques: Submódulo de Cheques abierto correctamente.");
+            Thread.sleep(1000);
+        } catch (Exception e) {
+            UtilidadesAllure.manejoError(driver, e, "Error al abrir el submódulo Polizas Contables.");
+        }
+    }
+
+    @Step("Registrar un nuevo Cheque")
     private void BotonAgregarManuamente() {
         try {
             WebElement botonRegistrar = wait.until(ExpectedConditions.elementToBeClickable(
@@ -157,19 +171,6 @@ public class PolizaManual {
         }
     }
 
-    @Step("Obtiene el folio de la póliza manual")
-    private void FolioPolizaManual() {
-        try {
-            WebElement campoFolio = wait.until(ExpectedConditions.visibilityOfElementLocated(
-                    By.xpath("/html/body/form/table/tbody/tr/td/table/tbody/tr/td/div/table/tbody/tr[2]/td/div[1]/table/tbody/tr/td/table/tbody/tr[1]/td/div/div[2]/table/tbody/tr/td/div/div[1]/table/tbody/tr/td/table/tbody/tr[1]/td/div/div[4]/div/table/tbody/tr/td/table/tbody/tr/td/ul/li[2]/input")
-            ));
-            FolioPoliza = campoFolio.getAttribute("value");
-            System.out.println("FolioPolizaManual: Se obtuvo el folio de póliza: " + FolioPoliza);
-        } catch (Exception e) {
-            UtilidadesAllure.manejoError(driver, e, "Error al establecer el folio de póliza.");
-        }
-    }
-
     @Step("Establecer el concepto de póliza")
     private void ConceptoPoliza() {
         try {
@@ -177,11 +178,13 @@ public class PolizaManual {
             WebElement campoConcepto = wait.until(ExpectedConditions.visibilityOfElementLocated(
                     By.xpath("/html/body/form/table/tbody/tr/td/table/tbody/tr/td/div/table/tbody/tr[2]/td/div[1]/table/tbody/tr/td/table/tbody/tr[1]/td/div/div[2]/table/tbody/tr/td/div/div[1]/table/tbody/tr/td/table/tbody/tr[1]/td/div/div[5]/div/table/tbody/tr/td/table/tbody/tr/td/ul/li[2]/input")
             ));
-            // Crea el concepto de la póliza manual
-            ConceptoPoliza= "PÓLIZA MANUAL AU " + FolioPoliza;
+            // Obtener la fecha actual en formato "yyyy-MM-dd"
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+            String fechaActual = sdf.format(new Date());
+            String concepto = "poliza manual " + fechaActual;
             campoConcepto.clear();
-            campoConcepto.sendKeys(ConceptoPoliza);
-            System.out.println("ConceptoPoliza: Se estableció el concepto: " + ConceptoPoliza);
+            campoConcepto.sendKeys(concepto);
+            System.out.println("ConceptoPoliza: Se estableció el concepto: " + concepto);
             Thread.sleep(1000);
         } catch (Exception e) {
             UtilidadesAllure.manejoError(driver, e, "Error al establecer el concepto de póliza.");
@@ -259,7 +262,7 @@ public class PolizaManual {
             campoReferencia.clear();
             campoReferencia.sendKeys("movimiento manual");
             System.out.println("Referencia: Se estableció la referencia: movimiento manual");
-            Thread.sleep(3000);
+            Thread.sleep(1000);
         } catch (Exception e) {
             UtilidadesAllure.manejoError(driver, e, "Error al establecer la referencia de movimiento.");
         }
@@ -268,12 +271,9 @@ public class PolizaManual {
     @Step("Establecer concepto de movimiento")
     private void ConceptoMovimiento() {
         try {
-            /*WebElement campoConceptoMov = wait.until(ExpectedConditions.visibilityOfElementLocated(
+            WebElement campoConceptoMov = wait.until(ExpectedConditions.visibilityOfElementLocated(
                     By.xpath("/html/body/form/div[7]/table/tbody/tr/td/div[1]/div/table/tbody/tr/td/table/tbody/tr[1]/td/div/div[5]/div[1]/div[3]/div/table/tbody/tr/td/table/tbody/tr/td/ul/li[2]/input")
-            ));*/
-            WebElement campoConceptoMov = driver.findElement(
-                    By.xpath("/html/body/form/div[7]/table/tbody/tr/td/div[1]/div/table/tbody/tr/td/table/tbody/tr[1]/td/div/div[6]/div[1]/div/table/tbody/tr/td/table/tbody/tr/td/ul/li[2]/input")
-            );
+            ));
             campoConceptoMov.clear();
             campoConceptoMov.sendKeys("Concepto Momiviento prueba");
             System.out.println("ConceptoMovimiento: Se estableció 'Concepto Movimiento prueba'");
@@ -339,261 +339,6 @@ public class PolizaManual {
             UtilidadesAllure.manejoError(driver, e, "Error al aceptar la alerta.");
         }
     }
-
-    @Step("Buscar Póliza")
-    private void BuscarPoliza() {
-        try {
-            WebElement inputBuscar = wait.until(ExpectedConditions.visibilityOfElementLocated(
-                    By.xpath("/html/body/form/table/tbody/tr/td/div/table/tbody/tr[1]/td/table/tbody/tr/td/table/tbody/tr[1]/td/div[3]/div[2]/div[3]/div/table/tbody/tr/td/div/div/div[1]/div[1]/label/input")
-            ));
-            inputBuscar.clear();
-            inputBuscar.sendKeys(ConceptoPoliza);
-            System.out.println("Buscar Póliza: Se buscó la póliza con número " + ConceptoPoliza + " correctamente.");
-            Thread.sleep(1000);
-        } catch (Exception e) {
-            UtilidadesAllure.manejoError(driver, e, "Error al buscar la póliza con número " + FolioPoliza + ".");
-        }
-    }
-
-    @Step("Seleccionar Póliza")
-    private void SeleccionarPoliza() {
-        try {
-            WebElement registro = wait.until(ExpectedConditions.elementToBeClickable(
-                    By.xpath("//table[@id='TABLE_ProPolizas']//td[normalize-space(text())='" + ConceptoPoliza + "']")
-            ));
-            registro.click();
-            System.out.println("Seleccionar Póliza: Registro con número " + ConceptoPoliza + " seleccionado correctamente.");
-            Thread.sleep(1000);
-        } catch (Exception e) {
-            UtilidadesAllure.manejoError(driver, e, "Error al seleccionar la póliza con número " + ConceptoPoliza + ".");
-        }
-    }
-
-    @Step("Presionar Botón Modificar")
-    private void BotonModificar() {
-        try {
-            WebElement btnModificar = wait.until(ExpectedConditions.elementToBeClickable(
-                    By.xpath("/html/body/form/table/tbody/tr/td/div/table/tbody/tr[1]/td/table/tbody/tr/td/table/tbody/tr[1]/td/div[3]/div[2]/div[1]/table/tbody/tr/td/table/tbody/tr[1]/td/div/div[3]/div/input")
-            ));
-            btnModificar.click();
-            System.out.println("Botón Modificar: Se hizo click en el botón Modificar correctamente.");
-            Thread.sleep(1000);
-        } catch (Exception e) {
-            UtilidadesAllure.manejoError(driver, e, "Error al presionar el botón Modificar.");
-        }
-    }
-
-    @Step("Actualizar Campo Concepto")
-    private void CampoConcepto() {
-        try {
-            WebElement campoConcepto = wait.until(ExpectedConditions.visibilityOfElementLocated(
-                    By.xpath("/html/body/form/table/tbody/tr/td/table/tbody/tr/td/div/table/tbody/tr[2]/td/div[1]/table/tbody/tr/td/table/tbody/tr[1]/td/div/div[2]/table/tbody/tr/td/div/div[1]/table/tbody/tr/td/table/tbody/tr[1]/td/div/div[5]/div/table/tbody/tr/td/table/tbody/tr/td/ul/li[2]/input")
-            ));
-            String valorActual = campoConcepto.getAttribute("value");
-            String nuevoValor = valorActual + " Modificaado";
-            campoConcepto.clear();
-            campoConcepto.sendKeys(nuevoValor);
-            System.out.println("CampoConcepto: Valor actualizado a: " + nuevoValor);
-            Thread.sleep(1000);
-        } catch (Exception e) {
-            UtilidadesAllure.manejoError(driver, e, "Error en CampoConcepto.");
-        }
-    }
-
-    @Step("Presionar Botón Modificar Movimientos")
-    private void BotonModificarMovimientos() {
-        try {
-            WebElement btnModificarMov = wait.until(ExpectedConditions.elementToBeClickable(
-                    By.xpath("/html/body/form/table/tbody/tr/td/table/tbody/tr/td/div/table/tbody/tr[2]/td/div[1]/table/tbody/tr/td/table/tbody/tr[1]/td/div/div[2]/table/tbody/tr/td/div/div[2]/table/tbody/tr[2]/td/table[1]/tbody/tr/td/div/div[1]/table/tbody/tr/td/div/div/div[1]/div[2]/div/table/tbody/tr/td/input")
-            ));
-            btnModificarMov.click();
-            System.out.println("BotonModificarMovimientos: Click realizado correctamente.");
-            Thread.sleep(1000);
-        } catch (Exception e) {
-            UtilidadesAllure.manejoError(driver, e, "Error en BotonModificarMovimientos.");
-        }
-    }
-
-    @Step("Actualizar Campo Referencia Movimiento")
-    private void CampoReferenciaMov() {
-        try {
-            WebElement campoReferencia = wait.until(ExpectedConditions.visibilityOfElementLocated(
-                    By.xpath("/html/body/form/div[7]/table/tbody/tr/td/div[1]/div/table/tbody/tr/td/table/tbody/tr[1]/td/div/div[5]/div[1]/div[2]/div/table/tbody/tr/td/table/tbody/tr/td/ul/li[2]/input")
-            ));
-            campoReferencia.clear();
-            campoReferencia.sendKeys("movimiento modificado");
-            System.out.println("CampoReferenciaMov: Texto 'movimiento modificado' ingresado correctamente.");
-            Thread.sleep(1000);
-        } catch (Exception e) {
-            UtilidadesAllure.manejoError(driver, e, "Error en CampoReferenciaMov.");
-        }
-    }
-
-    @Step("Aceptar Modificación Movimiento")
-    private void AceptarModMovimiento() {
-        try {
-            WebElement btnAceptarModMov = wait.until(ExpectedConditions.elementToBeClickable(
-                    By.xpath("/html/body/form/div[7]/table/tbody/tr/td/div[4]/div[1]/div/table/tbody/tr/td/a/span/span")
-            ));
-            btnAceptarModMov.click();
-            System.out.println("AceptarModMovimiento: Click realizado correctamente.");
-            Thread.sleep(1000);
-        } catch (Exception e) {
-            UtilidadesAllure.manejoError(driver, e, "Error en AceptarModMovimiento.");
-        }
-    }
-
-    @Step("Aceptar Modificación Póliza")
-    private void AceptarModificacionPoliza() {
-        try {
-            WebElement btnAceptarModPol = wait.until(ExpectedConditions.elementToBeClickable(
-                    By.xpath("/html/body/form/table/tbody/tr/td/table/tbody/tr/td/div/table/tbody/tr[2]/td/div[1]/table/tbody/tr/td/table/tbody/tr[1]/td/div/div[3]/div[3]/div/table/tbody/tr/td/input")
-            ));
-            btnAceptarModPol.click();
-            System.out.println("AceptarModificacionPoliza: Click realizado correctamente.");
-            Thread.sleep(1000);
-        } catch (Exception e) {
-            UtilidadesAllure.manejoError(driver, e, "Error en AceptarModificacionPoliza.");
-        }
-    }
-
-    @Step("Presionar Botón Consultar")
-    private void BotonConsultar() {
-        try {
-            WebElement btnConsultar = wait.until(ExpectedConditions.elementToBeClickable(
-                    By.xpath("/html/body/form/table/tbody/tr/td/div/table/tbody/tr[1]/td/table/tbody/tr/td/table/tbody/tr[1]/td/div[3]/div[2]/div[1]/table/tbody/tr/td/table/tbody/tr[1]/td/div/div[4]/div/input")
-            ));
-            btnConsultar.click();
-            System.out.println("Botón Consultar: Se presionó correctamente.");
-            Thread.sleep(1000);
-        } catch (Exception e) {
-            UtilidadesAllure.manejoError(driver, e, "Error al presionar el botón Consultar.");
-        }
-    }
-
-    @Step("Capturar Concepto")
-    private void CapturarConcepto() {
-        try {
-            WebElement campoConcepto = wait.until(ExpectedConditions.visibilityOfElementLocated(
-                    By.xpath("/html/body/form/table/tbody/tr/td/table/tbody/tr/td/div/table/tbody/tr[2]/td/div[1]/table/tbody/tr/td/table/tbody/tr[1]/td/div/div[2]/table/tbody/tr/td/div/div[1]/table/tbody/tr/td/table/tbody/tr[1]/td/div/div[5]/div/table/tbody/tr/td/table/tbody/tr/td/ul/li[2]/input")
-            ));
-            String valorConcepto = campoConcepto.getAttribute("value");
-            System.out.println("Capturar Concepto: Valor capturado: " + valorConcepto);
-            Thread.sleep(1000);
-        } catch (Exception e) {
-            UtilidadesAllure.manejoError(driver, e, "Error al capturar el concepto.");
-        }
-    }
-
-    @Step("Salir de Consultar")
-    private void SalirConsultar() {
-        try {
-            WebElement btnSalir = wait.until(ExpectedConditions.elementToBeClickable(
-                    By.xpath("/html/body/form/table/tbody/tr/td/table/tbody/tr/td/div/table/tbody/tr[2]/td/div[1]/table/tbody/tr/td/table/tbody/tr[1]/td/div/div[3]/div[4]/div/table/tbody/tr/td/input")
-            ));
-            btnSalir.click();
-            System.out.println("Salir Consultar: Se presionó el botón de salir correctamente.");
-            Thread.sleep(1000);
-        } catch (Exception e) {
-            UtilidadesAllure.manejoError(driver, e, "Error al presionar el botón de salir en Consultar.");
-        }
-    }
-
-    @Step("Hacer clic en el botón de impresión")
-    public void BotonImprimir() {
-        try {
-            // Localizar el botón de impresión usando el XPath proporcionado
-            WebElement botonImprimir = driver.findElement(
-                    By.xpath("/html/body/form/table/tbody/tr/td/div/table/tbody/tr[1]/td/table/tbody/tr/td/table/tbody/tr[1]/td/div[3]/div[2]/div[1]/table/tbody/tr/td/table/tbody/tr[1]/td/div/div[6]/div/input"));
-
-            // Hacer clic en el botón
-            botonImprimir.click();
-            System.out.println("Se hizo clic en el botón de impresión.");
-
-        } catch (Exception e) {
-            System.err.println("Error al hacer clic en el botón de impresión: " + e.getMessage());
-        }
-    }
-
-    @Step("Seleccionar el último formato de impresión")
-    public void SeleccionarFormato() {
-        try {
-            // Localizar el menú desplegable de formatos usando el XPath proporcionado
-            WebElement comboFormatos = driver.findElement(
-                    By.xpath("/html/body/form/table/tbody/tr/td/table/tbody/tr/td/div/table/tbody/tr[2]/td/div[1]/table/tbody/tr/td/table/tbody/tr[3]/td/div[1]/table/tbody/tr/td/div/div/table/tbody/tr/td/table/tbody/tr/td/ul/li[2]/table/tbody/tr/td/select"));
-
-            // Crear un objeto Select para interactuar con el menú desplegable
-            Select selectFormato = new Select(comboFormatos);
-
-            // Seleccionar la última opción del menú desplegable
-            int ultimaOpcion = selectFormato.getOptions().size() - 1;
-            selectFormato.selectByIndex(ultimaOpcion);
-            System.out.println("Se seleccionó el último formato de impresión.");
-
-        } catch (Exception e) {
-            System.err.println("Error al seleccionar el formato de impresión: " + e.getMessage());
-        }
-    }
-
-    @Step("Hacer clic en el botón de imprimir")
-    public void Imprimir() {
-        try {
-            // Localizar el botón de imprimir usando el XPath proporcionado
-            WebElement botonImprimir = driver.findElement(
-                    By.xpath("/html/body/form/table/tbody/tr/td/table/tbody/tr/td/div/table/tbody/tr[2]/td/div[1]/table/tbody/tr/td/table/tbody/tr[1]/td/div/div[2]/div/table/tbody/tr/td/input"));
-
-            // Hacer clic en el botón
-            botonImprimir.click();
-            System.out.println("Se hizo clic en el botón de imprimir.");
-
-            Thread.sleep(3000);
-
-        } catch (Exception e) {
-            System.err.println("Error al hacer clic en el botón de imprimir: " + e.getMessage());
-        }
-    }
-
-    @Step("Hacer clic en el botón para cerrar la vista previa")
-    public void CerrarVistaPrevia() {
-        try {
-            // Localizar el botón para cerrar la vista previa usando el XPath proporcionado
-            WebElement botonCerrar = driver.findElement(
-                    By.xpath("/html/body/form/table/tbody/tr/td/table/tbody/tr/td/div/table/tbody/tr[2]/td/div[1]/table/tbody/tr/td/table/tbody/tr[1]/td/div/div[1]/div[3]/div/table/tbody/tr/td/a/span"));
-
-            // Hacer clic en el botón
-            botonCerrar.click();
-            System.out.println("Se hizo clic en el botón para cerrar la vista previa.");
-
-        } catch (Exception e) {
-            System.err.println("Error al hacer clic en el botón para cerrar la vista previa: " + e.getMessage());
-        }
-    }
-
-    @Step("Eliminar Póliza")
-    private void EliminarPoliza() {
-        try {
-            WebElement btnEliminar = wait.until(ExpectedConditions.elementToBeClickable(
-                    By.xpath("/html/body/form/table/tbody/tr/td/div/table/tbody/tr[1]/td/table/tbody/tr/td/table/tbody/tr[1]/td/div[3]/div[2]/div[1]/table/tbody/tr/td/table/tbody/tr[1]/td/div/div[5]/div/input")
-            ));
-            btnEliminar.click();
-            System.out.println("Eliminar Poliza: Se presionó el botón de eliminar póliza correctamente.");
-            Thread.sleep(1000);
-        } catch (Exception e) {
-            UtilidadesAllure.manejoError(driver, e, "Error al presionar el botón de eliminar póliza.");
-        }
-    }
-
-    @Step("Aceptar Alerta de Eliminación de Póliza")
-    private void AceptarAlertaEliminarP() {
-        try {
-            wait.until(ExpectedConditions.alertIsPresent()).accept();
-            System.out.println("Alerta Eliminación de Póliza Manual aceptada correctamente y eliminada la póliza manual #" + FolioPoliza);
-        } catch (Exception e) {
-            UtilidadesAllure.manejoError(driver, e, "No se encontró ninguna alerta para aceptar.");
-        }
-    }
-
-
 
 
 }
