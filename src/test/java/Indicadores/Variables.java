@@ -8,5 +8,7 @@ public class Variables {
     public static final String Operador = "024518"; // Número de operador
     public static final String PROVEEDOR = "1"; // Número de proveedoR
 
-    // Puedes agregar aquí otras variables o constantes que necesites compartir
+    // Variables importacion archivos.
+
+    public static final String Docmateriales = "C:\\RepositorioPrueAuto\\XLSXPruebas\\ImportarMaterialesPA.xlsx";
 }

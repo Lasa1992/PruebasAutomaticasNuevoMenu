@@ -170,7 +170,7 @@ public class ImportacionPolizasYPrepolizas {
 
     @Step("Revisar y actualizar la fecha en el archivo Excel")
     private void RevisionFechaExcel() {
-        String filePath = "C:\\Users\\UsuarioY\\Desktop\\Pruebas Automaticas\\XLSXPruebas\\ImportarPolizas.xlsx";
+        String filePath = "C:\\RepositorioPrueAuto\\XLSXPruebas\\ImportarPolizas.xlsx";
         try {
             FileInputStream file = new FileInputStream(filePath);
             Workbook workbook = new XSSFWorkbook(file);

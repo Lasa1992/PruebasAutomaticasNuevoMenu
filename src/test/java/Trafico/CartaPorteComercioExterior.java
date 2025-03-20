@@ -494,7 +494,7 @@ public class CartaPorteComercioExterior {
     private void ImportacionMaterial() {
         try {
             WebElement inputArchivo = wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("EDT_IMPORTARMATERIALES_ARCHIVO")));
-            String rutaArchivo = "C:\\Users\\UsuarioY\\Desktop\\Pruebas Automaticas\\XLSXPruebas\\ImportarMaterialesComercioExterior.xlsx";
+            String rutaArchivo = "C:\\RepositorioPrueAuto\\XLSXPruebas\\ImportarMaterialesComercioExterior.xlsx";
             File archivo = new File(rutaArchivo);
             if (!archivo.exists()) {
                 throw new Exception("El archivo especificado no existe: " + rutaArchivo);

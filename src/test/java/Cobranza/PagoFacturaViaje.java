@@ -39,6 +39,8 @@ public class PagoFacturaViaje {
     private static final String NUMERO_CLIENTE = Variables.CLIENTE; // Número de cliente configurable
     private static final String FOLIO_RUTA = Variables.RUTA; // Folio de la ruta configurable
     private static final String TIPO_DOCUMENTO = Variables.DocumentoIngreso;
+    // Definir la ruta del archivo en una variable
+    private static final String rutaArchivo  = Variables.Docmateriales;
 
 
 
@@ -319,12 +321,13 @@ public class PagoFacturaViaje {
 
     @Step("Importar Archivo de Materiales")
     private void ImportacionMaterial() {
+
+
         try {
             // Espera a que el campo de archivo sea visible
             WebElement inputArchivo = wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("EDT_IMPORTARMATERIALES_ARCHIVO")));
 
-            // Especifica la ruta al archivo que deseas importar
-            String rutaArchivo = "C:\\Users\\usuariocalidad02\\Desktop\\Pruebas Automaticas\\XLSXPruebas\\ImportarMaterialesPA.xlsx";
+            // Verificar si el archivo existe
             File archivo = new File(rutaArchivo);
             if (archivo.exists()) {
                 // Enviar la ruta del archivo al campo de tipo "file"
@@ -359,6 +362,7 @@ public class PagoFacturaViaje {
             UtilidadesAllure.manejoError(driver, e, "Error al importar el archivo de materiales");
         }
     }
+
 
     @Step("Aceptar Importación de Materiales")
     private void BotonAceptarImportacion() {

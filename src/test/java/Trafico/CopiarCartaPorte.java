@@ -30,6 +30,8 @@ public class CopiarCartaPorte {
     private static final String NUMERO_RUTA = Variables.RUTA;        // Número de ruta
     private static final String TIPO_DOCUMENTO = Variables.DocumentoTraslado;
 
+    private static final String rutaArchivo  = Variables.Docmateriales;
+
     // Variables para almacenar valores reutilizables
 
     private static String folioGuardado;
@@ -309,12 +311,13 @@ public class CopiarCartaPorte {
 
     @Step("Importar Archivo de Materiales")
     private void ImportacionMaterial() {
+
+
         try {
             // Espera a que el campo de archivo sea visible
             WebElement inputArchivo = wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("EDT_IMPORTARMATERIALES_ARCHIVO")));
 
-            // Especifica la ruta al archivo que deseas importar
-            String rutaArchivo = "C:\\Users\\UsuarioY\\Desktop\\Pruebas Automaticas\\XLSXPruebas\\ImportarMaterialesPA.xlsx";
+            // Verificar si el archivo existe
             File archivo = new File(rutaArchivo);
             if (archivo.exists()) {
                 // Enviar la ruta del archivo al campo de tipo "file"

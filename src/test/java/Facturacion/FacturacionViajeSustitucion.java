@@ -28,6 +28,8 @@ public class FacturacionViajeSustitucion {
     private static final String NUMERO_CLIENTE   = Variables.CLIENTE;  // Número de cliente
     private static final String NUMERO_RUTA      = Variables.RUTA;  // Número de ruta
     private static final String TIPO_DOCUMENTO   = Variables.DocumentoIngreso;
+
+    private static final String rutaArchivo  = Variables.Docmateriales;
     // =========================================================================
 
     // Variables para almacenar valores reutilizables
@@ -300,38 +302,42 @@ public class FacturacionViajeSustitucion {
             UtilidadesAllure.manejoError(driver, e, "Error al hacer clic en el botón Importar Materiales");
         }
     }
-
     @Step("Importar Archivo de Materiales")
     private void ImportacionMaterial() {
-        try {
-            WebElement inputArchivo = wait.until(
-                    ExpectedConditions.visibilityOfElementLocated(By.id("EDT_IMPORTARMATERIALES_ARCHIVO")));
 
-            // Ajusta la ruta del archivo según tus necesidades
-            String rutaArchivo = "C:\\Users\\UsuarioY\\Desktop\\Pruebas Automaticas\\XLSXPruebas\\ImportarMaterialesPA.xlsx";
+
+        try {
+            // Espera a que el campo de archivo sea visible
+            WebElement inputArchivo = wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("EDT_IMPORTARMATERIALES_ARCHIVO")));
+
+            // Verificar si el archivo existe
             File archivo = new File(rutaArchivo);
-            if (!archivo.exists()) {
+            if (archivo.exists()) {
+                // Enviar la ruta del archivo al campo de tipo "file"
+                inputArchivo.sendKeys(rutaArchivo);
+            } else {
                 throw new Exception("El archivo especificado no existe: " + rutaArchivo);
             }
 
-            inputArchivo.sendKeys(rutaArchivo);
+            // Espera a que el botón de importar sea clicable
+            WebElement botonImportar = wait.until(ExpectedConditions.elementToBeClickable(By.id("BTN_IMPORTARMATERIALES_IMPORTAR")));
 
-            WebElement botonImportar = wait.until(ExpectedConditions.elementToBeClickable(
-                    By.id("BTN_IMPORTARMATERIALES_IMPORTAR")));
+            // Hacer clic en el botón de importar
             botonImportar.click();
+
+            // Esperar unos 3 segundos después de hacer clic
             Thread.sleep(3000);
 
+            // Verificar si la importación fue exitosa o falló
             try {
-                WebElement iconoExito = wait.until(
-                        ExpectedConditions.visibilityOfElementLocated(By.id("IMG_ICONO_EXITO")));
+                WebElement iconoExito = wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("IMG_ICONO_EXITO")));
                 if (iconoExito.isDisplayed()) {
                     System.out.println("Importación de materiales exitosa.");
                 }
             } catch (TimeoutException e) {
-                WebElement iconoError = wait.until(
-                        ExpectedConditions.visibilityOfElementLocated(By.id("IMG_IMPORTARMATERIALES_ERROR")));
+                WebElement iconoError = wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("IMG_IMPORTARMATERIALES_ERROR")));
                 if (iconoError.isDisplayed()) {
-                    UtilidadesAllure.capturaImagen(driver);
+                    UtilidadesAllure.capturaImagen(driver); // Toma captura de pantalla en caso de error
                     throw new Exception("La importación de materiales falló, se mostró el icono de error.");
                 }
             }
@@ -339,7 +345,6 @@ public class FacturacionViajeSustitucion {
             UtilidadesAllure.manejoError(driver, e, "Error al importar el archivo de materiales");
         }
     }
-
     @Step("Aceptar Importación de Materiales")
     private void BotonAceptarImportacion() {
         try {
