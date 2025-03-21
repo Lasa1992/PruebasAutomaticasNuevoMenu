@@ -28,6 +28,10 @@ public class MovimientoBancarioModElim {
     // Variable global para almacenar el número de movimiento
     private static String folioMovimiento = "";
 
+    // Variable global para almacenar el valor de la cuenta seleccionada
+    private String cuentaSeleccionadaValor;
+
+
 
     @BeforeEach
     public void setup() {
@@ -67,7 +71,7 @@ public class MovimientoBancarioModElim {
         submoduloMovBancarios();
     }
 
-    @RepeatedTest(3)
+    @RepeatedTest(10)
     @Order(4)
     @Description("Generación de Movimiento con Conceptos Aleatorios")
     public void testAgregarMovimientoBancario() {
@@ -153,10 +157,25 @@ public class MovimientoBancarioModElim {
 
             if (!options.isEmpty()) {
                 int index = new Random().nextInt(options.size());
+                WebElement opcionSeleccionada = options.get(index);
                 select.selectByIndex(index);
-                System.out.println("Cuenta Bancaria seleccionada: " + options.get(index).getText());
-            }
 
+                // Obtener el texto de la opción seleccionada
+                String textoOpcion = opcionSeleccionada.getText();
+                // Buscar la posición del guión (-)
+                int indiceGuion = textoOpcion.indexOf("-");
+                // Extraer el valor anterior al guión, si se encontró; de lo contrario, tomar todo el texto
+                String valorCuenta;
+                if (indiceGuion != -1) {
+                    valorCuenta = textoOpcion.substring(0, indiceGuion).trim();
+                } else {
+                    valorCuenta = textoOpcion.trim();
+                }
+
+                // Guardar el valor en la variable global
+                cuentaSeleccionadaValor = valorCuenta;
+                System.out.println("Cuenta seleccionada: " + cuentaSeleccionadaValor);
+            }
         } catch (Exception e) {
             UtilidadesAllure.manejoError(driver, e, "Error al seleccionar una cuenta bancaria.");
         }
@@ -332,10 +351,10 @@ public class MovimientoBancarioModElim {
             inputBusqueda.click();
             inputBusqueda.clear();
 
-            inputBusqueda.sendKeys(folioMovimiento);
+            inputBusqueda.sendKeys(cuentaSeleccionadaValor);
             Thread.sleep(2000);
 
-            System.out.println("Búsqueda realizada para el folio: " + folioMovimiento);
+            System.out.println("Búsqueda realizada para el folio: " + cuentaSeleccionadaValor);
 
         } catch (Exception e) {
             UtilidadesAllure.manejoError(driver, e, "Error al buscar el movimiento bancario.");

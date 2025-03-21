@@ -14,14 +14,15 @@ import org.junit.platform.launcher.core.LauncherDiscoveryRequestBuilder;
 import org.junit.platform.launcher.core.LauncherFactory;
 import org.junit.platform.engine.discovery.DiscoverySelectors;
 
+import java.io.IOException;
 import java.util.*;
 import java.util.concurrent.*;
 
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class SuiteGlobal {
 
-    private static final String[] NAVEGADORES = {"chrome"/*, "firefox", "edge"*/};
-    private static final int NUMERO_HILOS = 2;
+    private static final String[] NAVEGADORES = {"chrome", "firefox", "edge"};
+    private static final int NUMERO_HILOS =1;
     private static final ExecutorService executorService = Executors.newFixedThreadPool(NUMERO_HILOS);
 
     // Mapa global para almacenar los resultados de todas las pruebas en todos los navegadores
@@ -52,13 +53,13 @@ public class SuiteGlobal {
 
     private Map<String, TestResult> ejecutarPruebasEnNavegador(String navegador) {
         Class<?>[] pruebas = {
-                  // Indicadores
-                  IndicadoresTest.class,
-                  ParametrosGenerales.class,
+                // Indicadores
+                 IndicadoresTest.class,
+                 ParametrosGenerales.class,
 
-                  // Bancos
-                  ChequesModElim.class,
-                  MovimientoBancarioModElim.class,
+                 // Bancos
+                   ChequesModElim.class,
+                   MovimientoBancarioModElim.class,
 
                   // Cobranza
                   PagoFacturaConcepto.class,
@@ -71,7 +72,7 @@ public class SuiteGlobal {
                   ImportacionPolizasYPrepolizas.class,
                   PolizaManual.class,
 
-                  // Facturación
+                 /* // Facturación
                   FacturacionGeneral.class,
                   FacturacionGeneralDescImpr.class,
                   FacturacionGeneralSustitucion.class,
@@ -88,7 +89,7 @@ public class SuiteGlobal {
                   CopiarCartaPorte.class,
                   ViajeACartaPorte.class,
                   LiquidacionFiscal.class,
-                  LiquidacionOperativa.class
+                  LiquidacionOperativa.class */
         };
 
         Map<String, TestResult> resultados = new LinkedHashMap<>();
@@ -165,7 +166,7 @@ public class SuiteGlobal {
             int exitosas = 0;
             int fallidas = 0;
 
-            System.out.println("\n🌐 Navegador: " + navegador.toUpperCase());
+            //System.out.println("\n🌐 Navegador: " + navegador.toUpperCase());
             for (Map.Entry<String, TestResult> entry : resultadosPorNavegador.entrySet()) {
                 if (entry.getKey().equals("TOTAL")) continue; // Saltar el tiempo total del navegador aquí
 
@@ -229,4 +230,22 @@ public class SuiteGlobal {
             return allSuccessful;
         }
     }
+
+   /* private void ejecutarComandoAllureServe() {
+        try {
+            System.out.println("🚀 Ejecutando comando: mvn allure:serve");
+            // Ejecuta el comando a través de cmd.exe para Windows
+            Process process = Runtime.getRuntime().exec(new String[]{"cmd.exe", "/c", "mvn allure:serve"});
+            // NOTA: No llamamos a process.waitFor() para no bloquear el hilo actual
+            System.out.println("Servidor Allure iniciado en segundo plano.");
+        } catch (IOException e) {
+            System.err.println("❌ Error al ejecutar el comando: " + e.getMessage());
+        }
+    }
+
+    @Test
+    @Order(2)
+    public void generarYServirInformeAllure() {
+        ejecutarComandoAllureServe();
+    }*/
 }

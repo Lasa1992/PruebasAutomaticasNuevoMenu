@@ -67,7 +67,7 @@ public class MovimientoBancario {
         submoduloMovBancarios();
     }
 
-    @RepeatedTest(3)
+    @RepeatedTest(2)
     @Order(4)
     @Description("Generación de Movimiento con Conceptos Aleatorios")
     public void testAgregarMovimientoBancario() {

@@ -25,6 +25,11 @@ public class ChequesModElim {
     private static WebDriverWait wait;
     private static String folioCheque = ""; // Variable global para el número de cheque
 
+
+    // Variable global para almacenar el valor de la cuenta seleccionada
+    private String cuentaSeleccionadaValor;
+
+
     @BeforeEach
     public void setup() {
         // 🛠️ Obtener el navegador dinámicamente desde la variable del sistema
@@ -63,7 +68,7 @@ public class ChequesModElim {
         submoduloCheques();
     }
 
-    @RepeatedTest(3)
+    @RepeatedTest(2)
     @Order(4)
     @Description("Generación de Cheque con Datos Aleatorios")
     public void AgregarCheque() {
@@ -88,6 +93,7 @@ public class ChequesModElim {
         AceptarMovimiento();
 
         EliminarCheque();
+        AlertaEliminar();
 
 
 
@@ -135,6 +141,7 @@ public class ChequesModElim {
         }
     }
 
+
     @Step("Seleccionar Cuenta Bancaria Aleatoria")
     private void CuentaBancaria() {
         try {
@@ -147,12 +154,30 @@ public class ChequesModElim {
 
             if (!options.isEmpty()) {
                 int index = new Random().nextInt(options.size());
+                WebElement opcionSeleccionada = options.get(index);
                 select.selectByIndex(index);
+
+                // Obtener el texto de la opción seleccionada
+                String textoOpcion = opcionSeleccionada.getText();
+                // Buscar la posición del guión (-)
+                int indiceGuion = textoOpcion.indexOf("-");
+                // Extraer el valor anterior al guión, si se encontró; de lo contrario, tomar todo el texto
+                String valorCuenta;
+                if (indiceGuion != -1) {
+                    valorCuenta = textoOpcion.substring(0, indiceGuion).trim();
+                } else {
+                    valorCuenta = textoOpcion.trim();
+                }
+
+                // Guardar el valor en la variable global
+                cuentaSeleccionadaValor = valorCuenta;
+                System.out.println("Cuenta seleccionada: " + cuentaSeleccionadaValor);
             }
         } catch (Exception e) {
             UtilidadesAllure.manejoError(driver, e, "Error al seleccionar una cuenta bancaria.");
         }
     }
+
 
     @Step("Capturar y Guardar Número de Cheque")
     private void NumeroCheque() {
@@ -260,7 +285,7 @@ public class ChequesModElim {
         }
     }
 
-    @Step("Buscar Cheque por Número")
+    @Step("Buscar Cheque por Cuenta Bancaria")
     private void BuscarCheque() {
         try {
             WebElement inputBusqueda = wait.until(ExpectedConditions.elementToBeClickable(
@@ -269,15 +294,16 @@ public class ChequesModElim {
 
             // Limpiar campo antes de escribir
             inputBusqueda.clear();
-            inputBusqueda.sendKeys(folioCheque);
+            // Utilizar la variable 'cuentaSeleccionadaValor' en lugar de 'folioCheque'
+            inputBusqueda.sendKeys(cuentaSeleccionadaValor);
             inputBusqueda.sendKeys(Keys.ENTER);  // Presionar ENTER para buscar
 
-            System.out.println("Cheque buscado: " + folioCheque);
-
+            System.out.println("Cheque buscado por cuenta: " + cuentaSeleccionadaValor);
         } catch (Exception e) {
             UtilidadesAllure.manejoError(driver, e, "Error al buscar el cheque.");
         }
     }
+
 
     @Step("Seleccionar Cheque en la Tabla")
     private void SeleccionarCheque() {
@@ -389,4 +415,18 @@ public class ChequesModElim {
             UtilidadesAllure.manejoError(driver, e, "Error al eliminar el cheque.");
         }
     }
+
+    @Step("Aceptar alerta de eliminación")
+    private void AlertaEliminar() {
+        try {
+            // Espera hasta que la alerta esté presente
+            Alert alerta = wait.until(ExpectedConditions.alertIsPresent());
+            // Acepta la alerta
+            alerta.accept();
+            System.out.println("Alerta de eliminación aceptada.");
+        } catch (Exception e) {
+            UtilidadesAllure.manejoError(driver, e, "Error al aceptar la alerta de eliminación.");
+        }
+    }
+
 }

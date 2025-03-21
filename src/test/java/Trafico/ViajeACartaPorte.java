@@ -164,7 +164,7 @@ public class ViajeACartaPorte {
 
             // 2) Leemos el contador actual desde el archivo
             int contadorViaje = 0;
-            Path path = Paths.get("C:\\Users\\UsuarioY\\Desktop\\Pruebas Automaticas\\XLSXPruebas\\VariableViajeACartaPorte.txt");
+            Path path = Paths.get("C:\\RepositorioPrueAuto\\XLSXPruebas\\VariableViajeACartaPorte.txt");
 
             if (Files.exists(path)) {
                 try {

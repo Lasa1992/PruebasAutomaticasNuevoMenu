@@ -14,6 +14,7 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 import org.openqa.selenium.support.ui.Select;
 
 import java.time.Duration;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Random;
@@ -515,14 +516,30 @@ public class PagoFacturaConcepto {
 
     public void deseleccionarCampoFecha() {
         try {
-            WebElement body = driver.findElement(By.tagName("body")); // Clic en el fondo de la página
-            body.click();
-            body.click();
-            System.out.println("Campo EDT_FECHA deseleccionado con un clic en el body.");
+            // Localizamos el elemento que queremos validar (reemplaza el XPath por el correcto)
+            WebElement campoFecha = driver.findElement(By.xpath("/html/body/form/table/tbody/tr/td/table/tbody/tr/td/div/table/tbody/tr[2]/td/div[1]/table/tbody/tr/td/table/tbody/tr[1]/td/div/div[1]/table/tbody/tr/td/table/tbody/tr[1]/td/div/div[1]/table/tbody/tr/td/table/tbody/tr[2]/td/div[1]/input"));
+            int maxIntentos = 3;
+            int intentos = 0;
+
+            // Verificamos si el elemento tiene el foco y repetimos el clic en el body si es necesario
+            while(campoFecha.equals(driver.switchTo().activeElement()) && intentos < maxIntentos) {
+                System.out.println("El campo está seleccionado. Haciendo clic en el body para quitar la selección... (Intento " + (intentos+1) + ")");
+                WebElement body = driver.findElement(By.tagName("body"));
+                body.click();
+                intentos++;
+            }
+
+            // Validamos el estado final
+            if (!campoFecha.equals(driver.switchTo().activeElement())) {
+                System.out.println("El campo se deseleccionó correctamente tras " + intentos + " intento(s).");
+            } else {
+                System.out.println("El campo sigue seleccionado tras " + intentos + " intento(s).");
+            }
         } catch (Exception e) {
-            System.err.println("No se pudo deseleccionar el campo EDT_FECHA: " + e.getMessage());
+            System.err.println("Error al deseleccionar el campo: " + e.getMessage());
         }
     }
+
 
     @Step("Asignar Cliente al Pago")
     private void CodigoClientPago() {
@@ -712,7 +729,7 @@ public class PagoFacturaConcepto {
     @Step("Generar Timbre del Pago")
     public void TimbrePago() {
         try {
-            WebElement btnSi = wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//input[contains(@class, 'BTN_YES')]")));
+            WebElement btnSi = wait.until(ExpectedConditions.elementToBeClickable(By.xpath("/html/body/form/table/tbody/tr/td/table/tbody/tr/td/div/table/tbody/tr[2]/td/div[1]/table/tbody/tr/td/div/div[3]/table/tbody/tr/td/table/tbody/tr[2]/td/div[2]/table/tbody/tr/td/input")));
             btnSi.click();
             System.out.println("Timbre del pago generado correctamente.");
         } catch (Exception e) {
@@ -724,39 +741,55 @@ public class PagoFacturaConcepto {
     @Step("Enviar Comprobante de Pago por Correo")
     public void EnvioCorreoPago() {
         try {
-            WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
-            List<WebElement> botones = wait.until(
-                    ExpectedConditions.presenceOfAllElementsLocatedBy(By.xpath("//input[@onclick]")));
-            List<WebElement> botonesValidos = botones.stream()
-                    .filter(b -> b.isDisplayed() && b.isEnabled())
+            WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(3));
+            // Definir los XPaths de los dos elementos
+            String xpath1 = "/html/body/form/table/tbody/tr/td/table/tbody/tr/td/div/table/tbody/tr[2]/td/div[1]/table/tbody/tr/td/div/div[3]/table/tbody/tr/td/table/tbody/tr[2]/td/div[2]/table/tbody/tr/td/input";
+            String xpath2 = "/html/body/form/table/tbody/tr/td/table/tbody/tr/td/div/table/tbody/tr[2]/td/div[1]/table/tbody/tr/td/div/div[3]/table/tbody/tr/td/table/tbody/tr[2]/td/div[3]/table/tbody/tr/td/input";
+
+            // Esperar a que ambos elementos estén presentes en el DOM
+            WebElement elemento1 = wait.until(ExpectedConditions.presenceOfElementLocated(By.xpath(xpath1)));
+            WebElement elemento2 = wait.until(ExpectedConditions.presenceOfElementLocated(By.xpath(xpath2)));
+
+            // Agregar ambos elementos a una lista
+            List<WebElement> elementos = new ArrayList<>();
+            elementos.add(elemento1);
+            elementos.add(elemento2);
+
+            // Filtrar aquellos que sean visibles y estén habilitados
+            List<WebElement> elementosValidos = elementos.stream()
+                    .filter(e -> e.isDisplayed() && e.isEnabled())
                     .collect(Collectors.toList());
-            if (botonesValidos.isEmpty()) {
-                System.out.println("No hay botones visibles y clickeables. Continuando...");
+
+            if (elementosValidos.isEmpty()) {
+                System.out.println("No hay elementos visibles y clickeables. Continuando...");
                 return;
             }
-            System.out.println("Botones válidos encontrados:");
-            for (WebElement boton : botonesValidos) {
-                // Se pueden agregar detalles adicionales si es necesario
-            }
-            WebElement botonSeleccionado = botonesValidos.get(new Random().nextInt(botonesValidos.size()));
+
+            // Seleccionar aleatoriamente uno de los elementos válidos
+            WebElement elementoSeleccionado = elementosValidos.get(new Random().nextInt(elementosValidos.size()));
+
             try {
-                System.out.println("Se hizo clic en el botón con ID: " + botonSeleccionado.getAttribute("id"));
-                botonSeleccionado.click();
+                System.out.println("Se hizo clic en el elemento seleccionado.");
+                elementoSeleccionado.click();
             } catch (Exception e) {
                 System.out.println("Click() falló, intentando con JavaScript...");
-                ((JavascriptExecutor) driver).executeScript("arguments[0].click();", botonSeleccionado);
-                System.out.println("Click ejecutado con JavaScript en el botón con ID: " + botonSeleccionado.getAttribute("id"));
+                ((JavascriptExecutor) driver).executeScript("arguments[0].click();", elementoSeleccionado);
+                System.out.println("Click ejecutado con JavaScript en el elemento seleccionado.");
             }
         } catch (Exception e) {
-            System.err.println("Error al hacer clic en el botón. Continuando...");
+            System.err.println("Error al hacer clic en el elemento. Continuando...");
             e.printStackTrace();
         }
     }
 
+
     @Step("Aceptar Póliza Contable del Pago")
     public void AceptarPolizaPago() {
         try {
-            WebElement btnOk = driver.findElement(By.xpath("//input[contains(@class, 'BTN-BotonClasicoGris BTN_OK ')]"));
+            WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(2));
+            WebElement btnOk = wait.until(ExpectedConditions.elementToBeClickable(
+                    By.xpath("/html/body/form/table/tbody/tr/td/table/tbody/tr/td/div/table/tbody/tr[2]/td/div[1]/table/tbody/tr/td/div/div[3]/table/tbody/tr/td/table/tbody/tr[2]/td/div[1]/table/tbody/tr/td/input")
+            ));
             btnOk.click();
             System.out.println("Póliza contable aceptada.");
         } catch (Exception e) {
@@ -764,24 +797,45 @@ public class PagoFacturaConcepto {
         }
     }
 
+
     public void deseleccionarCampoFecha2() {
         try {
-            WebElement body = driver.findElement(By.tagName("body"));
-            body.click();
-            body.click();
-            System.out.println("Campo EDT_FECHA deseleccionado con un clic en el body.");
+            // Localizamos el elemento que queremos validar (reemplaza el XPath por el correcto)
+            WebElement campoFecha = driver.findElement(By.xpath("/html/body/form/table/tbody/tr/td/table/tbody/tr/td/div/table/tbody/tr[2]/td/div[1]/table/tbody/tr/td/table/tbody/tr[1]/td/div/div[1]/table/tbody/tr/td/table/tbody/tr[1]/td/div/div[1]/table/tbody/tr/td/table/tbody/tr[2]/td/div[1]/input"));
+            int maxIntentos = 3;
+            int intentos = 0;
+
+            // Verificamos si el elemento tiene el foco y repetimos el clic en el body si es necesario
+            while(campoFecha.equals(driver.switchTo().activeElement()) && intentos < maxIntentos) {
+                System.out.println("El campo está seleccionado. Haciendo clic en el body para quitar la selección... (Intento " + (intentos+1) + ")");
+                WebElement body = driver.findElement(By.tagName("body"));
+                body.click();
+                intentos++;
+            }
+
+            // Validamos el estado final
+            if (!campoFecha.equals(driver.switchTo().activeElement())) {
+                System.out.println("El campo se deseleccionó correctamente tras " + intentos + " intento(s).");
+            } else {
+                System.out.println("El campo sigue seleccionado tras " + intentos + " intento(s).");
+            }
         } catch (Exception e) {
-            System.err.println("No se pudo deseleccionar el campo EDT_FECHA: " + e.getMessage());
+            System.err.println("Error al deseleccionar el campo: " + e.getMessage());
         }
     }
 
     @Step("Salir de la Ventana de Pago")
     public void SalirVentanaPago() {
         try {
-            wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//input[contains(@class, 'BTN-BotonClasicoGris BTN_CANCELAR')]"))).click();
+            WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(1));
+            WebElement btnCancelar = wait.until(ExpectedConditions.elementToBeClickable(
+                    By.xpath("/html/body/form/table/tbody/tr/td/table/tbody/tr/td/div/table/tbody/tr[2]/td/div[1]/table/tbody/tr/td/table/tbody/tr[1]/td/div/div[2]/div[3]/div/table/tbody/tr/td/input")
+            ));
+            btnCancelar.click();
             System.out.println("Salida de la ventana realizada.");
         } catch (Exception e) {
             System.err.println("Error al salir de la ventana: " + e.getMessage());
         }
     }
+
 }

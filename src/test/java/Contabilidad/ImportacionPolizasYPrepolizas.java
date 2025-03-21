@@ -210,7 +210,7 @@ public class ImportacionPolizasYPrepolizas {
             WebElement fileInput = wait.until(ExpectedConditions.elementToBeClickable(
                     By.xpath("/html/body/form/table/tbody/tr/td/table/tbody/tr/td/div/table/tbody/tr[2]/td/div[1]/table/tbody/tr/td/table/tbody/tr[1]/td/div/table/tbody/tr/td/table/tbody/tr[1]/td/div/div[4]/div[1]/div/input")
             ));
-            fileInput.sendKeys("C:\\Users\\UsuarioY\\Desktop\\Pruebas Automaticas\\XLSXPruebas\\ImportarPolizas.xlsx");
+            fileInput.sendKeys("C:\\RepositorioPrueAuto\\XLSXPruebas\\ImportarPolizas.xlsx");
             WebElement uploadButton = wait.until(ExpectedConditions.elementToBeClickable(
                     By.xpath("/html/body/form/table/tbody/tr/td/table/tbody/tr/td/div/table/tbody/tr[2]/td/div[1]/table/tbody/tr/td/table/tbody/tr[1]/td/div/table/tbody/tr/td/table/tbody/tr[1]/td/div/div[4]/div[2]/div/table/tbody/tr/td/input")
             ));
@@ -265,7 +265,7 @@ public class ImportacionPolizasYPrepolizas {
             ));
             btnSalir.click();
             System.out.println("Salir Ventana: Se salió de la ventana de importación correctamente.");
-            Thread.sleep(1000);
+            Thread.sleep(3000);
         } catch (Exception e) {
             UtilidadesAllure.manejoError(driver, e, "Error al salir de la ventana de importación.");
         }
@@ -280,7 +280,7 @@ public class ImportacionPolizasYPrepolizas {
             inputBuscar.clear();
             inputBuscar.sendKeys(FolioPoliza);
             System.out.println("Buscar Póliza: Se buscó la póliza con número " + FolioPoliza + " correctamente.");
-            Thread.sleep(1000);
+            Thread.sleep(3000);
         } catch (Exception e) {
             UtilidadesAllure.manejoError(driver, e, "Error al buscar la póliza con número " + FolioPoliza + ".");
         }

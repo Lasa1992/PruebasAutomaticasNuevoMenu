@@ -76,7 +76,7 @@ public class PagoPasivos {
     public void PagoPasivo() {
 
         AgregarPasivo();
-        //QuitarCampoFecha();
+        QuitarCampoFecha();
         CodigoProveedor();
         NoDocumento();
         CopiarFolio();
@@ -144,6 +144,7 @@ public class PagoPasivos {
             // Hacer clic en el botón
             botonPagos.click();
             System.out.println("Se hizo clic en el botón de Pagos.");
+            Thread.sleep(1000);
 
         } catch (Exception e) {
             System.err.println("Error al hacer clic en el botón de Pagos: " + e.getMessage());
@@ -175,6 +176,7 @@ public class PagoPasivos {
             // Hacer clic en la opción del menú usando Actions para mayor estabilidad
             actions.moveToElement(opcionAgregar).click().perform();
             System.out.println("Se hizo clic en la opción Agregar del menú.");
+            Thread.sleep(3000);
 
         } catch (Exception e) {
             System.err.println("Error al interactuar con el menú Agregar: " + e.getMessage());
@@ -183,13 +185,27 @@ public class PagoPasivos {
 
     public void QuitarCampoFecha() {
         try {
-            WebElement body = driver.findElement(By.id("tzSTC_TITULO1")); // Clic en el fondo de la página
-            body.click();
-            body.click();
-            System.out.println("Campo EDT_FECHA deseleccionado con un clic en el body.");
-            Thread.sleep(3000);
+            // Localizamos el elemento que queremos validar (reemplaza el XPath por el correcto)
+            WebElement campoFecha = driver.findElement(By.xpath("/html/body/form/table/tbody/tr/td/table/tbody/tr/td/div/table/tbody/tr[2]/td/div[1]/table/tbody/tr/td/table/tbody/tr[2]/td/div[12]/table/tbody/tr/td/table/tbody/tr[2]/td/div[5]/table/tbody/tr/td/ul/li[2]/input"));
+            int maxIntentos = 3;
+            int intentos = 0;
+
+            // Verificamos si el elemento tiene el foco y repetimos el clic en el body si es necesario
+            while(campoFecha.equals(driver.switchTo().activeElement()) && intentos < maxIntentos) {
+                System.out.println("El campo está seleccionado. Haciendo clic en el body para quitar la selección... (Intento " + (intentos+1) + ")");
+                WebElement body = driver.findElement(By.tagName("body"));
+                body.click();
+                intentos++;
+            }
+
+            // Validamos el estado final
+            if (!campoFecha.equals(driver.switchTo().activeElement())) {
+                System.out.println("El campo se deseleccionó correctamente tras " + intentos + " intento(s).");
+            } else {
+                System.out.println("El campo sigue seleccionado tras " + intentos + " intento(s).");
+            }
         } catch (Exception e) {
-            System.err.println("No se pudo deseleccionar el campo EDT_FECHA: " + e.getMessage());
+            System.err.println("Error al deseleccionar el campo: " + e.getMessage());
         }
     }
 
@@ -197,8 +213,10 @@ public class PagoPasivos {
     public void CodigoProveedor() {
         try {
             WebElement inputCodigo = wait.until(ExpectedConditions.presenceOfElementLocated(By.xpath(
-                    "/html/body/form/table/tbody/tr/td/table/tbody/tr/td/div/table/tbody/tr[2]/td/div[1]/table/tbody/tr/td/table/tbody/tr[2]/td/div[12]/table/tbody/tr/td/table/tbody/tr[2]/td/div[19]/table/tbody/tr/td/ul/li[2]/input"
+                    "/html/body/form/table/tbody/tr/td/table/tbody/tr/td/div/table/tbody/tr[2]/td/div[1]/table/tbody/tr/td/table/tbody/tr[2]/td/div[12]/table/tbody/tr/td/table/tbody/tr[2]/td/div[18]/table/tbody/tr/td/ul/li[2]/input"
             )));
+
+            inputCodigo.click();
             inputCodigo.clear();
             inputCodigo.sendKeys(CODIGO_PROVEEDOR);
             System.out.println("Se ingresó el número " + CODIGO_PROVEEDOR + " en el campo Código de Proveedor.");

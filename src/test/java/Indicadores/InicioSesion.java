@@ -37,12 +37,12 @@ public class InicioSesion {
 
             switch (navegador.toLowerCase()) {
                 case "firefox":
-                    System.out.println("🦊 Iniciando pruebas en Firefox...");
+                   // System.out.println("🦊 Iniciando pruebas en Firefox...");
                     System.setProperty("webdriver.gecko.driver", "C:\\RepositorioPrueAuto\\Mozila\\geckodriver.exe");
                     driver = new FirefoxDriver();
                     break;
                 case "edge":
-                    System.out.println("🌐 Iniciando pruebas en Edge...");
+                    //System.out.println("🌐 Iniciando pruebas en Edge...");
                     System.setProperty("webdriver.edge.driver", "C:\\RepositorioPrueAuto\\Edge\\msedgedriver.exe");
                     EdgeOptions edgeOptions = new EdgeOptions();
                     edgeOptions.addArguments("--inprivate");  // Modo incógnito
@@ -52,7 +52,7 @@ public class InicioSesion {
                     break;
                 case "chrome":
                 default:
-                    System.out.println("🔵 Iniciando pruebas en Chrome...");
+                    //System.out.println("🔵 Iniciando pruebas en Chrome...");
                     System.setProperty("webdriver.chrome.driver", "C:\\RepositorioPrueAuto\\Chromedriver\\chromedriver.exe");
                     driver = new ChromeDriver();
                     break;
@@ -66,7 +66,7 @@ public class InicioSesion {
             driverThreadLocal.set(driver);
             waitThreadLocal.set(wait);
 
-            System.out.println("🌍 WebDriver creado en " + navegador + " para hilo " + Thread.currentThread().getId());
+            //System.out.println("🌍 WebDriver creado en " + navegador + " para hilo " + Thread.currentThread().getId());
         }
     }
 

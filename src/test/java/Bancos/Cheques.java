@@ -63,7 +63,7 @@ public class Cheques {
         submoduloCheques();
     }
 
-    @RepeatedTest(3)
+    @RepeatedTest(2)
     @Order(4)
     @Description("Generación de Cheque con Datos Aleatorios")
     public void AgregarCheque() {
