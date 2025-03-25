@@ -116,19 +116,7 @@ public class CartaPorteSustitucion {
         InicioSesion.cerrarSesion(); // Asegurar que se libere el WebDriver correctamente
     }
 
-    // Método auxiliar para ejecutar comandos del sistema
-    private static void ejecutarComando(String comando) throws Exception {
-        ProcessBuilder processBuilder = new ProcessBuilder();
-        processBuilder.command("sh", "-c", comando); // Usa "cmd /c" en Windows
-        processBuilder.inheritIO(); // Hereda la entrada y salida del proceso principal
 
-        Process process = processBuilder.start();
-        int exitCode = process.waitFor(); // Espera a que el comando termine
-
-        if (exitCode != 0) {
-            throw new RuntimeException("Error al ejecutar el comando: " + comando);
-        }
-    }
 
 
     private static void BotonModuloTrafico() {

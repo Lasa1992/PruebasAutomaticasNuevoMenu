@@ -111,6 +111,7 @@ public class FacturacionConceptoSustitucion {
         AceptarFacturaSustituida();
         BotonConcurrenciaFacturaSustituida();
         BotonTimbreSustitucion();
+        //BotonFechaAjuste();
         CorreoDesspuesSustitucion();
         CancelacionSAT();
         CancelacionSAT2();

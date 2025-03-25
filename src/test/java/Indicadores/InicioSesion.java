@@ -19,9 +19,9 @@ public class InicioSesion {
     // Lista de credenciales para pruebas en paralelo
     private static final String[][] CREDENTIALS = {
             {"UsuarioPrueba1", "Prueba.0000"},
-            {"UsuarioPrueba2", "Prueba.0000"},
-            {"UsuarioPrueba3", "Prueba.0000"},
-            {"UsuarioPrueba4", "Prueba.0000"}
+            {"UsuarioPrueba2", "Prueba.0000"}//,
+           // {"UsuarioPrueba3", "Prueba.0000"},
+            //{"UsuarioPrueba4", "Prueba.0000"}
     };
 
     // Contador atómico para asignar credenciales únicas en pruebas concurrentes
@@ -114,7 +114,7 @@ public class InicioSesion {
             WebElement inputUsuario = wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("EDT_USUARIO")));
             WebElement inputContrasena = wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("EDT_CONTRASENA")));
 
-            inputEmpresa.sendKeys("IIA040805DZ4");
+            inputEmpresa.sendKeys("TST080808000");
             inputUsuario.sendKeys(username);
             inputContrasena.sendKeys(password);
 

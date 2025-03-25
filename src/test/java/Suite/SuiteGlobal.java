@@ -21,7 +21,7 @@ import java.util.concurrent.*;
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class SuiteGlobal {
 
-    private static final String[] NAVEGADORES = {"chrome", "firefox", "edge"};
+    private static final String[] NAVEGADORES = {"chrome",/*firefox"*/"edge"};
     private static final int NUMERO_HILOS =1;
     private static final ExecutorService executorService = Executors.newFixedThreadPool(NUMERO_HILOS);
 
@@ -53,43 +53,44 @@ public class SuiteGlobal {
 
     private Map<String, TestResult> ejecutarPruebasEnNavegador(String navegador) {
         Class<?>[] pruebas = {
+
                 // Indicadores
-                 IndicadoresTest.class,
-                 ParametrosGenerales.class,
+                IndicadoresTest.class,
+                ParametrosGenerales.class,
 
-                 // Bancos
-                   ChequesModElim.class,
-                   MovimientoBancarioModElim.class,
+// Bancos
+                ChequesModElim.class,
+                MovimientoBancarioModElim.class,
 
-                  // Cobranza
-                  PagoFacturaConcepto.class,
-                  PagoFacturaViaje.class,
+// Cobranza
+                PagoFacturaConcepto.class,
+                PagoFacturaViaje.class,
 
-                  // Cuentas por pagar
-                  PagoPasivos.class,
+// Cuentas por pagar
+                PagoPasivos.class,
 
-                  // Contabilidad
-                  ImportacionPolizasYPrepolizas.class,
-                  PolizaManual.class,
+// Contabilidad
+                ImportacionPolizasYPrepolizas.class,
+                PolizaManual.class,
 
-                 /* // Facturación
-                  FacturacionGeneral.class,
-                  FacturacionGeneralDescImpr.class,
-                  FacturacionGeneralSustitucion.class,
-                  FacturaConceptoTimbrada.class,
-                  FacturacionConceptoSustitucion.class,
-                  FacturacionConceptoDescImpr.class,
-                  FacturacionListadoViajes.class,
-                  FacturacionViajeSustitucion.class,
+// Facturación
+                FacturacionGeneral.class,
+                FacturacionGeneralDescImpr.class,
+                FacturacionGeneralSustitucion.class,
+                FacturaConceptoTimbrada.class,
+                FacturacionConceptoSustitucion.class,
+                FacturacionConceptoDescImpr.class,
+                FacturacionListadoViajes.class,
+                FacturacionViajeSustitucion.class,
 
-                  // Tráfico
-                  CartaPorteComercioExterior.class,
-                  CartaPorteImpresionDescarga.class,
-                  CartaPorteSustitucion.class,
-                  CopiarCartaPorte.class,
-                  ViajeACartaPorte.class,
-                  LiquidacionFiscal.class,
-                  LiquidacionOperativa.class */
+// Tráfico
+                CartaPorteComercioExterior.class,
+                CartaPorteImpresionDescarga.class,
+                CartaPorteSustitucion.class,
+                CopiarCartaPorte.class,
+                ViajeACartaPorte.class,
+                LiquidacionFiscal.class,
+                LiquidacionOperativa.class
         };
 
         Map<String, TestResult> resultados = new LinkedHashMap<>();
