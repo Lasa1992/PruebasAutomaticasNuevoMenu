@@ -79,28 +79,7 @@ public class PagoFacturaContraRecibos {
         informacionTimbrado.setLength(0);
 
         // Comienza el flujo de facturación
-        //Se hacen 2 facturas
-        for (int i = 0; i < 2; i++) {
-            handleImageButton();
-            handleSubMenuButton();
-            BotonAgregarListado();
-            CodigoClienteFactura();
-            MonedaFactura();
-            ConceptofacturacionAgregar(); // Abre el formulario de facturación de concepto
-            IngresaValorCantidad(); // Ingresa la cantidad
-            AsignarCodigoConceptoFacturacion(); // Aquí le pasas el código único
-            IngresaPrecioUnitario(); // Ingresa el precio unitario
-            BotonAgregarConcepto(); // Agrega el concepto
-            ObtenerFolioFactura(); // Captura el folio de la factura
-            AceptarFactura(); // Acepta la factura
-            BotonConcurrenciaFactura();
-            BotonTimbre(); // Timbrar la factura
-            ValidarYEnviarCorreo(); // Validar posibles errores
-            BotonPoliza(); // Aceptar botón generó póliza
-            BotonImpresion(); // Regresar a la pantalla principal
-            i++;
-        }
-        /*
+        //Se hace primer factura
         handleImageButton();
         handleSubMenuButton();
         BotonAgregarListado();
@@ -118,8 +97,23 @@ public class PagoFacturaContraRecibos {
         ValidarYEnviarCorreo(); // Validar posibles errores
         BotonPoliza(); // Aceptar botón generó póliza
         BotonImpresion(); // Regresar a la pantalla principal
-        */
 
+        //Se genera la segunda factura
+        BotonAgregarListado();
+        CodigoClienteFactura();
+        MonedaFactura();
+        ConceptofacturacionAgregar(); // Abre el formulario de facturación de concepto
+        IngresaValorCantidad(); // Ingresa la cantidad
+        AsignarCodigoConceptoFacturacion(); // Aquí le pasas el código único
+        IngresaPrecioUnitario(); // Ingresa el precio unitario
+        BotonAgregarConcepto(); // Agrega el concepto
+        ObtenerFolioFactura(); // Captura el folio de la factura
+        AceptarFactura(); // Acepta la factura
+        BotonConcurrenciaFactura();
+        BotonTimbre(); // Timbrar la factura
+        ValidarYEnviarCorreo(); // Validar posibles errores
+        BotonPoliza(); // Aceptar botón generó póliza
+        BotonImpresion(); // Regresar a la pantalla principal
 
        // Crea del contra recibo de las facturas que se crearon
         BotonModuloCobranza(); // Selecciona el módulo de Cobranza en la interfaz de usuario.
@@ -129,29 +123,29 @@ public class PagoFacturaContraRecibos {
         ObtenerFolioCR();  // Obtiene el folio del contra recibo.
         IntroducirReferenciaCR();  // Introduce una referencia del contra recibo.
         DeseleccionarTodoCR();  // Deselecciona todas las facturas del cliente en contra recibo.
-        SeleccionarFacturasCR(); // Busca y selecciona las facturas creadas y las agrega al contra recibo.
+        SeleccionarFacturasCR(); // Selecciona la factura creada y la agrega al contra recibo.
         AceptarAgregarCR(); // Acepta la adición de las facturas al contra recibo.
 
-      /*  // Bloque donde se controla el pago de la factura
+      // Bloque donde se controla el pago del contra recibo
         BotonModuloCobranza(); // Selecciona el módulo de Cobranza en la interfaz de usuario.
         BotonPagosAbonos(); // Selecciona el submódulo pagos/abonos.
-        BotonRegistrarPagoAbono(); // Da clic en el botón para agregar pago/abono.
+        BotonRegistrarPagoCR(); // Da clic en el botón para registrar un pago a contra recibo.
         deseleccionarCampoFecha(); // Deselecciona el campo de fecha.
         CodigoClientPago(); // Introduce el código del cliente para el pago.
         SeleccionarCuentaBancariaAleatoria(); // Selecciona una cuenta bancaria aleatoria para el pago.
-        BusquedaFacturaPagar(); // Busca la factura a pagar.
-        SeleccionFactura(); // Selecciona la factura a pagar.
+        IntroducirReferencia(); // Introduce una referencia para el pago del contra recibo.
+        BuscarContraReciboPagar(FolioCR); // Busca contra recibo a pagar.
+        SeleccionarFacturasPagoCR(); // Busca las facturas del contra recibo a pagar.
         ValidarConversion(); // Se valida la conversión de la moneda.
         IntroducirMontoPago(); // Introduce el monto a pagar.
-        IntroducirReferencia(); // Introduce una referencia para el pago.
         AceptarPagoAbono(); // Acepta el pago/abono.
         TimbrePago(); // Acepta el timbre del pago.
         EnvioCorreoPago(); // Envía un correo para el pago (Sí/No).
         AceptarPolizaPago(); // Acepta la póliza del pago.
         deseleccionarCampoFecha2(); // Deselecciona el campo de fecha.
         SalirVentanaPago(); // Sale de la ventana de pago.
-       */
     }
+
 
     @AfterAll
     public static void tearDown() {
@@ -215,6 +209,7 @@ public class PagoFacturaContraRecibos {
             // Elige aleatoriamente una opción
             Random random = new Random();
             String opcionSeleccionada = opciones.get(random.nextInt(opciones.size()));
+            //String opcionSeleccionada = "PESOS"; // Selecciona Moneda PESOS en la factura
 
             // Selecciona la opción en el primer combo box
             primerComboBox.selectByVisibleText(opcionSeleccionada);
@@ -665,6 +660,8 @@ public class PagoFacturaContraRecibos {
             String valorDolares = montoDolaresElement.getAttribute("value").trim().replace(",", "").replace("$", "");
             String valorTipoCambio = tipoCambioElement.getAttribute("value").trim().replace(",", "").replace("$", "");
             String textoConversion = conversionMonedaElement.getText().trim();
+            System.out.println("Se obtuvo el monto en dlls de: $" + valorDolares);
+            System.out.println("Se ontuvo el tipo de cambio: $" + valorTipoCambio);
             // Extraer número de tzSTC_CONVERSIONDEMONEDA
             double conversionAutomatica = 0.0;
             Pattern pattern = Pattern.compile("\\$([0-9]+\\.?[0-9]*)");
@@ -679,7 +676,7 @@ public class PagoFacturaContraRecibos {
             // Lógica de cálculo basada en la moneda detectada
             if (monedaSeleccionada.equals("PESOS")) {
                 if (montoPesos > 0) {
-                    MontoaPAGAR = montoPesos;
+                    MontoaPAGAR = montoPesos + (montoDolares * tipoCambio) ;
                 } else if (montoDolares > 0) {
                     MontoaPAGAR = montoDolares * tipoCambio;
                 } else if (conversionAutomatica > 0) {
@@ -690,7 +687,7 @@ public class PagoFacturaContraRecibos {
                 }
             } else if (monedaSeleccionada.equals("DÓLARES")) {
                 if (montoDolares > 0) {
-                    MontoaPAGAR = montoDolares;
+                    MontoaPAGAR = montoDolares + (montoPesos / tipoCambio);
                 } else if (montoPesos > 0) {
                     MontoaPAGAR = montoPesos / tipoCambio;
                 } else if (conversionAutomatica > 0) {
@@ -732,9 +729,10 @@ public class PagoFacturaContraRecibos {
     @Step("Introducir referencia bancaria")
     public void IntroducirReferencia() {
         try {
+            System.out.println("Entra a registrar la referencia bancaria");
             WebElement campoReferencia = wait.until(ExpectedConditions.visibilityOfElementLocated(By.name("EDT_REFERENCIABANCARIA")));
             campoReferencia.clear();
-            String referencia = "pago" + FolioFactura;
+            String referencia = "Pago CR" + FolioCR;
             campoReferencia.sendKeys(referencia);
             System.out.println("Referencia ingresada: " + referencia);
         } catch (NoSuchElementException | TimeoutException e) {
@@ -748,7 +746,7 @@ public class PagoFacturaContraRecibos {
         try {
             WebElement btnAceptar = wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//input[contains(@class, 'BTN_ACEPTAR')]")));
             btnAceptar.click();
-            System.out.println("Pago/Abono aceptado correctamente.");
+            System.out.println("Pago/Abono Contra Recibo Aceptado.");
         } catch (Exception e) {
             UtilidadesAllure.manejoError(driver, e, "Error al aceptar el pago o abono.");
             System.out.println("Error al aceptar el pago o abono.");
@@ -925,7 +923,7 @@ public class PagoFacturaContraRecibos {
 
                 // **Clic en el ícono de búsqueda**
                 WebElement iconoBuscar = wait.until(ExpectedConditions.elementToBeClickable(
-                        By.id("TABLE_PROPASIVOSPENDIENTESDEPAGO_TITRES_RECH_3")));
+                        By.id("TABLE_PROFACTURAS_TITRES_RECH_1")));
                 iconoBuscar.click();
                 System.out.println("Se hizo clic en el ícono de búsqueda de facturas para seleccionarlas y agregarlas al contra recibo.");
                 Thread.sleep(500);
@@ -942,7 +940,7 @@ public class PagoFacturaContraRecibos {
 
                 // **Esperar y seleccionar la fila correcta con el número de documento**
                 WebElement filaSeleccionada = wait.until(ExpectedConditions.presenceOfElementLocated(
-                        By.xpath("//tr[contains(@class, 'TABLE-Selected') and .//td[contains(@class, 'wbcolCOL_NUMERODOCUMETO')]//div[text()='" + factura + "']]")));
+                        By.xpath("//tr[contains(@class, 'TABLE-Selected') and .//td[contains(@class, 'wbcolCOL_DOCUMENTO')]//div[text()='" + factura + "']]")));
                 System.out.println("Se encontró la fila del documento: " + factura);
 
                 // **Buscar el checkbox dentro de la fila seleccionada**
@@ -969,7 +967,7 @@ public class PagoFacturaContraRecibos {
                 if (!checkBox.isSelected()) {
                     try {
                         checkBox.click();
-                        System.out.println("Se marcó el checkbox con `click()` estándar.");
+                        System.out.println("Se selecciono la factura correctamente");
                     } catch (Exception e) {
                         System.out.println("`click()` falló, probando con JavaScript...");
                         js.executeScript("arguments[0].click();", checkBox);
@@ -991,6 +989,7 @@ public class PagoFacturaContraRecibos {
         }
     }
 
+
     private void AceptarAgregarCR() {
         try {
             // Localizar el botón "Agregar" por su ID
@@ -1005,4 +1004,164 @@ public class PagoFacturaContraRecibos {
         }
     }
 
+    public void BotonRegistrarPagoCR() {
+        try {
+            WebElement opcionRegistrar = wait.until(ExpectedConditions.elementToBeClickable(
+                    By.id("BTN_REGISTRARPAGOCONCONTRARECIBO")));
+            // Hacer clic en la opción "Registrar Pago Contra Recibo"
+            opcionRegistrar.click();
+            System.out.println("Opción 'Registrar Pago Contra Recibo' seleccionada correctamente.");
+        } catch (Exception e) {
+            UtilidadesAllure.manejoError(driver, e, "Error al seleccionar la opción 'Registrar Pago Contra Recibo'.");
+        }
+    }
+
+    public void BuscarContraReciboPagar(String FolioCR) { // Busca el Contra Recibo para pagar
+        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(20));  // Aumentamos el tiempo de espera
+        JavascriptExecutor js = (JavascriptExecutor) driver;
+
+        try {
+            // **Clic en el ícono de búsqueda**
+            WebElement iconoBuscar = wait.until(ExpectedConditions.elementToBeClickable(
+                    By.id("TABLE_PROCONTRARECIBOSCLIENTE_TITRES_RECH_1")));
+            iconoBuscar.click();
+            System.out.println("Se hizo clic en el ícono de búsqueda de contra recibos.");
+            Thread.sleep(500);
+
+            // **Interacción con el campo de búsqueda**
+            WebElement inputBuscar = wait.until(ExpectedConditions.visibilityOfElementLocated(
+                    By.cssSelector("form > input"))); // Cambié a `visibilityOfElementLocated`
+            inputBuscar.clear();  // Limpiar el campo antes de ingresar el nuevo valor
+            inputBuscar.sendKeys(FolioCR);  // Buscar el folio del CR
+            Thread.sleep(1000);
+            inputBuscar.sendKeys(Keys.ENTER);
+            System.out.println("Se ingresó y buscó el Folio del CR: #" + FolioCR);
+            Thread.sleep(500);
+
+            // **Esperar y seleccionar la fila correcta con el número de documento**
+            WebElement filaSeleccionada = wait.until(ExpectedConditions.presenceOfElementLocated(
+                    By.xpath("//tr[contains(@class, 'TABLE-Selected') and .//td[contains(@class, 'wbcolCOL_FOLIO')]//div[text()='" + FolioCR + "']]")));
+            System.out.println("Se encontró el contra recibo: #" + FolioCR);
+
+            // **Buscar el checkbox dentro de la fila seleccionada**
+            WebElement checkBox = filaSeleccionada.findElement(By.xpath(".//td[contains(@class, 'wbcolCOL_MARCARCR')]//input[@type='checkbox']"));
+
+            // **Imprimir el ID del checkbox encontrado**
+            String checkBoxId = checkBox.getAttribute("id");
+            System.out.println("Checkbox encontrado con ID: " + checkBoxId);
+
+            // **Si el checkbox no es visible, hacer scroll hasta él**
+            if (!checkBox.isDisplayed()) {
+                System.out.println("El checkbox no es visible, desplazándose hacia él...");
+                js.executeScript("arguments[0].scrollIntoView({block: 'center'});", checkBox);
+                Thread.sleep(500);
+            }
+
+            // **Si el checkbox está deshabilitado, habilitarlo**
+            if (!checkBox.isEnabled()) {
+                System.out.println("El checkbox está deshabilitado, intentando habilitarlo...");
+                js.executeScript("arguments[0].removeAttribute('disabled');", checkBox);
+            }
+
+            // **Verificar si ya está marcado antes de hacer clic**
+            if (!checkBox.isSelected()) {
+                try {
+                    checkBox.click();
+                    System.out.println("Se seleccionó el contra recibo #"+FolioCR +" correctamente.");
+                } catch (Exception e) {
+                    System.out.println("`click()` falló, probando con JavaScript...");
+                    js.executeScript("arguments[0].click();", checkBox);
+                    System.out.println("Se marcó el checkbox con `JavaScriptExecutor`.");
+                }
+            } else {
+                System.out.println("El checkbox ya estaba marcado.");
+            }
+
+            Thread.sleep(2000);  // Espera final
+
+        } catch (NoSuchElementException e) {
+            System.err.println("Elemento no encontrado: " + e.getMessage());
+        } catch (TimeoutException e) {
+            System.err.println("Tiempo de espera agotado: " + e.getMessage());
+        } catch (Exception e) {
+            System.err.println("Error inesperado: " + e.getMessage());
+        }
+    }
+
+
+    public void SeleccionarFacturasPagoCR() { //Método para seleccionar las facturas en el Contra Recibo
+        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(20));  // Aumentamos el tiempo de espera
+        JavascriptExecutor js = (JavascriptExecutor) driver;
+
+        try {
+            // Iterar sobre el array/lista de Facturas
+            for (String factura : Facturas) {
+
+                // **Clic en el ícono de búsqueda**
+                WebElement iconoBuscar = wait.until(ExpectedConditions.elementToBeClickable(
+                        By.id("TABLE_PROFACTURAS_TITRES_RECH_1")));
+                iconoBuscar.click();
+                System.out.println("Se hizo clic en el ícono de búsqueda de facturas para seleccionarlas y agregarlas al pago de contra recibo.");
+                Thread.sleep(500);
+
+                // **Interacción con el campo de búsqueda**
+                WebElement inputBuscar = wait.until(ExpectedConditions.visibilityOfElementLocated(
+                        By.cssSelector("form > input"))); // Cambié a `visibilityOfElementLocated`
+                inputBuscar.clear();  // Limpiar el campo antes de ingresar el nuevo valor
+                inputBuscar.sendKeys(factura);  // Buscar el documento actual
+                Thread.sleep(1000);
+                inputBuscar.sendKeys(Keys.ENTER);
+                System.out.println("Se ingresó y buscó el documento: " + factura);
+                Thread.sleep(500);
+
+                // **Esperar y seleccionar la fila correcta con el número de documento**
+                WebElement filaSeleccionada = wait.until(ExpectedConditions.presenceOfElementLocated(
+                        By.xpath("//tr[contains(@class, 'TABLE-Selected') and .//td[contains(@class, 'wbcolCOL_DOCUMENTO')]//div[text()='" + factura + "']]")));
+                System.out.println("Se encontró la fila del documento: " + factura);
+
+                // **Buscar el checkbox dentro de la fila seleccionada**
+                WebElement checkBox = filaSeleccionada.findElement(By.xpath(".//td[contains(@class, 'wbcolCOL_MARCAR')]//input[@type='checkbox']"));
+
+                // **Imprimir el ID del checkbox encontrado**
+                String checkBoxId = checkBox.getAttribute("id");
+                System.out.println("Checkbox encontrado con ID: " + checkBoxId);
+
+                // **Si el checkbox no es visible, hacer scroll hasta él**
+                if (!checkBox.isDisplayed()) {
+                    System.out.println("El checkbox no es visible, desplazándose hacia él...");
+                    js.executeScript("arguments[0].scrollIntoView({block: 'center'});", checkBox);
+                    Thread.sleep(500);
+                }
+
+                // **Si el checkbox está deshabilitado, habilitarlo**
+                if (!checkBox.isEnabled()) {
+                    System.out.println("El checkbox está deshabilitado, intentando habilitarlo...");
+                    js.executeScript("arguments[0].removeAttribute('disabled');", checkBox);
+                }
+
+                // **Verificar si ya está marcado antes de hacer clic**
+                if (!checkBox.isSelected()) {
+                    try {
+                        checkBox.click();
+                        System.out.println("Se selecciono la factura correctamente");
+                    } catch (Exception e) {
+                        System.out.println("`click()` falló, probando con JavaScript...");
+                        js.executeScript("arguments[0].click();", checkBox);
+                        System.out.println("Se marcó el checkbox con `JavaScriptExecutor`.");
+                    }
+                } else {
+                    System.out.println("El checkbox ya estaba marcado.");
+                }
+
+                Thread.sleep(2000);  // Espera entre búsquedas de cada factura
+            }
+
+        } catch (NoSuchElementException e) {
+            System.err.println("Elemento no encontrado: " + e.getMessage());
+        } catch (TimeoutException e) {
+            System.err.println("Tiempo de espera agotado: " + e.getMessage());
+        } catch (Exception e) {
+            System.err.println("Error inesperado: " + e.getMessage());
+        }
+    }
 }
