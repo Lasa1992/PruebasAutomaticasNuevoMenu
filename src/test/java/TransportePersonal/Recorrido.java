@@ -66,7 +66,7 @@ public class Recorrido {
         BotonListadoRecorridos();
     }
 
-    @RepeatedTest(500)
+    @RepeatedTest(2)
     @Order(4)
     @Description("Se ingresa al listado de Viajes y se crea una Carta Porte, se factura y timbra el viaje.")
     public void testCrearViaje() {

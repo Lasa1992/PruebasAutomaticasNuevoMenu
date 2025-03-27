@@ -2,6 +2,7 @@ package Indicadores;
 
 import org.openqa.selenium.*;
 import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.edge.EdgeDriver;
 import org.openqa.selenium.edge.EdgeOptions;
 import org.openqa.selenium.firefox.FirefoxDriver;
@@ -19,9 +20,9 @@ public class InicioSesion {
     // Lista de credenciales para pruebas en paralelo
     private static final String[][] CREDENTIALS = {
             {"UsuarioPrueba1", "Prueba.0000"},
-            {"UsuarioPrueba2", "Prueba.0000"}//,
-           // {"UsuarioPrueba3", "Prueba.0000"},
-            //{"UsuarioPrueba4", "Prueba.0000"}
+            {"UsuarioPrueba2", "Prueba.0000"},
+            {"UsuarioPrueba3", "Prueba.0000"},
+            {"UsuarioPrueba4", "Prueba.0000"}
     };
 
     // Contador atómico para asignar credenciales únicas en pruebas concurrentes
@@ -33,30 +34,40 @@ public class InicioSesion {
      */
     public static void setup(String navegador) {
         if (driverThreadLocal.get() == null) {
-            WebDriver driver;
+            WebDriver driver = null;
 
             switch (navegador.toLowerCase()) {
                 case "firefox":
-                   // System.out.println("🦊 Iniciando pruebas en Firefox...");
+                    System.out.println("🦊 Iniciando pruebas en Firefox (headless)...");
                     System.setProperty("webdriver.gecko.driver", "C:\\RepositorioPrueAuto\\Mozila\\geckodriver.exe");
-                    driver = new FirefoxDriver();
+
+                    
                     break;
+
                 case "edge":
-                    //System.out.println("🌐 Iniciando pruebas en Edge...");
+                    System.out.println("🌐 Iniciando pruebas en Edge (headless)...");
                     System.setProperty("webdriver.edge.driver", "C:\\RepositorioPrueAuto\\Edge\\msedgedriver.exe");
+
                     EdgeOptions edgeOptions = new EdgeOptions();
                     edgeOptions.addArguments("--inprivate");  // Modo incógnito
                     edgeOptions.addArguments("--disable-features=EdgeSignin"); // Desactiva autenticación automática
+                    edgeOptions.addArguments("--headless"); // Modo headless
 
                     driver = new EdgeDriver(edgeOptions);
                     break;
+
                 case "chrome":
                 default:
-                    //System.out.println("🔵 Iniciando pruebas en Chrome...");
+                    System.out.println("🔵 Iniciando pruebas en Chrome (headless)...");
                     System.setProperty("webdriver.chrome.driver", "C:\\RepositorioPrueAuto\\Chromedriver\\chromedriver.exe");
-                    driver = new ChromeDriver();
+
+                    ChromeOptions chromeOptions = new ChromeOptions();
+                    //chromeOptions.addArguments("--headless");
+
+                    driver = new ChromeDriver(chromeOptions);
                     break;
             }
+
 
             WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
 
@@ -114,7 +125,7 @@ public class InicioSesion {
             WebElement inputUsuario = wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("EDT_USUARIO")));
             WebElement inputContrasena = wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("EDT_CONTRASENA")));
 
-            inputEmpresa.sendKeys("TST080808000");
+            inputEmpresa.sendKeys("IIA040805DZ4");
             inputUsuario.sendKeys(username);
             inputContrasena.sendKeys(password);
 
