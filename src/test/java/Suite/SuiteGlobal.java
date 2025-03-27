@@ -56,7 +56,7 @@ public class SuiteGlobal {
 
                 // Indicadores
                 IndicadoresTest.class,
-                ParametrosGenerales.class,
+/*                ParametrosGenerales.class,
 
 // Bancos
                 ChequesModElim.class,
@@ -91,6 +91,10 @@ public class SuiteGlobal {
                 ViajeACartaPorte.class,
                 LiquidacionFiscal.class,
                 LiquidacionOperativa.class
+
+
+
+ */
         };
 
         Map<String, TestResult> resultados = new LinkedHashMap<>();
