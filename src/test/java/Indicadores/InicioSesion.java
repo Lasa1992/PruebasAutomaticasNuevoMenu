@@ -2,19 +2,13 @@ package Indicadores;
 
 import org.openqa.selenium.*;
 import org.openqa.selenium.chrome.ChromeDriver;
-import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.edge.EdgeDriver;
 import org.openqa.selenium.edge.EdgeOptions;
 import org.openqa.selenium.firefox.FirefoxDriver;
-import org.openqa.selenium.firefox.FirefoxOptions;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
-import java.awt.*;
-import java.awt.Rectangle;
 import java.time.Duration;
-import java.util.concurrent.ArrayBlockingQueue;
-import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class InicioSesion {
@@ -22,91 +16,77 @@ public class InicioSesion {
     private static final ThreadLocal<WebDriverWait> waitThreadLocal = new ThreadLocal<>();
     private static final ThreadLocal<String[]> credentialThreadLocal = new ThreadLocal<>();
 
+    // Lista de credenciales para pruebas en paralelo
     private static final String[][] CREDENTIALS = {
             {"UsuarioPrueba1", "Prueba.0000"},
-            {"UsuarioPrueba2", "Prueba.0000"}
+            {"UsuarioPrueba2", "Prueba.0000"}//,
+            // {"UsuarioPrueba3", "Prueba.0000"},
+            //{"UsuarioPrueba4", "Prueba.0000"}
     };
 
+    // Contador atómico para asignar credenciales únicas en pruebas concurrentes
     private static final AtomicInteger credentialCounter = new AtomicInteger(0);
 
-    private static final BlockingQueue<Integer> posicionesDisponibles = new ArrayBlockingQueue<>(2);
-    private static final ThreadLocal<Integer> posicionAsignada = new ThreadLocal<>();
-
-    static {
-        for (int i = 0; i < 2; i++) {
-            posicionesDisponibles.add(i);
-        }
-    }
-
+    /**
+     * Inicializa el WebDriver en función del navegador especificado.
+     * @param navegador Nombre del navegador ("chrome", "firefox", "edge").
+     */
     public static void setup(String navegador) {
         if (driverThreadLocal.get() == null) {
-            WebDriver driver = null;
+            WebDriver driver;
 
             switch (navegador.toLowerCase()) {
                 case "firefox":
-                    System.out.println("🦊 Iniciando pruebas en Firefox...");
+                    // System.out.println("🦊 Iniciando pruebas en Firefox...");
                     System.setProperty("webdriver.gecko.driver", "C:\\RepositorioPrueAuto\\Mozila\\geckodriver.exe");
-                    FirefoxOptions firefoxOptions = new FirefoxOptions();
-                    driver = new FirefoxDriver(firefoxOptions);
+                    driver = new FirefoxDriver();
                     break;
-
                 case "edge":
-                    System.out.println("🌐 Iniciando pruebas en Edge...");
+                    //System.out.println("🌐 Iniciando pruebas en Edge...");
                     System.setProperty("webdriver.edge.driver", "C:\\RepositorioPrueAuto\\Edge\\msedgedriver.exe");
                     EdgeOptions edgeOptions = new EdgeOptions();
+                    edgeOptions.addArguments("--inprivate");  // Modo incógnito
+                    edgeOptions.addArguments("--disable-features=EdgeSignin"); // Desactiva autenticación automática
+
                     driver = new EdgeDriver(edgeOptions);
                     break;
-
                 case "chrome":
                 default:
-                    System.out.println("🔵 Iniciando pruebas en Chrome...");
+                    //System.out.println("🔵 Iniciando pruebas en Chrome...");
                     System.setProperty("webdriver.chrome.driver", "C:\\RepositorioPrueAuto\\Chromedriver\\chromedriver.exe");
-                    ChromeOptions chromeOptions = new ChromeOptions();
-                    driver = new ChromeDriver(chromeOptions);
+                    driver = new ChromeDriver();
                     break;
-            }
-
-            try {
-                int posicion = posicionesDisponibles.take(); // 0 o 1
-                posicionAsignada.set(posicion);
-
-                GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
-                GraphicsDevice[] pantallas = ge.getScreenDevices();
-
-                if (pantallas.length < 2) {
-                    System.out.println("⚠ Solo se detectó un monitor. Ambas ventanas se abrirán en el mismo.");
-                }
-
-                GraphicsConfiguration configPantalla = pantallas.length > posicion
-                        ? pantallas[posicion].getDefaultConfiguration()
-                        : pantallas[0].getDefaultConfiguration();
-
-                Rectangle areaPantalla = configPantalla.getBounds();
-
-                driver.manage().window().setPosition(new org.openqa.selenium.Point(areaPantalla.x, areaPantalla.y));
-                driver.manage().window().setSize(new org.openqa.selenium.Dimension(areaPantalla.width, areaPantalla.height));
-
-            } catch (InterruptedException e) {
-                e.printStackTrace();
             }
 
             WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
 
+            driver.manage().window().maximize();
             driver.get("https://www.softwareparatransporte.com/");
 
             driverThreadLocal.set(driver);
             waitThreadLocal.set(wait);
+
+            //System.out.println("🌍 WebDriver creado en " + navegador + " para hilo " + Thread.currentThread().getId());
         }
     }
 
+    /**
+     * Obtiene el WebDriver del hilo actual.
+     */
     public static WebDriver getDriver() {
         return driverThreadLocal.get();
     }
 
+    /**
+     * Obtiene el WebDriverWait del hilo actual.
+     */
     public static WebDriverWait getWait() {
         return waitThreadLocal.get();
     }
 
+    /**
+     * Asigna una credencial única a cada hilo y la devuelve.
+     */
     private static String[] getCredential() {
         if (credentialThreadLocal.get() == null) {
             int index = credentialCounter.getAndIncrement() % CREDENTIALS.length;
@@ -116,6 +96,9 @@ public class InicioSesion {
         return credentialThreadLocal.get();
     }
 
+    /**
+     * Completa el formulario de inicio de sesión con credenciales únicas por hilo.
+     */
     public static void fillForm() {
         try {
             String[] credential = getCredential();
@@ -131,7 +114,7 @@ public class InicioSesion {
             WebElement inputUsuario = wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("EDT_USUARIO")));
             WebElement inputContrasena = wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("EDT_CONTRASENA")));
 
-            inputEmpresa.sendKeys("IIA040805DZ4");
+            inputEmpresa.sendKeys("TST080808000");
             inputUsuario.sendKeys(username);
             inputContrasena.sendKeys(password);
 
@@ -142,6 +125,9 @@ public class InicioSesion {
         }
     }
 
+    /**
+     * Envía el formulario de inicio de sesión.
+     */
     public static void submitForm() {
         try {
             WebDriverWait wait = getWait();
@@ -156,6 +142,9 @@ public class InicioSesion {
         }
     }
 
+    /**
+     * Maneja alertas emergentes después del inicio de sesión.
+     */
     public static void handleAlert() {
         try {
             WebDriverWait wait = getWait();
@@ -169,6 +158,9 @@ public class InicioSesion {
         }
     }
 
+    /**
+     * Maneja la pantalla de tipo de cambio si aparece.
+     */
     public static void handleTipoCambio() {
         try {
             WebDriver driver = getDriver();
@@ -182,6 +174,9 @@ public class InicioSesion {
         }
     }
 
+    /**
+     * Maneja la pantalla de novedades si aparece.
+     */
     public static void handleNovedadesScreen() {
         try {
             WebDriverWait wait = getWait();
@@ -193,6 +188,9 @@ public class InicioSesion {
         }
     }
 
+    /**
+     * Cierra la sesión y libera los recursos del WebDriver.
+     */
     public static void cerrarSesion() {
         try {
             WebDriver driver = getDriver();
@@ -202,12 +200,6 @@ public class InicioSesion {
                 driverThreadLocal.remove();
                 waitThreadLocal.remove();
                 credentialThreadLocal.remove();
-
-                Integer posicion = posicionAsignada.get();
-                if (posicion != null) {
-                    posicionesDisponibles.put(posicion);
-                    posicionAsignada.remove();
-                }
             }
         } catch (Exception e) {
             System.err.println("⚠ Error en cerrarSesion(): " + e.getMessage());
