@@ -1,0 +1,59 @@
+[33mbb3b322[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmaster[m[33m, [m[1;31morigin/master[m[33m, [m[1;31morigin/HEAD[m[33m)[m hilos v 5
+[33me722f44[m hilos
+[33m1c69735[m Se crea la parte de contra recibos
+[33m12c30ca[m Merge remote-tracking branch 'origin/master'
+[33m9ec5aeb[m Se crea la parte de contra recibos
+[33m35aa89a[m hilos
+[33m6b60430[m ppruebas paralelaas bien al 1000
+[33ma81b15e[m Rename SuiteGlobal.java to SuiteGlobal2.java
+[33m09d4a30[m Rename InicioSesion.java to InicioSesion2.java
+[33m39e48bb[m Merge remote-tracking branch 'origin/master'
+[33m8613a6f[m recurrencia
+[33ma57c4e8[m Se agregó la busqueda de la póliza y concepto de póliza
+[33mfdd12c2[m se suben nuevos scriptss
+[33m45ac0e2[m se suben nuevos scriptss
+[33mb69eb9a[m Merge remote-tracking branch 'origin/master'
+[33mfc1580b[m se suben nuevos scriptss
+[33m1a2f3de[m Delete src/test/java/Trafico/Ejemplo.java
+[33m846ed1b[m subida de ejemplo
+[33m1289330[m h
+[33mcfc1681[m ACTUALIZADOS 13/02/2025
+[33m7351038[m ACTUALIZADOS 13/02/2025
+[33mafaef15[m Se genera clase de java para pagos abonos de cobranza. falta validar las ventanas de aceptacion al finalizar el flujo.
+[33mbeb758c[m prueba para jose
+[33mcb93af7[m Scrip creacio viaje ingreso y facturacion desde el listado validando check facturacion Automaticas parametros confgiguracion
+[33m7801e4f[m Scrip creacio viaje ingreso y facturacion ingreso
+[33m63d74e0[m Merge remote-tracking branch 'origin/master'
+[33mc5fd0f7[m Scrip creacio viaje ingreso y facturacion ingreso
+[33m4268cbe[m Se finaliza la classe de ParametrosGenerales. Se agregan a IndicadoresTest las anotaciones de Epic y Story para validar su funcionamiento.
+[33m0638df9[m script creacion de viajes siempre timbra
+[33m1d5355b[m Merge remote-tracking branch 'origin/master'
+[33mf62a5df[m script cancelacion y sustitucion corregido
+[33m01b56cd[m Se actualizan dependencias.
+[33mc274d09[m script cancelacion y sustitucion corregido
+[33md113d79[m Se eliminan clases innecesarias y se crean paquetes para el modulo de trafico y utilidades.
+[33mbdfeeae[m Se eliminan clases innecesarias y se crean paquetes para el modulo de trafico y utilidades.
+[33m8de5465[m Se eliminan clases innecesarias y se crean paquetes para el modulo de trafico y utilidades.
+[33m88aff2e[m se crearon script para la cancelacion y sustitucion
+[33m746d3e2[m Se modifica la clase de IndicadoresTest para que valide todos los indicadores en el sistema.
+[33mb1c5bc7[m Se agregan cambios a la estructura de Inicio de sesion. Se crea la clase de IndicadoresTest para prueba de indicadores.
+[33md4595ba[m Se hacen cambios para iniciar sesion utilizando los metodos de InicioSesion en las demas clases.
+[33m9c2e607[m Merge remote-tracking branch 'origin/master'
+[33mc28b250[m Se agrega un nuevo paquete al proyecto y se agrega la clase de inicio de sesion para poder heredar sus metodos.
+[33mc3f844b[m Se Comenzo a scriptar la funciona de CANCELAR Y SUSTITUIR UNA FACTURA
+[33mbba0b0c[m Merge remote-tracking branch 'GM/master'
+[33mf93e3a9[m Se Comenzo a scriptar la funciona de CANCELAR Y SUSTITUIR UNA FACTURA
+[33mc59ab9f[m Se agrega funcion para manejar los errores, cerrar la ventana al agregar el concepto de facturacion y la ventana de facturacion.
+[33mc68a8f2[m FacturacionConceptoTest - Se corrigen errores para el envio de correo, advertencias del sistema
+[33m37bdb1f[m UtilidadesAllure: -Se agrega funcion a la clase de UtilidadesAllure para poder generar screenshots cuando sea necesario. FacturacionConceptoTest: -Se agrega la variable informacionFactura. -Se agrega la variable informacionConcepto. -Se agrega la variable informacionTimbrado. -Se guarda en las variables la informacion concatenada de las facturas para mostrar la informacion que lleva la factura generada en el reporte de Allure.
+[33md9893db[m Merge remote-tracking branch 'origin/master'
+[33m2471f10[m UtilidadesAllure: -Se agrega funcion a la clase de UtilidadesAllure para poder generar screenshots cuando sea necesario. FacturacionConceptoTest: -Se agrega la variable informacionFactura. -Se agrega la variable informacionConcepto. -Se agrega la variable informacionTimbrado. -Se guarda en las variables la informacion concatenada de las facturas para mostrar la informacion que lleva la factura generada en el reporte de Allure.
+[33m153a2f0[m Se Comenzo a scriptar la funciona de agregar una factura por concepto QUE TIMBRE SIEMPRE
+[33m50b406b[m  Se agrega clase UtilidadesAllure para identificar errores en las pruebas, ademas de agregar una captura de pantalla donde se localizo el error.  Se agrega funcion a los catch para poder obtener el error en base a la funcion creada en la clase UtilidadesAllure.
+[33m05064eb[m termminado primera version factura por concepto
+[33mac76cab[m Se Comenzo a scriptar la funciona de agregar una factura por concepto
+[33m7e51469[m Se Termina el proceso de viaje Se crea prueba sin tener que abrir y ccerrar el navegador o sesion con n viajes
+[33medee4cc[m Se continua con la captura del viaje y aceptacion de diversas notiificacion
+[33mdb5da15[m Se continua con la captura del viaje y aceptacion de diversas notiificacion
+[33m50add43[m Se continua con la captura del viaje y aceptacion de diversas notiificacion
+[33m16b776d[m Inicilizacion de prueba automatizada Version 1 Login Maven,Selenium,Junit5.Allure
