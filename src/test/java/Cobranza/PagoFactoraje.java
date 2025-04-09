@@ -41,7 +41,8 @@ public class PagoFactoraje {
     private double MontoaPAGAR;
 
     private static final String Forma_Pago   = "TRANSFERENCIA ELECTRÓNICA DE FONDOS";
-    private static final String rutaArchivoFactoraje  = Variables.XMLFactoraje;
+    private static final String rutaArchivoFactoraje  = "C:\\RepositorioPrueAuto\\XLSXPruebas\\Factoraje 27272.xml";
+
 
     @BeforeEach
     public void setup() {

@@ -11,5 +11,4 @@ public class Variables {
     // Variables importacion archivos.
 
     public static final String Docmateriales = "C:\\RepositorioPrueAuto\\XLSXPruebas\\ImportarMaterialesPA.xlsx";
-    public static final String XMLFactoraje = "C:\\RepositorioPrueAuto\\XLSXPruebas\\Factoraje 27272.xml";
 }
