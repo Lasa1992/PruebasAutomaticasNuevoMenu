@@ -9,8 +9,8 @@ import io.qameta.allure.Step;
 import org.junit.jupiter.api.*;
 import org.openqa.selenium.*;
 import org.openqa.selenium.support.ui.ExpectedConditions;
-import org.openqa.selenium.support.ui.WebDriverWait;
 import org.openqa.selenium.support.ui.Select;
+import org.openqa.selenium.support.ui.WebDriverWait;
 
 import java.io.File;
 import java.time.Duration;
@@ -18,8 +18,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Random;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
@@ -142,22 +140,6 @@ public class PagoFactoraje {
         AceptarPolizaPago(); // Acepta la póliza del pago.
         deseleccionarCampoFecha2(); // Deselecciona el campo de fecha.
         SalirVentanaPago(); // Sale de la ventana de pago.
-
-
-//        //Cancelación del pago
-//        BusquedaPagoCR(); // Busca el pago de contra recibo.
-//        SeleccionarPagoCR(); // Selecciona el pago de contra recibo.
-//        BotonCancelarPago(); // Cancela el pago de contra recibo.
-//        SeleccionaMotivoCancelacion(); // Selecciona el motivo de cancelación.
-//        MensajeSustitucionRequerida(); // Introduce un mensaje de sustitución requerida.
-//        IntroducirReferenciaSustitucion(); // Introduce una referencia de sustitución.
-//        AceptarPagoAbono(); // Acepta el pago/abono sutituido
-//        TimbrePago(); // Acepta el timbre del pago.
-//        EnvioCorreoPago(); // Envía un correo para el pago (Sí/No).
-//        AceptarPolizaPago(); // Acepta la póliza del pago.
-//        deseleccionarCampoFecha2(); // Deselecciona el campo de fecha.
-//        SalirVentanaPago(); // Sale de la ventana de pago.
-
     }
 
 
