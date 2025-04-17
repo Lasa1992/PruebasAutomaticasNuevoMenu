@@ -101,7 +101,7 @@ public class ChequesModElim {
 
     @AfterAll
     public static void tearDown() {
-        System.out.println("🔒 Cerrando sesión y liberando WebDriver desde FacturacionGeneral...");
+        System.out.println("🔒 Cerrando sesión y liberando WebDriver desde ChequeModElim...");
         InicioSesion.cerrarSesion(); // Asegurar que se libere el WebDriver correctamente
     }
 

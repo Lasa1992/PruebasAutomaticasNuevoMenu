@@ -2,6 +2,7 @@ package Indicadores;
 
 import org.openqa.selenium.*;
 import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.edge.EdgeDriver;
 import org.openqa.selenium.edge.EdgeOptions;
 import org.openqa.selenium.firefox.FirefoxDriver;
@@ -19,10 +20,12 @@ public class InicioSesion {
     // Lista de credenciales para pruebas en paralelo
     private static final String[][] CREDENTIALS = {
             {"UsuarioPrueba1", "Prueba.0000"},
-            {"UsuarioPrueba2", "Prueba.0000"}//,
-            // {"UsuarioPrueba3", "Prueba.0000"},
-            //{"UsuarioPrueba4", "Prueba.0000"}
+            {"UsuarioPrueba2", "Prueba.0000"},
+            {"UsuarioPrueba3", "Prueba.0000"},
+            {"UsuarioPrueba4", "Prueba.0000"}
     };
+
+    private static final String RFCPRUEBA = Variables.RFC;
 
     // Contador atómico para asignar credenciales únicas en pruebas concurrentes
     private static final AtomicInteger credentialCounter = new AtomicInteger(0);
@@ -54,6 +57,8 @@ public class InicioSesion {
                 default:
                     //System.out.println("🔵 Iniciando pruebas en Chrome...");
                     System.setProperty("webdriver.chrome.driver", "C:\\RepositorioPrueAuto\\Chromedriver\\chromedriver.exe");
+                    ChromeOptions options = new ChromeOptions();
+                    options.addArguments("--headless");
                     driver = new ChromeDriver();
                     break;
             }
@@ -114,7 +119,7 @@ public class InicioSesion {
             WebElement inputUsuario = wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("EDT_USUARIO")));
             WebElement inputContrasena = wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("EDT_CONTRASENA")));
 
-            inputEmpresa.sendKeys("TST080808000");
+            inputEmpresa.sendKeys(Variables.RFC);
             inputUsuario.sendKeys(username);
             inputContrasena.sendKeys(password);
 

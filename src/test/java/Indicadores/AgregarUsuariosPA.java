@@ -29,7 +29,7 @@ public class AgregarUsuariosPA {
     @Description("Ejecuta el inicio de sesión completo con manejo de alertas y ventanas emergentes")
     public void InicioSesionCompleto() {
         // **Rellenar formulario de inicio de sesión**
-        driver.findElement(By.id("EDT_EMPRESA")).sendKeys("IIA040805DZ4");
+        driver.findElement(By.id("EDT_EMPRESA")).sendKeys("TST030303000");
         driver.findElement(By.id("EDT_USUARIO")).sendKeys("GM");
         driver.findElement(By.id("EDT_CONTRASENA")).sendKeys("");
 
@@ -85,7 +85,7 @@ public class AgregarUsuariosPA {
         System.out.println("Ingresó al listado de usuarios.");
     }
 
-    @RepeatedTest(3)
+    @RepeatedTest(4)
     @Order(3)
     @Description("Agregar un nuevo usuario al sistema")
     public void AgregarUsuarios(RepetitionInfo repetitionInfo) {

@@ -28,7 +28,7 @@ public class CreacionUsuario {
         driver = new ChromeDriver();
         wait = new WebDriverWait(driver, Duration.ofSeconds(5));
         driver.manage().window().maximize();
-        driver.get("http://190.9.53.4:9093/");
+        driver.get("https://www.softwareparatransporte.com/GMTERPV8_WEB/ES/PAGE_CatUsuariosLoginAWP.awp");
     }
 
     @Test

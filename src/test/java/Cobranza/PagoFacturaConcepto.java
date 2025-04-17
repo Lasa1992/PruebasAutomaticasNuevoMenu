@@ -124,7 +124,7 @@ public class PagoFacturaConcepto {
 
     private static void handleImageButton() {
         try {
-            WebElement imageButton = wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//img[contains(@src, '/GMTERPV8_WEB/Imagenes/FACTURACION1')]")));
+            WebElement imageButton = wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//*[@id=\"HTM_HTMLTEMPLATE1\"]/div/ul/li[3]/a/img")));
             imageButton.click();
         } catch (Exception e) {
             UtilidadesAllure.manejoError(driver, e, "Botón Módulo Facturación no funciona.");
@@ -134,7 +134,7 @@ public class PagoFacturaConcepto {
 
     private static void handleSubMenuButton() {
         try {
-            WebElement subMenuButton = wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//img[contains(@src, '/GMTERPV8_WEB/Imagenes/FACTURACION/PORCONCEPTO1')]")));
+            WebElement subMenuButton = wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//*[@id=\"HTM_HTMLTEMPLATE1\"]/div/ul/li[3]/ul/li[2]/a/img")));
             subMenuButton.click();
         } catch (Exception e) {
             // Captura el mensaje de error, toma una captura de pantalla y lo despliega en el reporte de Allure.
@@ -499,13 +499,13 @@ public class PagoFacturaConcepto {
         try {
             // Espera a que la opción principal "Registrar" en el menú sea clickeable
             WebElement menuRegistrar = wait.until(ExpectedConditions.elementToBeClickable(
-                    By.id("OPT_REGISTRARMENU")));
+                    By.xpath("//*[@id=\"OPT_REGISTRARMENU\"]")));
             // Hacer clic en la opción "Registrar" para desplegar el submenú
             menuRegistrar.click();
             System.out.println("Menú 'Registrar' abierto.");
             // Espera a que la opción específica "Registrar" dentro del submenú sea clickeable
             WebElement opcionRegistrar = wait.until(ExpectedConditions.elementToBeClickable(
-                    By.id("OPT_REGISTRAR")));
+                    By.xpath("//*[@id=\"OPT_REGISTRAR\"]")));
             // Hacer clic en la opción "Registrar"
             opcionRegistrar.click();
             System.out.println("Opción 'Registrar' seleccionada correctamente.");
@@ -544,7 +544,7 @@ public class PagoFacturaConcepto {
     @Step("Asignar Cliente al Pago")
     private void CodigoClientPago() {
         try {
-            WebElement NumeroClientePago = wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("EDT_NUMEROCLIENTE")));
+            WebElement NumeroClientePago = wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//*[@id=\"EDT_NUMEROCLIENTE\"]")));
             NumeroClientePago.click();
             NumeroClientePago.sendKeys(NUMERO_CLIENTE);
             NumeroClientePago.sendKeys(Keys.TAB);
@@ -602,7 +602,7 @@ public class PagoFacturaConcepto {
         }
     }
 
-    public void SeleccionFactura() {
+    public void SeleccionFactura() throws InterruptedException {
         WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(4));
         try {
             // Espera explícita hasta que el checkbox de la factura sea visible y clickeable
@@ -617,20 +617,24 @@ public class PagoFacturaConcepto {
             UtilidadesAllure.manejoError(driver, e, "Error al seleccionar la factura");
             System.out.println("Error al seleccionar la factura");
         }
+
+        // Espera de 3 segundos al finalizar
+        Thread.sleep(3000);
     }
+
 
     @Step("Validar moneda y calcular el monto a pagar")
     public void ValidarConversion() {
         try {
             // Obtener la moneda seleccionada
-            WebElement monedaElement = wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("tzSTC_MONEDA")));
+            WebElement monedaElement = wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//*[@id=\"tzSTC_MONEDA\"]")));
             String monedaSeleccionada = monedaElement.getText().trim().toUpperCase();
             System.out.println("Moneda detectada: " + monedaSeleccionada);
             // Obtener valores de los campos relevantes
-            WebElement montoPesosElement = wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("EDT_IMPORTEPESOS")));
-            WebElement montoDolaresElement = wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("EDT_IMPORTEDLLS")));
-            WebElement tipoCambioElement = wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("EDT_TIPOCAMBIO")));
-            WebElement conversionMonedaElement = wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("tzSTC_CONVERSIONDEMONEDA")));
+            WebElement montoPesosElement = wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//*[@id=\"EDT_IMPORTEPESOS\"]")));
+            WebElement montoDolaresElement = wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//*[@id=\"EDT_IMPORTEDLLS\"]")));
+            WebElement tipoCambioElement = wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//*[@id=\"EDT_TIPOCAMBIO\"]")));
+            WebElement conversionMonedaElement = wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//*[@id=\"tzSTC_CONVERSIONDEMONEDA\"]")));
             // Obtener valores y limpiar caracteres extraños
             String valorPesos = montoPesosElement.getAttribute("value").trim().replace(",", "").replace("$", "");
             String valorDolares = montoDolaresElement.getAttribute("value").trim().replace(",", "").replace("$", "");
@@ -727,16 +731,21 @@ public class PagoFacturaConcepto {
     }
 
     @Step("Generar Timbre del Pago")
-    public void TimbrePago() {
+    public void TimbrePago() throws InterruptedException {
         try {
-            WebElement btnSi = wait.until(ExpectedConditions.elementToBeClickable(By.xpath("/html/body/form/table/tbody/tr/td/table/tbody/tr/td/div/table/tbody/tr[2]/td/div[1]/table/tbody/tr/td/div/div[3]/table/tbody/tr/td/table/tbody/tr[2]/td/div[2]/table/tbody/tr/td/input")));
+            WebElement btnSi = wait.until(ExpectedConditions.elementToBeClickable(
+                    By.xpath("/html/body/form/table/tbody/tr/td/table/tbody/tr/td/div/table/tbody/tr[2]/td/div[1]/table/tbody/tr/td/div/div[3]/table/tbody/tr/td/table/tbody/tr[2]/td/div[2]/table/tbody/tr/td/input")
+            ));
             btnSi.click();
             System.out.println("Timbre del pago generado correctamente.");
         } catch (Exception e) {
             UtilidadesAllure.manejoError(driver, e, "Error al generar el timbre del pago.");
             System.out.println("Error al generar el timbre del pago.");
         }
+
+        Thread.sleep(2000); // Espera de 2 segundos al final
     }
+
 
     @Step("Enviar Comprobante de Pago por Correo")
     public void EnvioCorreoPago() {
@@ -784,18 +793,21 @@ public class PagoFacturaConcepto {
 
 
     @Step("Aceptar Póliza Contable del Pago")
-    public void AceptarPolizaPago() {
+    public void AceptarPolizaPago() throws InterruptedException {
         try {
             WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(2));
             WebElement btnOk = wait.until(ExpectedConditions.elementToBeClickable(
-                    By.xpath("/html/body/form/table/tbody/tr/td/table/tbody/tr/td/div/table/tbody/tr[2]/td/div[1]/table/tbody/tr/td/div/div[3]/table/tbody/tr/td/table/tbody/tr[2]/td/div[1]/table/tbody/tr/td/input")
+                    By.xpath("//*[@id=\"BTN_OK\"]")
             ));
             btnOk.click();
             System.out.println("Póliza contable aceptada.");
         } catch (Exception e) {
             System.err.println("Error al aceptar la póliza: " + e.getMessage());
         }
+
+        Thread.sleep(1000); // Espera de 1 segundo al final
     }
+
 
 
     public void deseleccionarCampoFecha2() {
