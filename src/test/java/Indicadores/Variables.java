@@ -2,7 +2,7 @@ package Indicadores;
 
 public class Variables {
 
-/*
+
     public static final String RFC = "IIA040805DZ4"; // RFC debemos de colocar el rfc de la base de datos y sus variables.
 
     public static final String CLIENTE = "000003"; // Número de cliente configurable
@@ -17,7 +17,7 @@ public class Variables {
     public static final String Docmateriales = "C:\\RepositorioPrueAuto\\XLSXPruebas\\ImportarMaterialesPA.xlsx";
 
 //KIJ
-
+/*
     public static final String RFC = "TST080808000"; // RFC debemos de colocar el rfc de la base de datos y sus variables.
     // Variables para KIJ0906199R1 o TST080808000
     public static final String CLIENTE = "000001"; // Número de cliente configurable
@@ -28,7 +28,7 @@ public class Variables {
     public static final String PROVEEDOR = "1"; // Número de proveedoR
 
     public static final String Docmateriales = "C:\\RepositorioPrueAuto\\XLSXPruebas\\ImportarMaterialesPA.xlsx";
-*/
+
 
 
 
@@ -43,6 +43,6 @@ public class Variables {
 
     public static final String Docmateriales = "C:\\RepositorioPrueAuto\\XLSXPruebas\\ImportarMaterialesPA.xlsx";
 
-
+*/
 
 }
