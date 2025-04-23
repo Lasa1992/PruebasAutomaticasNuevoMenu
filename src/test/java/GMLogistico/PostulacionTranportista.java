@@ -59,7 +59,7 @@ public class PostulacionTranportista {
         try { Thread.sleep(1000); } catch (InterruptedException ie) { Thread.currentThread().interrupt(); }
     }
 
-    @RepeatedTest(5)
+    @RepeatedTest(250)
     @Order(1)
     @Description("Generación de Cheque con Datos Aleatorios")
     public void AgregarSubasta() throws Exception {

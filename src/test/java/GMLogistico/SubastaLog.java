@@ -63,7 +63,7 @@ import java.util.regex.Pattern;
 
 
 
-    @RepeatedTest(5)
+    @RepeatedTest(1500)
     @Order(1)
     @Description("Generación de Cheque con Datos Aleatorios")
     public void AgregarSubasta() throws Exception {
