@@ -98,7 +98,7 @@ public class MovimientoBancarioModElim {
 
     @AfterAll
     public static void tearDown() {
-        System.out.println("🔒 Cerrando sesión y liberando WebDriver desde FacturacionGeneral...");
+        System.out.println("🔒 Cerrando sesión y liberando WebDriver desde Movimiento Bancario ModElim...");
         InicioSesion.cerrarSesion(); // Asegurar que se libere el WebDriver correctamente
     }
 

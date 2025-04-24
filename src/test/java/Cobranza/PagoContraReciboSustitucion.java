@@ -165,7 +165,7 @@ public class PagoContraReciboSustitucion {
 
     @AfterAll
     public static void tearDown() {
-        System.out.println("🔒 Cerrando sesión y liberando WebDriver desde FacturacionGeneral...");
+        System.out.println("🔒 Cerrando sesión y liberando WebDriver desde Pago ContraReciboSustitucion....");
         InicioSesion.cerrarSesion(); // Asegurar que se libere el WebDriver correctamente
     }
 

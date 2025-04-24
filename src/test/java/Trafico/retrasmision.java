@@ -18,7 +18,7 @@ import java.util.List;
 import java.util.Random;
 
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-public class CreacionViajeTimbreTraslado {
+public class retrasmision {
 
     private static WebDriver driver;
     private static WebDriverWait wait;
@@ -87,8 +87,9 @@ public class CreacionViajeTimbreTraslado {
         BotonAceptarImportacion();
         BotonAceptarViaje();
         BotonConcurrencia();
-        AceptarMensajeTimbre();
+        //AceptarMensajeTimbre();
         EnvioCorreo();
+        Mensajeretramision();
         BotonImpresion();
     }
 
@@ -373,6 +374,18 @@ public class CreacionViajeTimbreTraslado {
         } catch (Exception e) {
             UtilidadesAllure.manejoError(driver, e,
                     "Error al elegir No para el envío del correo de timbre");
+        }
+    }
+
+    @Step("Presiona el menssaje de la retrasmision ")
+    private void Mensajeretramision(){
+        try{
+            WebElement botonretra = wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//*[@id=\"BTN_OK\"]")));
+            System.out.println("Se acepto el mensaje El viaje se esta retrasmitiendo");
+            botonretra.click();
+        } catch (Exception e) {
+            UtilidadesAllure.manejoError(driver, e,
+                    "Error al Aceptar el mensaje de retrasmision");
         }
     }
 

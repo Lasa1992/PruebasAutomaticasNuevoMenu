@@ -232,21 +232,4 @@ public class SuiteGlobal {
         }
     }
 
-   /* private void ejecutarComandoAllureServe() {
-        try {
-            System.out.println("🚀 Ejecutando comando: mvn allure:serve");
-            // Ejecuta el comando a través de cmd.exe para Windows
-            Process process = Runtime.getRuntime().exec(new String[]{"cmd.exe", "/c", "mvn allure:serve"});
-            // NOTA: No llamamos a process.waitFor() para no bloquear el hilo actual
-            System.out.println("Servidor Allure iniciado en segundo plano.");
-        } catch (IOException e) {
-            System.err.println("❌ Error al ejecutar el comando: " + e.getMessage());
-        }
-    }
-
-    @Test
-    @Order(2)
-    public void generarYServirInformeAllure() {
-        ejecutarComandoAllureServe();
-    }*/
 }
