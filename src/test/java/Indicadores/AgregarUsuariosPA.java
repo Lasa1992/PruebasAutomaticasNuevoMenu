@@ -29,9 +29,9 @@ public class AgregarUsuariosPA {
     @Description("Ejecuta el inicio de sesión completo con manejo de alertas y ventanas emergentes")
     public void InicioSesionCompleto() {
         // **Rellenar formulario de inicio de sesión**
-        driver.findElement(By.id("EDT_EMPRESA")).sendKeys("IIA040805DZ4");
-        driver.findElement(By.id("EDT_USUARIO")).sendKeys("GM");
-        driver.findElement(By.id("EDT_CONTRASENA")).sendKeys("");
+        driver.findElement(By.id("EDT_EMPRESA")).sendKeys("CACX7605101P8");
+        driver.findElement(By.id("EDT_USUARIO")).sendKeys("DAVID");
+        driver.findElement(By.id("EDT_CONTRASENA")).sendKeys("Ggt123456#");
 
         WebElement submitButton = wait.until(ExpectedConditions.elementToBeClickable(By.id("BTN_ENTRAR")));
         submitButton.click();

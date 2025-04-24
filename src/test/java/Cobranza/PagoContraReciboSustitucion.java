@@ -90,7 +90,7 @@ public class PagoContraReciboSustitucion {
         AsignarCodigoConceptoFacturacion(); // Aquí le pasas el código único
         IngresaPrecioUnitario(); // Ingresa el precio unitario
         BotonAgregarConcepto(); // Agrega el concepto
-        ObtenerFolioFactura(); // Captura el folio de la factura
+        ObtenerFolioFactura(); // Captura el folio de la factura este metodo se tiene que adecuar a la serie de la bd
         AceptarFactura(); // Acepta la factura
         BotonConcurrenciaFactura();
         BotonTimbre(); // Timbrar la factura

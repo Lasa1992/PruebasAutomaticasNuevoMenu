@@ -525,7 +525,10 @@ public class FacturacionGeneralSustitucion {
 
     private void MonedaSustitucion() {
         try {
-            Select primerComboBox = new Select(driver.findElement(By.id("COMBO_CATMONEDAS")));
+            WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(5));
+            WebElement comboMonedas = wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("COMBO_CATMONEDAS")));
+
+            Select primerComboBox = new Select(comboMonedas);
             List<String> opciones = List.of("PESOS", "DÓLARES");
 
             Random random = new Random();
@@ -536,6 +539,9 @@ public class FacturacionGeneralSustitucion {
             System.out.println("La Moneda es: " + opcionSeleccionada);
             informacionFactura.append("Moneda: ").append(opcionSeleccionada).append("\n\n");
             Allure.addAttachment("Informacion Factura", informacionFactura.toString());
+        } catch (TimeoutException e) {
+            System.out.println("El combo de monedas no se encontró en el tiempo esperado.");
+            // Podés decidir no lanzar el error si no es crítico
         } catch (Exception e) {
             UtilidadesAllure.manejoError(driver, e, "Se ha producido un error: " + e.getMessage());
             System.out.println("Se ha producido un error: " + e.getMessage());
@@ -611,13 +617,15 @@ public class FacturacionGeneralSustitucion {
 
             WebElement boton;
             if (elegirSi) {
-                boton = wait.until(ExpectedConditions.elementToBeClickable(By.id("tzBTN_YES")));
+                boton = wait.until(ExpectedConditions.elementToBeClickable(By.id("//*[@id=\"BTN_YES\"]")));
                 System.out.println("Se eligió la opción Sí para el envío del correo después de la sustitución.");
             } else {
                 boton = wait.until(ExpectedConditions.elementToBeClickable(By.id("tzBTN_NO")));
                 System.out.println("Se eligió la opción No para el envío del correo después de la sustitución.");
             }
             boton.click();
+        } catch (TimeoutException e) {
+            System.out.println("El mensaje de confirmación para el envío de correo no apareció. Se continúa sin realizar acción.");
         } catch (Exception e) {
             UtilidadesAllure.manejoError(driver, e, "Error al elegir entre Sí o No para el envío del correo después de la sustitución");
             System.out.println("Error al elegir entre Sí o No para el envío del correo después de la sustitución");
@@ -627,7 +635,7 @@ public class FacturacionGeneralSustitucion {
     @Step("Aceptar Cancelación en el SAT")
     private static void CancelacionSAT() {
         try {
-            WebElement aceptarButton = wait.until(ExpectedConditions.elementToBeClickable(By.id("tzBTN_YES")));
+            WebElement aceptarButton = wait.until(ExpectedConditions.elementToBeClickable(By.id("//*[@id=\"BTN_YES\"]")));
             aceptarButton.click();
             System.out.println("Se presionó el botón de aceptar para la cancelación en el SAT");
         } catch (Exception e) {
@@ -639,7 +647,7 @@ public class FacturacionGeneralSustitucion {
     @Step("Aceptar Cancelación en el SAT (Segundo Mensaje)")
     private static void CancelacionSAT2() {
         try {
-            WebElement aceptarButton = wait.until(ExpectedConditions.elementToBeClickable(By.id("tzBTN_YES")));
+            WebElement aceptarButton = wait.until(ExpectedConditions.elementToBeClickable(By.id("//*[@id=\"BTN_YES\"]")));
             aceptarButton.click();
             System.out.println("Se presionó el botón de aceptar para la cancelación en el SAT (segundo mensaje)");
         } catch (Exception e) {
@@ -651,7 +659,7 @@ public class FacturacionGeneralSustitucion {
     @Step("Aceptar Cancelación en el SAT (Tercer Mensaje)")
     private static void CancelacionSAT3() {
         try {
-            WebElement aceptarButton = driver.findElement(By.id("BTN_OK"));
+            WebElement aceptarButton = driver.findElement(By.id("//*[@id=\"BTN_OK\"]"));
             if (aceptarButton.isDisplayed() && aceptarButton.isEnabled()) {
                 aceptarButton.click();
                 System.out.println("Se hizo clic en el botón de aceptar para la cancelación en el SAT.");

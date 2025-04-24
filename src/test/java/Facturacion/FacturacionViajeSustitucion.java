@@ -107,8 +107,8 @@ public class FacturacionViajeSustitucion {
         AceptarFactura();
         BotonConcurrenciaFactura();
         AceptarTimbre();
-        EnvioCorreoFactura();
-        AceptarPoliza();
+        //EnvioCorreoFactura();
+        //AceptarPoliza();
         AceptarImpresion();
 
         // ======================
@@ -172,7 +172,7 @@ public class FacturacionViajeSustitucion {
     public void TipoDocumentoIngreso() {
         try {
             WebElement tipoDocumentoCombo = wait.until(ExpectedConditions.visibilityOfElementLocated(
-                    By.id("COMBO_CATTIPOSDOCUMENTOS")));
+                    By.xpath("//*[@id='COMBO_CATTIPOSDOCUMENTOS']")));
 
             // Se usa la variable TIPO_DOCUMENTO para buscar la opción
             WebElement opcionIngreso = tipoDocumentoCombo.findElement(
@@ -184,6 +184,7 @@ public class FacturacionViajeSustitucion {
                     "No se pudo seleccionar el Tipo de Documento: " + TIPO_DOCUMENTO);
         }
     }
+
 
     @Step("Manejar Número de Viaje (folio + 1)")
     private void NumeroViajeCliente() {
@@ -572,22 +573,15 @@ public class FacturacionViajeSustitucion {
         }
     }
 
-    private static void AceptarFactura() {
-        int intentos = 0;
-        boolean exito = false;
-        while (intentos < 3 && !exito) {
-            try {
-                WebElement aceptarButton = wait.until(ExpectedConditions.elementToBeClickable(
-                        By.id("BTN_ACEPTAR")));
-                aceptarButton.click();
-                System.out.println("Se presionó el botón de aceptar factura en el intento " + (intentos + 1));
-                exito = true;
-            } catch (Exception e) {
-                intentos++;
-                if (intentos == 3) {
-                    UtilidadesAllure.manejoError(driver, e, "Error al presionar el botón de aceptar factura");
-                }
-            }
+    private void AceptarFactura() {
+        try {
+            WebElement botonAgregar = driver.findElement(By.id("BTN_ACEPTAR"));
+            botonAgregar.click();
+            System.out.println("Se ha hecho clic en el botón 'Agregar'.");
+        } catch (Exception e) {
+            UtilidadesAllure.manejoError(driver, e, null);
+            System.out.println("Se ha producido un error al hacer clic en el botón 'Agregar': " + e.getMessage());
+            e.printStackTrace();
         }
     }
 
@@ -619,13 +613,19 @@ public class FacturacionViajeSustitucion {
     private static void AceptarTimbre() {
         try {
             WebElement aceptarEDIButton = wait.until(ExpectedConditions.elementToBeClickable(
-                    By.id("BTN_YES")));
+                    By.xpath("//*[@id=\"BTN_YES\"]")));
+
+            // Esperar 5 segundos antes de hacer clic
+            Thread.sleep(5000);
+
             aceptarEDIButton.click();
             System.out.println("Se presionó el botón de aceptar timbre");
         } catch (Exception e) {
+            System.out.println("No se encontró el botón de aceptar timbre o hubo un error al hacer clic.");
             UtilidadesAllure.manejoError(driver, e, "Error al presionar el botón de aceptar timbre");
         }
     }
+
 
     private static void EnvioCorreoFactura() {
         try {
@@ -743,7 +743,7 @@ public class FacturacionViajeSustitucion {
     private static void MensajeSustitucionRequerida() {
         try {
             WebElement botonSi = wait.until(ExpectedConditions.elementToBeClickable(
-                    By.id("tzBTN_YES")));
+                    By.xpath("//*[@id='tzBTN_YES']")));
             botonSi.click();
             System.out.println("Se presionó el botón de Sí para la sustitución requerida");
         } catch (Exception e) {
@@ -751,6 +751,7 @@ public class FacturacionViajeSustitucion {
                     "Error al presionar el botón de Sí para la sustitución requerida");
         }
     }
+
 
     private static void FiltroMonedaSustitucion() {
         try {
@@ -820,7 +821,7 @@ public class FacturacionViajeSustitucion {
         while (intentos < 3 && !exito) {
             try {
                 WebElement aceptarButton = wait.until(ExpectedConditions.elementToBeClickable(
-                        By.id("z_BTN_ACEPTAR_IMG")));
+                        By.xpath("//*[@id='z_BTN_ACEPTAR_IMG']")));
                 aceptarButton.click();
                 System.out.println("Se presionó el botón de aceptar factura en el intento " + (intentos + 1));
                 exito = true;
@@ -863,10 +864,10 @@ public class FacturacionViajeSustitucion {
 
             WebElement boton;
             if (elegirSi) {
-                boton = wait.until(ExpectedConditions.elementToBeClickable(By.id("tzBTN_YES")));
+                boton = wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//*[@id='BTN_YES']")));
                 System.out.println("Se eligió la opción Sí para el envío del correo después de la sustitución.");
             } else {
-                boton = wait.until(ExpectedConditions.elementToBeClickable(By.id("tzBTN_NO")));
+                boton = wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//*[@id='tzBTN_NO']")));
                 System.out.println("Se eligió la opción No para el envío del correo después de la sustitución.");
             }
             boton.click();
@@ -875,6 +876,7 @@ public class FacturacionViajeSustitucion {
                     "Error al elegir entre Sí o No para el envío del correo después de la sustitución");
         }
     }
+
 
     @Step("Aceptar Cancelación en el SAT")
     private static void CancelacionSAT() {

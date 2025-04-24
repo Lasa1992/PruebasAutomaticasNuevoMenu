@@ -315,7 +315,7 @@ public class PolizaManual {
     private void AceptarPoliza() {
         try {
             WebElement btnAceptarPoliza = wait.until(ExpectedConditions.elementToBeClickable(
-                    By.xpath("/html/body/form/table/tbody/tr/td/table/tbody/tr/td/div/table/tbody/tr[2]/td/div[1]/table/tbody/tr/td/table/tbody/tr[1]/td/div/div[3]/div[3]/div/table/tbody/tr/td/input")
+                    By.xpath("//*[@id=\"BTN_ACEPTAR\"]")
             ));
             btnAceptarPoliza.click();
             System.out.println("AceptarPoliza: Botón presionado correctamente.");

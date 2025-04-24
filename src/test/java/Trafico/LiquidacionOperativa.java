@@ -17,6 +17,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
+import static org.openqa.selenium.By.xpath;
+
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class LiquidacionOperativa   {
 
@@ -30,6 +32,7 @@ public class LiquidacionOperativa   {
     private static final String NUMERO_RUTA      = Variables.RUTA;  // Número de ruta
     private static final String TIPO_DOCUMENTO   = Variables.DocumentoTraslado;
     private static final String FOLIO_OPERADOR = Variables.Operador;
+    private static final String NUMERO_PROVEEDOR = Variables.PROVEEDOR;
 
     private static final String rutaArchivo  = Variables.Docmateriales;
     // =========================================================================
@@ -101,6 +104,20 @@ public class LiquidacionOperativa   {
         Aceptarllegada();
         EnvioCorreoseguimientollegada();
 
+        //Flujo gasto de viaje
+        ModuloTrafico();
+        GastosViaje();
+        BotonRegistrarGasto();
+        CodigoOperador();
+        NumeroComprobante();
+        CodigoProveedor();
+        ConceptoGasto();
+        AceptarGastoViaje();
+        PolizaCombustible();
+        CerrarVentanaGastoViaje();
+
+
+//        //Flujo liquidación
         ModuloTrafico();
         LiquidacionesOperativas();
         BotonGenerarLiquidacion();
@@ -143,7 +160,7 @@ public class LiquidacionOperativa   {
     private static void BotonModuloTrafico() {
         try {
             WebElement ModuloBotonTrafico = wait.until(ExpectedConditions.elementToBeClickable(
-                    By.xpath("//img[contains(@src, '/GMTERPV8_WEB/Imagenes/TRAFICO1.jpg')]")));
+                    xpath("//img[contains(@src, '/GMTERPV8_WEB/Imagenes/TRAFICO1.jpg')]")));
             ModuloBotonTrafico.click();
         } catch (Exception e) {
             UtilidadesAllure.manejoError(driver, e, "Botón Módulo Tráfico no funciona.");
@@ -153,7 +170,7 @@ public class LiquidacionOperativa   {
     private static void BotonListadoViajes() {
         try {
             WebElement ListadoBoton = wait.until(ExpectedConditions.elementToBeClickable(
-                    By.xpath("//a[img[contains(@src, '/GMTERPV8_WEB/Imagenes/TRAFICO/VIAJES1.jpg')]]")));
+                    xpath("//a[img[contains(@src, '/GMTERPV8_WEB/Imagenes/TRAFICO/VIAJES1.jpg')]]")));
             ListadoBoton.click();
         } catch (Exception e) {
             UtilidadesAllure.manejoError(driver, e, "Botón Listado de Viajes no funciona.");
@@ -176,7 +193,7 @@ public class LiquidacionOperativa   {
             WebElement tipoDocumentoCombo = wait.until(ExpectedConditions.visibilityOfElementLocated(
                     By.id("COMBO_CATTIPOSDOCUMENTOS")));
             WebElement opcionTraslado = tipoDocumentoCombo.findElement(
-                    By.xpath(".//option[text()='" + TIPO_DOCUMENTO + "']"));
+                    xpath(".//option[text()='" + TIPO_DOCUMENTO + "']"));
             opcionTraslado.click();
         } catch (Exception e) {
             UtilidadesAllure.manejoError(driver, e,
@@ -399,7 +416,7 @@ public class LiquidacionOperativa   {
         try {
             // Esperar unos segundos para ver si aparece el mensaje de concurrencia
             WebElement botonAceptarConcurrencia = wait.until(ExpectedConditions.elementToBeClickable(
-                    By.xpath("/html/body/form/table/tbody/tr/td/table/tbody/tr/td/div/table/tbody/tr[2]/td/div[1]/table/tbody/tr/td/div/div[3]/table/tbody/tr/td/table/tbody/tr[2]/td/div[1]/table/tbody/tr/td/input")));
+                    xpath("/html/body/form/table/tbody/tr/td/table/tbody/tr/td/div/table/tbody/tr[2]/td/div[1]/table/tbody/tr/td/div/div[3]/table/tbody/tr/td/table/tbody/tr[2]/td/div[1]/table/tbody/tr/td/input")));
 
             // Si el botón está disponible, hacer clic en él
             botonAceptarConcurrencia.click();
@@ -509,7 +526,7 @@ public class LiquidacionOperativa   {
             // Localiza el <a> que contiene la palabra "Salida"
             WebElement linkSalida = wait.until(
                     ExpectedConditions.elementToBeClickable(
-                            By.xpath("//td[contains(@class,'COL_SALIDA1')]//a[contains(text(),'Salida')]")
+                            xpath("//td[contains(@class,'COL_SALIDA1')]//a[contains(text(),'Salida')]")
                     )
             );
             linkSalida.click();
@@ -525,7 +542,7 @@ public class LiquidacionOperativa   {
             // asumiendo que es el primero en el DOM ( [1] ) en ese momento
             WebElement btnAceptarSalida = wait.until(
                     ExpectedConditions.elementToBeClickable(
-                            By.xpath("(//input[@id='BTN_ACEPTAR'])[1]")
+                            xpath("(//input[@id='BTN_ACEPTAR'])[1]")
                     )
             );
             btnAceptarSalida.click();
@@ -559,7 +576,7 @@ public class LiquidacionOperativa   {
             // Localiza el <a> que contiene la palabra "Llegada"
             WebElement linkLlegada = wait.until(
                     ExpectedConditions.elementToBeClickable(
-                            By.xpath("//td[contains(@class,'COL_LLEGADA1')]//a[contains(text(),'Llegada')]")
+                            xpath("//td[contains(@class,'COL_LLEGADA1')]//a[contains(text(),'Llegada')]")
                     )
             );
             linkLlegada.click();
@@ -603,7 +620,7 @@ public class LiquidacionOperativa   {
     private void ModuloTrafico() {
         try {
             WebElement moduloTrafico = wait.until(ExpectedConditions.elementToBeClickable(
-                    By.xpath("//img[contains(@src, 'TRAFICO')]")));
+                    xpath("//img[contains(@src, 'TRAFICO')]")));
             moduloTrafico.click();
             System.out.println("Se ingresó al módulo de Tráfico.");
         } catch (Exception e) {
@@ -614,7 +631,7 @@ public class LiquidacionOperativa   {
     private void LiquidacionesOperativas() {
         try {
             WebElement liquidacionesButton = wait.until(ExpectedConditions.elementToBeClickable(
-                    By.xpath("//img[@alt='Liquidaciones']")));
+                    xpath("//img[@alt='Liquidaciones']")));
             liquidacionesButton.click();
             System.out.println("Se accedió a Liquidaciones Fiscales.");
         } catch (Exception e) {
@@ -651,7 +668,7 @@ public class LiquidacionOperativa   {
                 // Esperar a que el input con el full XPath sea visible
                 WebElement folioField = wait.until(
                         ExpectedConditions.visibilityOfElementLocated(
-                                By.xpath("/html/body/form/table/tbody/tr/td/table/tbody/tr/td/div/table/tbody/tr[2]/td/div[1]/table/tbody/tr/td/table/tbody/tr[2]/td/div[12]/table/tbody/tr/td/table/tbody/tr[2]/td/div[3]/table/tbody/tr/td/table/tbody/tr[2]/td/div[1]/input")
+                                xpath("/html/body/form/table/tbody/tr/td/table/tbody/tr/td/div/table/tbody/tr[2]/td/div[1]/table/tbody/tr/td/table/tbody/tr[2]/td/div[12]/table/tbody/tr/td/table/tbody/tr[2]/td/div[3]/table/tbody/tr/td/table/tbody/tr[2]/td/div[1]/input")
                         )
                 );
 
@@ -740,7 +757,7 @@ public class LiquidacionOperativa   {
         try {
             // Esperamos a que el campo esté visible usando el XPath
             WebElement operadorField = wait.until(ExpectedConditions.visibilityOfElementLocated(
-                    By.xpath("/html/body/form/table/tbody/tr/td/table/tbody/tr/td/div/table/tbody/tr[2]/td/div[1]/table/tbody/tr/td/table/tbody/tr[2]/td/div[12]/table/tbody/tr/td/table/tbody/tr[2]/td/div[3]/table/tbody/tr/td/table/tbody/tr[2]/td/div[7]/input")));
+                    xpath("/html/body/form/table/tbody/tr/td/table/tbody/tr/td/div/table/tbody/tr[2]/td/div[1]/table/tbody/tr/td/table/tbody/tr[2]/td/div[12]/table/tbody/tr/td/table/tbody/tr[2]/td/div[3]/table/tbody/tr/td/table/tbody/tr[2]/td/div[7]/input")));
 
             // Limpiamos y escribimos la variable FOLIO_OPERADOR
             operadorField.clear();
@@ -768,7 +785,7 @@ public class LiquidacionOperativa   {
         try {
             // Esperamos a que el campo esté visible usando el XPath
             WebElement folioField = wait.until(ExpectedConditions.visibilityOfElementLocated(
-                    By.xpath("/html/body/form/table/tbody/tr/td/table/tbody/tr/td/div/table/tbody/tr[2]/td/div[1]/table/tbody/tr/td/table/tbody/tr[2]/td/div[12]/table/tbody/tr/td/table/tbody/tr[2]/td/div[3]/table/tbody/tr/td/table/tbody/tr[2]/td/div[1]/input")));
+                    xpath("/html/body/form/table/tbody/tr/td/table/tbody/tr/td/div/table/tbody/tr[2]/td/div[1]/table/tbody/tr/td/table/tbody/tr[2]/td/div[12]/table/tbody/tr/td/table/tbody/tr[2]/td/div[3]/table/tbody/tr/td/table/tbody/tr[2]/td/div[1]/input")));
 
             // Capturamos el valor del campo y lo asignamos a la variable estática
             FolioLiquidacion = folioField.getAttribute("value");
@@ -845,14 +862,15 @@ public class LiquidacionOperativa   {
     @Step("Aceptar Póliza")
     public void Poliza() {
         try {
-            // Localiza el botón "Aceptar" con id="BTN_OK"
             WebElement botonAceptar = wait.until(
                     ExpectedConditions.elementToBeClickable(By.cssSelector("input#BTN_OK"))
             );
             botonAceptar.click();
             System.out.println("Se hizo clic en el botón Aceptar (Póliza).");
+        } catch (TimeoutException e) {
+            System.out.println("El botón Aceptar (Póliza) no apareció. Se continúa sin hacer clic.");
         } catch (Exception e) {
-            System.err.println("Error al dar clic en el botón Aceptar (Póliza): " + e.getMessage());
+            System.err.println("Error inesperado al intentar dar clic en el botón Aceptar (Póliza): " + e.getMessage());
         }
     }
 
@@ -861,7 +879,7 @@ public class LiquidacionOperativa   {
         try {
             // Localizar el campo de búsqueda usando el XPath proporcionado
             WebElement campoBusqueda = driver.findElement(
-                    By.xpath("/html/body/form/table/tbody/tr/td/div/table/tbody/tr[1]/td/table/tbody/tr/td/table/tbody/tr/td/table/tbody/tr[1]/td/div[3]/div[2]/div[3]/div/table/tbody/tr/td/div/div/div[1]/div[1]/label/input"));
+                    xpath("/html/body/form/table/tbody/tr/td/div/table/tbody/tr[1]/td/table/tbody/tr/td/table/tbody/tr/td/table/tbody/tr[1]/td/div[3]/div[2]/div[3]/div/table/tbody/tr/td/div/div/div[1]/div[1]/label/input"));
 
             // Limpiar el campo de búsqueda (opcional, dependiendo de tu caso)
             campoBusqueda.clear();
@@ -884,7 +902,7 @@ public class LiquidacionOperativa   {
         try {
             // Localizar la tabla usando el XPath proporcionado
             WebElement tabla = driver.findElement(
-                    By.xpath("/html/body/form/table/tbody/tr/td/div/table/tbody/tr[1]/td/table/tbody/tr/td/table/tbody/tr/td/table/tbody/tr[1]/td/div[3]/div[2]/div[3]/div/table/tbody/tr/td/div/div/div[2]/div[2]"));
+                    xpath("/html/body/form/table/tbody/tr/td/div/table/tbody/tr[1]/td/table/tbody/tr/td/table/tbody/tr/td/table/tbody/tr[1]/td/div[3]/div[2]/div[3]/div/table/tbody/tr/td/div/div/div[2]/div[2]"));
 
             // Buscar todas las filas de la tabla
             List<WebElement> filas = tabla.findElements(By.tagName("tr"));
@@ -922,24 +940,28 @@ public class LiquidacionOperativa   {
         try {
             // Presionar el botón de autorización
             WebElement botonAutorizar = driver.findElement(
-                    By.xpath("/html/body/form/table/tbody/tr/td/div/table/tbody/tr[1]/td/table/tbody/tr/td/table/tbody/tr/td/table/tbody/tr[1]/td/div[3]/div[2]/div[1]/table/tbody/tr/td/table/tbody/tr[3]/td/div[1]/table/tbody/tr/td/a/span/span"));
+                    xpath("//*[@id=\"z_BTN_AUTORIZAR_IMG\"]"));
             botonAutorizar.click();
             System.out.println("Se presionó el botón de autorización.");
 
             // Esperar a que el segundo botón esté visible y presionarlo
             WebElement botonConfirmar = driver.findElement(
-                    By.xpath("/html/body/form/div[8]/table/tbody/tr/td/div[2]/div[1]/div/table/tbody/tr/td/a/span/span"));
+                    xpath("//*[@id=\"z_BTN_ACEPTAR_IMG\"]"));
             botonConfirmar.click();
             System.out.println("Se presionó el botón de confirmación.");
+            Thread.sleep(3000);
 
             // Manejar la alerta que aparece
+            WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(3));
+            wait.until(ExpectedConditions.alertIsPresent());
+
             Alert alerta = driver.switchTo().alert(); // Cambiar el foco a la alerta
             String textoAlerta = alerta.getText(); // Obtener el texto de la alerta
             System.out.println("Texto de la alerta: " + textoAlerta);
 
             // Aceptar la alerta
             alerta.accept();
-            System.out.println("Se aceptó la alerta.");
+            System.out.println("Se aceptó la alerta y se autorizo la liquidación.");
 
             Thread.sleep(3000);
 
@@ -955,7 +977,7 @@ public class LiquidacionOperativa   {
         try {
             // Presionar el primer botón de pagar
             WebElement botonPagar1 = driver.findElement(
-                    By.xpath("/html/body/form/table/tbody/tr/td/div/table/tbody/tr[1]/td/table/tbody/tr/td/table/tbody/tr/td/table/tbody/tr[1]/td/div[3]/div[2]/div[1]/table/tbody/tr/td/table/tbody/tr[2]/td/div[2]/table/tbody/tr/td/a/span/span"));
+                    xpath("/html/body/form/table/tbody/tr/td/div/table/tbody/tr[1]/td/table/tbody/tr/td/table/tbody/tr/td/table/tbody/tr[1]/td/div[3]/div[2]/div[1]/table/tbody/tr/td/table/tbody/tr[2]/td/div[2]/table/tbody/tr/td/a/span/span"));
             botonPagar1.click();
             System.out.println("Se presionó el primer botón de pagar.");
 
@@ -964,7 +986,7 @@ public class LiquidacionOperativa   {
 
             // Presionar el segundo botón de confirmación de pago
             WebElement botonPagar2 = driver.findElement(
-                    By.xpath("/html/body/form/table/tbody/tr/td/table/tbody/tr/td/div/table/tbody/tr[2]/td/div[1]/table/tbody/tr/td/table/tbody/tr[1]/td/div/div[3]/div[1]/div/input"));
+                    xpath("/html/body/form/table/tbody/tr/td/table/tbody/tr/td/div/table/tbody/tr[2]/td/div[1]/table/tbody/tr/td/table/tbody/tr[1]/td/div/div[3]/div[1]/div/input"));
             botonPagar2.click();
             System.out.println("Se presionó el segundo botón de confirmación de pago.");
 
@@ -982,7 +1004,7 @@ public class LiquidacionOperativa   {
         try {
             // Localizar el campo de mensaje de nómina usando el XPath proporcionado
             WebElement campoNomina = driver.findElement(
-                    By.xpath("/html/body/form/table/tbody/tr/td/table/tbody/tr/td/div/table/tbody/tr[2]/td/div[1]/table/tbody/tr/td/div/div[3]/table/tbody/tr/td/table/tbody/tr[2]/td/div[2]/table/tbody/tr/td/input"));
+                    xpath("//*[@id=\"BTN_YES\"]"));
 
             // Hacer clic en el campo
             campoNomina.click();
@@ -998,7 +1020,7 @@ public class LiquidacionOperativa   {
         try {
             // Localizar el campo de mensaje de timbre de pago usando el XPath proporcionado
             WebElement campoTimbrePago = driver.findElement(
-                    By.xpath("/html/body/form/table/tbody/tr/td/table/tbody/tr/td/div/table/tbody/tr[2]/td/div[1]/table/tbody/tr/td/div/div[3]/table/tbody/tr/td/table/tbody/tr[2]/td/div[2]/table/tbody/tr/td/input"));
+                    xpath("//*[@id=\"BTN_YES\"]"));
 
             // Hacer clic en el campo
             campoTimbrePago.click();
@@ -1014,7 +1036,7 @@ public class LiquidacionOperativa   {
         try {
             // Localizar el campo de mensaje de póliza usando el XPath proporcionado
             WebElement campoPoliza = driver.findElement(
-                    By.xpath("/html/body/form/table/tbody/tr/td/table/tbody/tr/td/div/table/tbody/tr[2]/td/div[1]/table/tbody/tr/td/div/div[3]/table/tbody/tr/td/table/tbody/tr[2]/td/div[1]/table/tbody/tr/td/input"));
+                    xpath("//*[@id=\"BTN_OK\"]"));
 
             // Hacer clic en el campo
             campoPoliza.click();
@@ -1024,4 +1046,212 @@ public class LiquidacionOperativa   {
             System.err.println("Error al hacer clic en el campo de mensaje de póliza: " + e.getMessage());
         }
     }
+
+    private void GastosViaje() {
+        try {
+            WebElement ListadoBoton = wait.until(ExpectedConditions.elementToBeClickable(
+                    xpath("//a[img[contains(@src, '/GMTERPV8_WEB/Imagenes/TRAFICO/GASTOSDEVIAJE1.jpg')]]")));
+            ListadoBoton.click();
+        } catch (Exception e) {
+            UtilidadesAllure.manejoError(driver, e, "Botón Gastos de Viaje no funcuina.");
+        }
+    }
+
+    @Step("Clic en el botón Registrar Gasto")
+    public void BotonRegistrarGasto() {
+        try {
+            // Usar ID: "BTN_GENERAR"
+            WebElement botonGenerar = wait.until(
+                    ExpectedConditions.elementToBeClickable(By.id("BTN_REGISTRAR"))
+            );
+            botonGenerar.click();
+            System.out.println("Se dio clic en el botón Registrar Gasto de Viaje");
+            Thread.sleep(2000);
+        } catch (Exception e) {
+            System.err.println("Error al dar clic en el botón Registrar Gasto de Viaje: " + e.getMessage());
+        }
+    }
+
+    @Step("Asignar Operador al gasto Viaje (variable NUMERO_Operador)")
+    private void CodigoOperador() {
+        try {
+            WebElement NumeroOperadorField = wait.until(ExpectedConditions.visibilityOfElementLocated(
+                    By.id("EDT_NUMEROOPERADOR")));
+            NumeroOperadorField.click();
+            NumeroOperadorField.sendKeys(FOLIO_OPERADOR);
+            NumeroOperadorField.sendKeys(Keys.TAB);
+            Thread.sleep(1000);
+        } catch (TimeoutException | InterruptedException e) {
+            UtilidadesAllure.manejoError(driver, e, "Error al asignar el operador al gasto de viaje");
+        }
+    }
+
+    @Step("Introducir número de comprobante del gasto de viaje")
+    public void NumeroComprobante() {
+        try {
+            WebElement campoNumero = wait.until(ExpectedConditions.visibilityOfElementLocated(By.name("EDT_NUMEROCOMPROBANTE")));
+            campoNumero.clear();
+
+            // Generar número aleatorio de 6 dígitos (entre 100000 y 999999)
+            Random rand = new Random();
+            int numeroAleatorio = rand.nextInt(900000) + 100000;
+
+            campoNumero.sendKeys(String.valueOf(numeroAleatorio));
+            System.out.println("Comprobante ingresado: " + numeroAleatorio);
+        } catch (NoSuchElementException | TimeoutException e) {
+            UtilidadesAllure.manejoError(driver, e, "Error al ingresar el número de comprobante del gasto de viaje.");
+            System.out.println("Error al ingresar el número de comprobante del gasto de viaje.");
+        }
+    }
+
+    @Step("Asignar Proveedor al gasto Viaje (variable NUMERO_PROVEEDOR)")
+    private void CodigoProveedor() {
+        try {
+            WebElement NumeroProveedorField = wait.until(ExpectedConditions.visibilityOfElementLocated(
+                    By.id("EDT_NUMEROPROVEEDOR")));
+            NumeroProveedorField.click();
+            NumeroProveedorField.sendKeys(NUMERO_PROVEEDOR);
+            NumeroProveedorField.sendKeys(Keys.TAB);
+            Thread.sleep(1000);
+        } catch (TimeoutException | InterruptedException e) {
+            UtilidadesAllure.manejoError(driver, e, "Error al asignar el proveedor al gasto de viaje");
+        }
+    }
+
+    @Step("Seleccionar concepto de gasto de Viaje")
+    private void ConceptoGasto() {
+        try {
+            WebElement CodigoConceptoField = wait.until(ExpectedConditions.visibilityOfElementLocated(
+                    //By.id("EDT_CODIGOCONCEPTOGASTOVIAJE")));
+                    By.xpath("//*[@id=\"EDT_CODIGOCONCEPTOGASTOVIAJE\"]")));
+            CodigoConceptoField.click();
+            Thread.sleep(3000);
+
+            // Seleccionar un número aleatorio de la lista [1, 2, 5, 9]
+            int[] opciones = {1, 2, 5, 9};
+            int numeroAleatorio = opciones[new Random().nextInt(opciones.length)];
+
+            CodigoConceptoField.sendKeys(String.valueOf(numeroAleatorio));
+            // Lógica adicional con switch
+            switch (numeroAleatorio) {
+                case 1, 2: //Gasto de Combustible Diesel Efectivo y Credito
+                    if (numeroAleatorio == 1) {
+                        System.out.println("Gasto de Combustible Diesel Efectivo.");
+                    } else {
+                        System.out.println("Gasto de Combustible Diesel Credito.");
+                    }
+                    //Se indica la cantidad de litros de combustible
+                    Thread.sleep(3000);
+                    WebElement LitrosField = wait.until(ExpectedConditions.visibilityOfElementLocated(
+                            By.id("EDT_CANTIDAD_DE_LITROS")));
+                    LitrosField.click();
+                    int CantidadLitros = new Random().nextInt(91) + 10;
+                    LitrosField.sendKeys(String.valueOf(CantidadLitros));
+                    Thread.sleep(1000);
+                    System.out.println("Cantidad de litros ingresada: " + CantidadLitros);
+                    //Se indica el precio por litro del combustible
+                    WebElement PrecioLitroField = wait.until(ExpectedConditions.visibilityOfElementLocated(
+                            By.id("EDT_PRECIOPORLTSCOMBUSTIBLE")));
+                    PrecioLitroField.click();
+                    PrecioLitroField.clear();
+                    double PrecioLitro = 24.00 + (new Random().nextDouble() * (26.99 - 24.00));
+                    PrecioLitro = Math.round(PrecioLitro * 100.0) / 100.0; // Redondear a 2 decimales
+                    PrecioLitroField.sendKeys(String.valueOf(PrecioLitro));
+                    System.out.println("Precio por litro ingresado: " + PrecioLitro);
+                    Thread.sleep(1000);
+                    break;
+                case 5:
+                    System.out.println("Gasto de Viaje Diesel Propio");
+                    //Se indica el contenedor propio
+                    Thread.sleep(1000);
+                    WebElement NumeroContenedorField = wait.until(ExpectedConditions.visibilityOfElementLocated(
+                            By.id("EDT_CODIGOCONTENEDOR")));
+                    NumeroContenedorField.click();
+                    NumeroContenedorField.sendKeys("4");
+                    Thread.sleep(1000);
+                    System.out.println("Se selecciona el contenedor 4 Contenedor Matriz");
+                    //Se indica la cantidad de litros de combustible
+                    WebElement LitrosCField = wait.until(ExpectedConditions.visibilityOfElementLocated(
+                            By.id("EDT_CANTIDAD_DE_LITROS")));
+                    LitrosCField.click();
+                    int CantidadCLitros = new Random().nextInt(91) + 10;
+                    LitrosCField.sendKeys(String.valueOf(CantidadCLitros));
+                    Thread.sleep(1000);
+                    System.out.println("Cantidad de litros ingresada: " + CantidadCLitros);
+                    //Se indica el precio por litro del combustible
+                    WebElement PrecioCLitroField = wait.until(ExpectedConditions.visibilityOfElementLocated(
+                            By.id("EDT_PRECIOPORLTSCOMBUSTIBLE")));
+                    PrecioCLitroField.click();
+                    PrecioCLitroField.clear();
+                    double PrecioCLitro = 24.00 + (new Random().nextDouble() * (26.99 - 24.00));
+                    PrecioCLitro = Math.round(PrecioCLitro * 100.0) / 100.0; // Redondear a 2 decimales
+                    PrecioCLitroField.sendKeys(String.valueOf(PrecioCLitro));
+                    System.out.println("Precio por litro ingresado: " + PrecioCLitro);
+                    Thread.sleep(1000);
+                    break;
+                case 9:
+                    System.out.println("Gasto de Viaje Efectivo");
+                    WebElement SubtotalField = wait.until(ExpectedConditions.visibilityOfElementLocated(
+                            By.id("EDT_SUBTOTAL")));
+                    SubtotalField.click();
+                    int Subtotal = new Random().nextInt(401) + 100; // 500 - 100 + 1 = 401
+                    SubtotalField.sendKeys(String.valueOf(Subtotal));
+                    SubtotalField.sendKeys(Keys.TAB);
+                    Thread.sleep(1000);
+                    break;
+                default:
+                    System.out.println("No se selecciono concepto de Gasto de Viaje");
+                    break;
+            }
+
+            Thread.sleep(3000);
+
+            System.out.println("Concepto de gasto seleccionado: " + numeroAleatorio);
+        } catch (TimeoutException | InterruptedException e) {
+            UtilidadesAllure.manejoError(driver, e, "Error al asignar el concepto de gasto de viaje");
+        }
+    }
+
+    @Step("Aceptar Registrar Gasto de Viaje")
+    private void AceptarGastoViaje() {
+        try {
+            WebElement botonAceptarTimbre = wait.until(ExpectedConditions.elementToBeClickable(
+                    By.id("BTN_ACEPTAR")));
+            botonAceptarTimbre.click();
+        } catch (Exception e) {
+            UtilidadesAllure.manejoError(driver, e,
+                    "Error al aceptar el gasto de viaje");
+        }
+    }
+
+
+
+    @Step("Cerrar Ventana de Gasto de Viaje")
+    private void CerrarVentanaGastoViaje() {
+        try {
+            WebElement botonAceptarTimbre = wait.until(ExpectedConditions.elementToBeClickable(
+                    By.id("z_BTN_CANCELAR_IMG")));
+            botonAceptarTimbre.click();
+        } catch (Exception e) {
+            UtilidadesAllure.manejoError(driver, e,
+                    "Error al cerrar la ventana de gasto de viaje");
+        }
+    }
+
+    @Step("Aceptar Póliza Combustible Propio")
+    public void PolizaCombustible() {
+        try {
+            WebElement botonAceptar = wait.until(
+                    ExpectedConditions.elementToBeClickable(By.cssSelector("input#BTN_OK"))
+            );
+            botonAceptar.click();
+            System.out.println("Se hizo clic en el botón Aceptar (Póliza).");
+        } catch (TimeoutException e) {
+            System.out.println("El botón Aceptar (Póliza) no apareció. Se continúa sin hacer clic.");
+        } catch (Exception e) {
+            System.err.println("Error inesperado al intentar dar clic en el botón Aceptar (Póliza): " + e.getMessage());
+        }
+    }
+
+
 }

@@ -96,8 +96,8 @@ public class PagoFactoraje {
         AceptarFactura(); // Acepta la factura
         BotonConcurrenciaFactura();
         BotonTimbre(); // Timbrar la factura
-        ValidarYEnviarCorreo(); // Validar posibles errores
-        BotonPoliza(); // Aceptar botón generó póliza
+        //ValidarYEnviarCorreo(); // Validar posibles errores
+        //BotonPoliza(); // Aceptar botón generó póliza
         BotonImpresion(); // Regresar a la pantalla principal
 
         //Se genera la segunda factura
@@ -113,8 +113,8 @@ public class PagoFactoraje {
         AceptarFactura(); // Acepta la factura
         BotonConcurrenciaFactura();
         BotonTimbre(); // Timbrar la factura
-        ValidarYEnviarCorreo(); // Validar posibles errores
-        BotonPoliza(); // Aceptar botón generó póliza
+        //ValidarYEnviarCorreo(); // Validar posibles errores
+        //BotonPoliza(); // Aceptar botón generó póliza
         BotonImpresion(); // Regresar a la pantalla principal
 
 
@@ -124,7 +124,7 @@ public class PagoFactoraje {
         BotonRegistrarPagoFactpraje(); // Selecciona la opción de registrar pago de factoraje.
         deseleccionarCampoFecha(); // Deselecciona el campo de fecha.
         CodigoClientPago(); // Introduce el código del cliente para el pago.
-        SeleccionarCuentaBancariaPesosAleatoria(); // Selecciona una cuenta bancaria aleatoria para el pago.
+        SeleccionarCuentaBancaria(); // Selecciona una cuenta bancaria para el pago.
         FormaPago(); // Selecciona la forma de pago.
         BotonInformacionPago(); // Abre la ventana de información adicional.
         CargarArchivoFactoraje(); // Carga el archivo de factoraje.
@@ -426,36 +426,70 @@ public class PagoFactoraje {
     public void ValidarYEnviarCorreo() {
         try {
             WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
-            // Buscar todos los botones con "onclick"
+
+            // Buscar todos los botones que tengan atributo "onclick"
             List<WebElement> botones = wait.until(
-                    ExpectedConditions.presenceOfAllElementsLocatedBy(By.xpath("//input[@onclick]")));
-            // Filtrar botones que son visibles y clickeables
+                    ExpectedConditions.presenceOfAllElementsLocatedBy(By.xpath("//input[@onclick]"))
+            );
+
+            // Filtrar aquellos que sean visibles y clickeables
             List<WebElement> botonesValidos = botones.stream()
                     .filter(b -> b.isDisplayed() && b.isEnabled())
                     .collect(Collectors.toList());
-            // Si no hay botones disponibles, continuar sin fallar
+
             if (botonesValidos.isEmpty()) {
                 System.out.println("No hay botones visibles y clickeables. Continuando...");
                 return;
             }
+
+            // Mostrar los botones encontrados (útil para debug)
             System.out.println("Botones válidos encontrados:");
             for (WebElement boton : botonesValidos) {
-                // Se pueden agregar más detalles si es necesario
+                System.out.printf("ID: %s | OnClick: %s%n",
+                        boton.getAttribute("id"),
+                        boton.getAttribute("onclick"));
             }
-            // Seleccionar aleatoriamente un botón de la lista de botones válidos
+
+            // Seleccionar botón aleatorio
             WebElement botonSeleccionado = botonesValidos.get(new Random().nextInt(botonesValidos.size()));
-            // Intentar hacer clic en el botón seleccionado
+
+            // Intentar clic normal
             try {
-                System.out.println("Se hizo clic en el botón con ID: " + botonSeleccionado.getAttribute("id"));
+                System.out.println("Intentando clic en botón con ID: " + botonSeleccionado.getAttribute("id"));
                 botonSeleccionado.click();
             } catch (Exception e) {
-                System.out.println("Click() falló, intentando con JavaScript...");
+                // Fallback a JavaScript si el clic normal falla
+                System.out.println("Click() falló. Usando JavaScript.");
                 ((JavascriptExecutor) driver).executeScript("arguments[0].click();", botonSeleccionado);
-                System.out.println("Click ejecutado con JavaScript en el botón con ID: " + botonSeleccionado.getAttribute("id"));
+                System.out.println("Click por JavaScript ejecutado en el botón con ID: " + botonSeleccionado.getAttribute("id"));
             }
+
+        } catch (TimeoutException te) {
+            System.err.println("No se encontraron botones con 'onclick' en el tiempo esperado.");
         } catch (Exception e) {
-            System.err.println("Error al hacer clic en el botón. Continuando...");
+            System.err.println("Error general al intentar hacer clic en un botón.");
             e.printStackTrace();
+        }
+    }
+
+    private void ImpresionFactura() {
+        try {
+            WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
+
+            // Buscar el botón usando solo XPath
+            WebElement botonRegresar = wait.until(ExpectedConditions.elementToBeClickable(
+                    By.xpath("//*[@id='BTN_REGRESAR']")));
+
+            // Hacer clic en el botón
+            botonRegresar.click();
+            System.out.println("Se hizo clic en el botón BTN_REGRESAR.");
+
+        } catch (TimeoutException e) {
+            System.out.println("No se encontró el botón BTN_REGRESAR dentro del tiempo esperado.");
+        } catch (Exception e) {
+            System.out.println("Error inesperado al hacer clic en BTN_REGRESAR.");
+            e.printStackTrace();
+            UtilidadesAllure.manejoError(driver, e, "Error al hacer clic en BTN_REGRESAR");
         }
     }
 
@@ -477,18 +511,17 @@ public class PagoFactoraje {
     private void BotonImpresion() {
         try {
             WebDriverWait shortWait = new WebDriverWait(driver, Duration.ofSeconds(3));
-            // Buscar el botón con "onclick" que contiene "BTN_REGRESAR"
+
+            // Buscar botón solo por XPath, asumiendo que BTN_REGRESAR es el nombre o parte del onclick
             WebElement botonRegresar = shortWait.until(ExpectedConditions.elementToBeClickable(
-                    By.xpath("//input[@type='button' and @name='BTN_REGRESAR' and contains(@onclick, 'BTN_REGRESAR')]")
+                    By.xpath("//*[@id=\"BTN_REGRESAR\"]")
             ));
-            if (botonRegresar != null) {
-                botonRegresar.click();
-                System.out.println("Se presionó el botón de regresar y se genró la factura correctamente.");
-            } else {
-                System.out.println("No se encontró el botón de regresar, continuando con la ejecución.");
-            }
+
+            botonRegresar.click();
+            System.out.println("Se presionó el botón de regresar y se generó la factura correctamente.");
+
         } catch (TimeoutException e) {
-            System.out.println("El botón de regresar no se mostró, continuando la ejecución normalmente");
+            System.out.println("El botón de regresar no se mostró, continuando la ejecución normalmente.");
         } catch (Exception e) {
             UtilidadesAllure.manejoError(driver, e, "Error al presionar el botón de regresar");
             System.out.println("Error al presionar el botón de regresar");
@@ -574,43 +607,29 @@ public class PagoFactoraje {
         }
     }
 
-    @Step("Seleccionar una cuenta bancaria en pesos aleatoria")
-    public void SeleccionarCuentaBancariaPesosAleatoria() {
+    @Step("Seleccionar cuenta bancaria específica: 0123456789 - BANAMEX PESOS")
+    public void SeleccionarCuentaBancaria() {
         try {
-            // Localizar el combo box usando XPath
+            // Localizar el combo box
             WebElement comboBoxElement = wait.until(ExpectedConditions.visibilityOfElementLocated(
                     By.xpath("//select[contains(@class, 'COMBO_CATCUENTASBANCARIAS')]")));
 
-            // Instanciar el objeto Select para manipular el dropdown
+            // Instanciar Select
             Select comboBox = new Select(comboBoxElement);
 
-            // Obtener todas las opciones disponibles en el combo box
-            List<WebElement> opcionesDisponibles = comboBox.getOptions();
+            // Texto exacto a buscar (ajusta si hay espacios no visibles como tabs u otros caracteres)
+            String textoExacto = "0123456789 - BANAMEX PESOS";
 
-            // Filtrar las opciones que contienen "Pesos" o "MXN"
-            List<WebElement> opcionesPesos = opcionesDisponibles.stream()
-                    .filter(opcion -> opcion.getText().contains("Pesos") || opcion.getText().contains("MXN"))
-                    .collect(Collectors.toList());
+            // Intentar seleccionar la opción
+            comboBox.selectByVisibleText(textoExacto);
+            System.out.println("Cuenta bancaria seleccionada: " + textoExacto);
 
-            // Verificar si hay opciones en pesos disponibles
-            if (!opcionesPesos.isEmpty()) {
-                // Seleccionar una opción aleatoria de las filtradas
-                Random random = new Random();
-                int indiceAleatorio = random.nextInt(opcionesPesos.size()); // Índice dentro de las opciones filtradas
-                WebElement opcionSeleccionada = opcionesPesos.get(indiceAleatorio);
-
-                // Obtener el texto de la opción seleccionada
-                String textoSeleccionado = opcionSeleccionada.getText();
-
-                // Seleccionar la opción en el combo box
-                comboBox.selectByVisibleText(textoSeleccionado);
-                System.out.println("Cuenta bancaria seleccionada: " + textoSeleccionado);
-            } else {
-                System.out.println("No hay cuentas bancarias en pesos disponibles para seleccionar.");
-            }
-        } catch (TimeoutException | NoSuchElementException e) {
-            UtilidadesAllure.manejoError(driver, e, "Error al seleccionar una cuenta bancaria en pesos aleatoria.");
-            System.out.println("Error al seleccionar una cuenta bancaria en pesos aleatoria.");
+        } catch (NoSuchElementException e) {
+            System.out.println("No se encontró la cuenta bancaria especificada en el combo.");
+            UtilidadesAllure.manejoError(driver, e, "No se encontró la cuenta bancaria 0123456789 - BANAMEX PESOS.");
+        } catch (TimeoutException e) {
+            System.out.println("El combo de cuentas bancarias no se mostró a tiempo.");
+            UtilidadesAllure.manejoError(driver, e, "Timeout al intentar seleccionar la cuenta bancaria.");
         }
     }
 

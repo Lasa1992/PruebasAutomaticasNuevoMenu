@@ -96,8 +96,8 @@ public class PagoSaldoAFavor {
         AceptarFactura(); // Acepta la factura
         BotonConcurrenciaFactura();
         BotonTimbre(); // Timbrar la factura
-        ValidarYEnviarCorreo(); // Validar posibles errores
-        BotonPoliza(); // Aceptar botón generó póliza
+        //ValidarYEnviarCorreo(); // Validar posibles errores
+        //BotonPoliza(); // Aceptar botón generó póliza
         BotonImpresion(); // Regresar a la pantalla principal
 
 

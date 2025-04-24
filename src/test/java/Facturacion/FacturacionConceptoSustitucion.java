@@ -164,7 +164,7 @@ public class FacturacionConceptoSustitucion {
                 .ignoring(NoSuchElementException.class);
 
         try {
-            WebElement numeroCliente = wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("EDT_NUMEROCLIENTE")));
+            WebElement numeroCliente = wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//*[@id='EDT_NUMEROCLIENTE']")));
             numeroCliente.click();
 
             // Se utiliza la variable NUMERO_CLIENTE
@@ -173,7 +173,7 @@ public class FacturacionConceptoSustitucion {
             numeroCliente.sendKeys(Keys.TAB);
 
             fluentWait.until(driver -> {
-                WebElement field = driver.findElement(By.id("EDT_NUMEROCLIENTE"));
+                WebElement field = driver.findElement(By.xpath("//*[@id='EDT_NUMEROCLIENTE']"));
                 return !Objects.requireNonNull(field.getAttribute("value")).isEmpty();
             });
 
@@ -370,15 +370,18 @@ public class FacturacionConceptoSustitucion {
             WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
             wait.until(ExpectedConditions.presenceOfElementLocated(By.tagName("body")));
 
-            WebElement botonAceptar;
-            try {
-                botonAceptar = wait.until(ExpectedConditions.elementToBeClickable(By.id("BTN_YES")));
-            } catch (Exception noButton) {
+            // Verifica si el botón está presente antes de esperar que sea clickeable
+            List<WebElement> botones = driver.findElements(By.id("//*[@id=\"BTN_YES\"]"));
+            if (botones.isEmpty()) {
                 System.out.println("El botón de aceptar Timbre no está disponible. Continuando...");
                 return;
             }
+
+            // Espera que sea clickeable si existe
+            WebElement botonAceptar = wait.until(ExpectedConditions.elementToBeClickable(botones.get(0)));
             botonAceptar.click();
             System.out.println("Se presionó el botón de aceptar Timbre");
+
         } catch (Exception e) {
             System.out.println("Error al presionar el botón de aceptar Timbre. Continuando...");
             e.printStackTrace();
@@ -435,7 +438,7 @@ public class FacturacionConceptoSustitucion {
         try {
             WebDriverWait shortWait = new WebDriverWait(driver, Duration.ofSeconds(3));
             WebElement botonRegresar = shortWait.until(ExpectedConditions.elementToBeClickable(
-                    By.xpath("//input[@type='button' and @name='BTN_REGRESAR' and contains(@onclick, 'BTN_REGRESAR')]")
+                    By.xpath("//*[@id=\"BTN_REGRESAR\"]")
             ));
             if (botonRegresar != null) {
                 botonRegresar.click();
@@ -515,37 +518,54 @@ public class FacturacionConceptoSustitucion {
 
     public void SeleccionaMotivoCancelacion() {
         try {
-            WebElement combo = driver.findElement(By.id("COMBO_MOTIVOCANCELACION"));
+            WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
+
+            // Esperar y seleccionar motivo de cancelación
+            WebElement combo = wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//*[@id='COMBO_MOTIVOCANCELACION']")));
             Select select = new Select(combo);
             select.selectByIndex(0);
 
-            WebElement comentarioField = driver.findElement(By.id("EDT_MOTIVO"));
+            // Esperar campo de comentario y escribir mensaje
+            WebElement comentarioField = wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//*[@id='EDT_MOTIVO']")));
             comentarioField.clear();
             comentarioField.sendKeys("Cancelación de factura por motivo de prueba automática. " + FolioFactura);
-            System.out.println(comentarioField);
+            System.out.println("Comentario ingresado: " + comentarioField.getAttribute("value"));
 
-            WebElement botonAceptar = driver.findElement(By.id("BTN_ACEPTAR"));
+            // Esperar y hacer clic en botón Aceptar
+            WebElement botonAceptar = wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//*[@id='BTN_ACEPTAR']")));
             botonAceptar.click();
+
         } catch (Exception e) {
-            System.out.println("Error al seleccionar la primera opción: " + e.getMessage());
+            System.out.println("Error al seleccionar motivo de cancelación: " + e.getMessage());
+            e.printStackTrace();
         }
     }
 
     @Step("Mensaje de Sustitución Requerida")
-    private static void MensajeSustitucionRequerida() {
+    private void MensajeSustitucionRequerida() {
         try {
-            WebElement botonSi = wait.until(ExpectedConditions.elementToBeClickable(By.id("tzBTN_YES")));
-            botonSi.click();
-            System.out.println("Se presionó el botón de Sí para la sustitución requerida");
+            WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(15));
+
+            // Esperar hasta que el botón esté presente usando XPath
+            wait.until(ExpectedConditions.presenceOfElementLocated(By.xpath("//*[@id='BTN_YES']")));
+
+            // Ahora esperar que esté visible y habilitado para clic
+            WebElement botonYes = wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//*[@id='BTN_YES']")));
+
+            botonYes.click();
+            System.out.println("Se hizo clic en BTN_YES.");
+        } catch (TimeoutException te) {
+            System.out.println("El botón BTN_YES no apareció o no fue clickeable a tiempo.");
+            UtilidadesAllure.manejoError(driver, te, "BTN_YES no disponible en MensajeSustitucionRequerida.");
         } catch (Exception e) {
-            UtilidadesAllure.manejoError(driver, e, "Error al presionar el botón de Sí para la sustitución requerida");
-            System.out.println("Error al presionar el botón de Sí para la sustitución requerida");
+            System.out.println("Error inesperado en MensajeSustitucionRequerida: " + e.getMessage());
+            UtilidadesAllure.manejoError(driver, e, "Error en MensajeSustitucionRequerida.");
         }
     }
 
     private void MonedaSustitucion() {
         try {
-            Select primerComboBox = new Select(driver.findElement(By.id("COMBO_CATMONEDAS")));
+            Select primerComboBox = new Select(driver.findElement(By.xpath("//*[@id='COMBO_CATMONEDAS']")));
             List<String> opciones = List.of("PESOS", "DÓLARES");
 
             Random random = new Random();
@@ -627,21 +647,30 @@ public class FacturacionConceptoSustitucion {
     @Step("Enviar Correo Después de Sustitución")
     private static void CorreoDesspuesSustitucion() {
         try {
+            WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
+
+            // Espera que el modal con los botones esté presente en el DOM y sea visible
+            wait.until(ExpectedConditions.presenceOfElementLocated(By.xpath("//div[contains(@class, 'modal-content')]")));
+
             Random random = new Random();
             boolean elegirSi = random.nextBoolean();
 
             WebElement boton;
+
             if (elegirSi) {
-                boton = wait.until(ExpectedConditions.elementToBeClickable(By.id("tzBTN_YES")));
+                System.out.println("Intentando hacer clic en el botón 'Sí'...");
+                boton = wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//*[@id='BTN_YES']")));
                 System.out.println("Se eligió la opción Sí para el envío del correo después de la sustitución.");
             } else {
-                boton = wait.until(ExpectedConditions.elementToBeClickable(By.id("tzBTN_NO")));
+                System.out.println("Intentando hacer clic en el botón 'No'...");
+                boton = wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//*[@id='BTN_NO']")));
                 System.out.println("Se eligió la opción No para el envío del correo después de la sustitución.");
             }
+
             boton.click();
         } catch (Exception e) {
             UtilidadesAllure.manejoError(driver, e, "Error al elegir entre Sí o No para el envío del correo después de la sustitución");
-            System.out.println("Error al elegir entre Sí o No para el envío del correo después de la sustitución");
+            System.out.println("Error al elegir entre Sí o No para el envío del correo después de la sustitución: " + e.getMessage());
         }
     }
 

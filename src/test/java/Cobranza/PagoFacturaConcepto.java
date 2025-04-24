@@ -517,7 +517,8 @@ public class PagoFacturaConcepto {
     public void deseleccionarCampoFecha() {
         try {
             // Localizamos el elemento que queremos validar (reemplaza el XPath por el correcto)
-            WebElement campoFecha = driver.findElement(By.xpath("/html/body/form/table/tbody/tr/td/table/tbody/tr/td/div/table/tbody/tr[2]/td/div[1]/table/tbody/tr/td/table/tbody/tr[1]/td/div/div[1]/table/tbody/tr/td/table/tbody/tr[1]/td/div/div[1]/table/tbody/tr/td/table/tbody/tr[2]/td/div[1]/input"));
+            System.out.println("Desmarcando el campo de fecha...");
+            WebElement campoFecha = driver.findElement(By.xpath("//*[@id=\"EDT_FECHA\"]"));
             int maxIntentos = 3;
             int intentos = 0;
 

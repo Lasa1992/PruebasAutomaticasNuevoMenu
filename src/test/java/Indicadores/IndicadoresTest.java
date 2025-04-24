@@ -67,12 +67,17 @@ public class IndicadoresTest {
 
     public void agregarIndicador() {
         try {
-            botonQuitarIndicador = driver.findElement(By.id("dwwBTN_CERRARFRAME1"));
+            // Buscar el botón para cerrar el frame si existe
+            botonQuitarIndicador = driver.findElement(By.xpath("//*[@id=\"z_BTN_CERRARFRAME1_IMG\"]/span"));
             if (botonQuitarIndicador.isDisplayed()) {
                 validarIndicador();
                 //InicioSesion.handleNovedadesScreen(wait);
             }
-            WebElement botonIndicador = wait.until(ExpectedConditions.elementToBeClickable(By.id("z_BTN_AGREGARINDICADOR1_IMG")));
+
+            // Usar XPath para el botón de agregar indicador
+            WebElement botonIndicador = wait.until(
+                    ExpectedConditions.elementToBeClickable(By.xpath("//*[@id=\"z_BTN_AGREGARINDICADOR1_IMG\"]/span"))
+            );
             botonIndicador.click();
             System.out.println("Se dio clic correctamente en el botón de agregar indicador.");
         } catch (Exception e) {
@@ -123,9 +128,13 @@ public class IndicadoresTest {
     public void validarIndicador() {
         try {
             InicioSesion.handleNovedadesScreen();
-            botonQuitarIndicador = driver.findElement(By.id("BTN_CERRARFRAME1"));
+
+            // Cambiado el selector a XPath
+            botonQuitarIndicador = driver.findElement(By.xpath("//*[@id='BTN_CERRARFRAME1']"));
+
             Thread.sleep(2500);
             UtilidadesAllure.capturaImagen(driver);
+
             if (botonQuitarIndicador.isDisplayed()) {
                 System.out.println("Indicador encontrado");
                 botonQuitarIndicador.click();
