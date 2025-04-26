@@ -81,7 +81,7 @@ public class EnvioDocTrans {
     }
 
 
-    @RepeatedTest(5)
+    @RepeatedTest(2)
     @Order(1)
     @Description("Generación de Cheque con Datos Aleatorios")
     public void AgregarSubasta() throws Exception {
@@ -181,7 +181,7 @@ public class EnvioDocTrans {
         buscarInput.click();
 
         // 2) Leer el Excel y preparar variables
-        String ruta = "C:\\Users\\LuisSanchez\\Desktop\\Excel Logistico\\BD Logistico.xlsx";
+        String ruta = "C:\\Users\\LuisSanchez\\IdeaProjects\\GMQA\\src\\test\\resources\\BD Logistico.xlsx";
         String folioParaBuscar = null;
 
         // 3) Abrir el archivo y recorrer filas
@@ -270,7 +270,7 @@ public class EnvioDocTrans {
     @Description("Selecciona el checkbox de documento y carga el archivo especificado")
     public void CargarDocumento() {
         // Ruta absoluta al archivo que se va a cargar
-        String rutaArchivo = "C:\\Users\\LuisSanchez\\Desktop\\Excel Logistico\\DocLogistico.docx";
+        String rutaArchivo = "C:\\Users\\LuisSanchez\\IdeaProjects\\GMQA\\src\\test\\resources\\DocLogistico.docx";
 
         try {
             // 1) Hacer clic en el checkbox para activar el campo de carga

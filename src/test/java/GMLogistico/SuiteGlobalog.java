@@ -21,7 +21,7 @@ public class SuiteGlobalog {
         Class<?>[] pruebas = {
 
                 SubastaLog.class,
-                PostulacionTranportista.class,
+                PostulacionTransportista.class,
                 AceptacionPostulacion.class,
                 EnvioDocTrans.class
 
