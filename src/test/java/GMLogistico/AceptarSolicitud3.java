@@ -12,7 +12,7 @@ import java.time.Duration;
 import java.util.List;
 
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-public class AceptarSolicitud {
+public class AceptarSolicitud3 {
 
     public static WebDriver driver;
     public static WebDriverWait wait;
@@ -61,7 +61,7 @@ public class AceptarSolicitud {
         MensajeAlerta();
     }
 
-    @RepeatedTest(3400)
+    @RepeatedTest(2100)
     @Order(2)
     @Description("Generación de Cheque con Datos Aleatorios")
     public void AceptarSolicitud() {
@@ -131,7 +131,7 @@ public class AceptarSolicitud {
                 new Cliente("LOGI1111112Q4", "logistico1@gmail.com", "123456")
         };
 
-        Cliente cliente = clientes[4];
+        Cliente cliente = clientes[2];
 
         currentRFC = cliente.rfc;
 
@@ -163,13 +163,17 @@ public class AceptarSolicitud {
         try {
             Alert alert = wait.until(ExpectedConditions.alertIsPresent());
             if (alert != null) {
+                System.out.println("Texto de la alerta detectada: " + alert.getText());
                 alert.accept();
-                System.out.println("Alerta aceptada.");
+                System.out.println("Alerta aceptada correctamente.");
             }
-        } catch (Exception e) {
+        } catch (TimeoutException e) {
             System.out.println("No se encontró alerta o no era necesaria.");
+        } catch (NoAlertPresentException e) {
+            System.out.println("No hay ninguna alerta activa.");
         }
     }
+
 
     @Description("Da clic en el botón 'Completos'.")
     public static void ClickBotonCompletos() {

@@ -12,7 +12,7 @@ import java.time.Duration;
 import java.util.List;
 
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-public class AceptarSolicitud {
+public class AceptarSolicitud2 {
 
     public static WebDriver driver;
     public static WebDriverWait wait;
@@ -61,7 +61,7 @@ public class AceptarSolicitud {
         MensajeAlerta();
     }
 
-    @RepeatedTest(3400)
+    @RepeatedTest(3900)
     @Order(2)
     @Description("Generación de Cheque con Datos Aleatorios")
     public void AceptarSolicitud() {
