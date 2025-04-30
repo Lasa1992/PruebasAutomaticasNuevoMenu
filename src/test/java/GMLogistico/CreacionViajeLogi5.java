@@ -18,7 +18,7 @@ import java.util.concurrent.ThreadLocalRandom;
 import java.util.stream.Collectors;
 
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-public class CreacionViajeLogi {
+public class CreacionViajeLogi5 {
 
     public static WebDriver driver;
     public static WebDriverWait wait;
@@ -92,14 +92,14 @@ public class CreacionViajeLogi {
     public void CrearViaje() {
         try {
             ClickBotonComprometidos();
-           // Filtros();
+            // Filtros();
             abrirMenuYSeleccionarCrearViaje();
             pause();
             seleccionarTipoDocumentoIngreso();
             pause();
             clickTabMateriales();
             pause();
-            // importarMaterialesCompleto();
+            //importarMaterialesCompleto();
             // pause();
             clickContinuarMateriales();
             pause();
@@ -187,7 +187,7 @@ public class CreacionViajeLogi {
                 new Cliente("LOGI1111112Q4", "logistico1@gmail.com", "123456")
         };
 
-        Cliente cliente = clientes[0];
+        Cliente cliente = clientes[4];
 
         currentRFC = cliente.rfc;
 
