@@ -110,8 +110,9 @@ public class EnvioDocTrans {
                 new Cliente("GMTHCDEMO018", "jose.calidad@gmtransporterp.com", "123456"),
                 new Cliente("TEGR820530HTC", "trans2@gmail.com", "123456"),
                 new Cliente("CAMR951214MKL", "trans3@gmail.com", "123456"),
-                //  new Cliente("LOGI4444445T6", "logi4@gmail.com", "123456"),
-                // new Cliente("LOGI1111112Q4", "logistico1@gmail.com", "123456")
+                new Cliente("XIA190128J61", "xenon@gmail.com", "123456"),
+                new Cliente("VARG001010PLQ", "trans1@gmail.com", "123456")
+
 
 
         };

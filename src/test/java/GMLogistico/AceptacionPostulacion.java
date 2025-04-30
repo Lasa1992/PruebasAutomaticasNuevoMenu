@@ -40,7 +40,7 @@ public class AceptacionPostulacion {
     };
 
     @Test
-    @Description("Procesa cada fila del Excel: abre y cierra el navegador por fila en modo headless")
+    @Description("Procesa cada fila del Excel: abre y cierra el navegador por fila, sin detenerse ante fallos")
     public void AgregarSubastaPorFila() throws Exception {
         // 1) Carga el Excel
         Workbook wb;
@@ -73,11 +73,11 @@ public class AceptacionPostulacion {
                 continue;
             }
 
-            // 4) Configura Chrome en modo headless y abre el navegador
+            // 4) Configura y abre Chrome en modo headless (o normal si prefieres)
             ChromeOptions options = new ChromeOptions();
             options.addArguments("--headless", "--disable-gpu", "--window-size=1920,1080");
             driver = new ChromeDriver(options);
-            wait = new WebDriverWait(driver, Duration.ofSeconds(15));
+            wait   = new WebDriverWait(driver, Duration.ofSeconds(15));
 
             try {
                 driver.manage().window().maximize();
@@ -96,24 +96,29 @@ public class AceptacionPostulacion {
                 BotonEnviar();
                 BotonAceptar();
 
-                System.out.println("Fila " + i + ": COMPLETADA para RFC " + rfcValue);
-
-                // 6) Marca la fila como procesada
+                // Marca la fila como procesada
                 Cell procCell = row.getCell(4);
                 if (procCell == null) procCell = row.createCell(4);
                 procCell.setCellValue("X");
 
-            } finally {
-                // 7) Cierra el navegador antes de la siguiente iteración
+                System.out.println("Fila " + i + ": COMPLETADA para RFC " + rfcValue);
+            }
+            catch (Exception e) {
+                // Si ocurre cualquier fallo, lo logueamos y continuamos
+                System.out.println("❌ Error en fila " + i + " (RFC=" + rfcValue + "): " + e.getClass().getSimpleName() + " - " + e.getMessage());
+            }
+            finally {
+                // 6) Cierra el navegador antes de la siguiente iteración
                 driver.quit();
             }
         }
 
-        // 8) Guarda los cambios en el Excel
+        // 7) Guarda los cambios en el Excel (X para éxitos, sin marca o error si falló)
         try (FileOutputStream fos = new FileOutputStream(EXCEL_PATH)) {
             wb.write(fos);
         }
     }
+
 
 
     @Description("Llena los campos de inicio de sesión con los datos del cliente dado.")
