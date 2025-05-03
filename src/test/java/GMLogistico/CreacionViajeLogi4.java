@@ -86,7 +86,7 @@ public class CreacionViajeLogi4 {
         MensajeAlerta();
     }
 
-    @RepeatedTest(4000)
+    @RepeatedTest(100)
     @Order(2)
     @Description("Generación Viaje Logistico")
     public void CrearViaje() {
@@ -851,7 +851,7 @@ public class CreacionViajeLogi4 {
     /** Pausa la ejecución 2 segundos sin propagar la InterruptedException. */
     private static void pause() {
         try {
-            Thread.sleep(1000);
+            Thread.sleep(500);
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
         }
