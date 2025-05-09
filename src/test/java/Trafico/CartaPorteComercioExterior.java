@@ -689,17 +689,26 @@ public class CartaPorteComercioExterior {
             System.out.println("Error al buscar la Carta Porte en el listado: " + e.getMessage());
         }
     }
+    ////*[@id="BTN_MODIFICAR"]
 
     public void BotonModificarCartaPorte() {
         try {
-            // Esperar a que el menú de opciones esté presente y sea clickeable
-            WebElement menuModificar = wait.until(ExpectedConditions.elementToBeClickable(By.id("tzOPT_MODIFICAR")));
-            menuModificar.click();
-            Thread.sleep(1000); // Pequeña espera antes de buscar la opción Modificar
+            // Esperar a que el menú de opciones sea clickeable por XPath
+            WebElement menuModificar = wait.until(ExpectedConditions.elementToBeClickable(
+                    By.xpath("//*[@id=\"BTN_MODIFICAR\"]"))
+            );
+
+            ((JavascriptExecutor) driver).executeScript("arguments[0].scrollIntoView(true);", menuModificar);
+            ((JavascriptExecutor) driver).executeScript("arguments[0].click();", menuModificar);
+            Thread.sleep(1000); // Espera breve antes de continuar
 
             // Esperar y hacer clic en la opción "Modificar"
-            WebElement opcionModificar = wait.until(ExpectedConditions.elementToBeClickable(By.id("OPT_MODIFICAR")));
-            opcionModificar.click();
+            WebElement opcionModificar = wait.until(ExpectedConditions.elementToBeClickable(
+                    By.xpath("//*[@id=\"BTN_MODIFICAR\"]"))
+            );
+
+            ((JavascriptExecutor) driver).executeScript("arguments[0].scrollIntoView(true);", opcionModificar);
+            ((JavascriptExecutor) driver).executeScript("arguments[0].click();", opcionModificar);
 
             System.out.println("Se hizo clic en la opción 'Modificar'.");
 
@@ -708,13 +717,25 @@ public class CartaPorteComercioExterior {
         }
     }
 
+
     @Step("Seleccionar Pestaña de Materiales Carga")
     private void SeleccionarPestanaMateriales2() {
         try {
-            WebElement pestana = wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("TAB_TAB1_2")));
-            WebElement link = pestana.findElement(By.tagName("a"));
-            link.click();
-            Thread.sleep(1000);
+            // Esperar a que la pestaña esté visible usando XPath
+            WebElement pestana = wait.until(ExpectedConditions.visibilityOfElementLocated(
+                    By.xpath("//*[@id=\"TAB_TAB1_2\"]/div/a")
+            ));
+
+            // Buscar el <a> interno
+            WebElement link = pestana.findElement(By.xpath(".//a"));
+
+            // Hacer scroll hacia la vista por si está fuera de pantalla
+            ((JavascriptExecutor) driver).executeScript("arguments[0].scrollIntoView(true);", link);
+
+            // Hacer clic con JavaScript para evitar interceptación
+            ((JavascriptExecutor) driver).executeScript("arguments[0].click();", link);
+
+            Thread.sleep(1000); // Solo si la transición es visual y lo requiere
         } catch (Exception e) {
             UtilidadesAllure.manejoError(driver, e, "Error al seleccionar la pestaña de Materiales Carga");
         }

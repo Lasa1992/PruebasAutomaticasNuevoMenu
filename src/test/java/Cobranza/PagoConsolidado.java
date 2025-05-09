@@ -572,15 +572,26 @@ public class PagoConsolidado {
     @Step("Asignar Cliente al Pago")
     private void CodigoClientPago() {
         try {
-            WebElement NumeroClientePago = wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("EDT_NUMEROCLIENTE")));
-            WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
-            NumeroClientePago.click();
-            NumeroClientePago.sendKeys(NUMERO_CLIENTE);
-            NumeroClientePago.sendKeys(Keys.TAB);
+            WebElement numeroClientePago = wait.until(ExpectedConditions.elementToBeClickable(
+                    By.xpath("//*[@id=\"EDT_NUMEROCLIENTE\"]")
+            ));
+
+            ((JavascriptExecutor) driver).executeScript("arguments[0].scrollIntoView(true);", numeroClientePago);
+            ((JavascriptExecutor) driver).executeScript("arguments[0].click();", numeroClientePago);
+
+            numeroClientePago.sendKeys(NUMERO_CLIENTE);
+            numeroClientePago.sendKeys(Keys.TAB);
+
         } catch (TimeoutException e) {
-            UtilidadesAllure.manejoError(driver, e, "Error al asignar el cliente al pago");
+            System.out.println("Campo 'Número Cliente' no se hizo clickeable a tiempo: " + e.getMessage());
+            UtilidadesAllure.manejoError(driver, e, "Error al esperar por el campo 'Número Cliente'");
+        } catch (Exception e) {
+            System.out.println("Error inesperado en el método CodigoClientPago: " + e.getMessage());
+            UtilidadesAllure.manejoError(driver, e, "Error inesperado al asignar el cliente al pago");
         }
     }
+
+
 
     @Step("Seleccionar cliente adicional desde botón 'Más Clientes'")
     private void SeleccionarClientAdicional() {
@@ -759,7 +770,7 @@ public class PagoConsolidado {
     @Step("Aceptar Pago o Abono")
     public void AceptarPagoAbono() {
         try {
-            WebElement btnAceptar = wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//input[contains(@class, 'BTN_ACEPTAR')]")));
+            WebElement btnAceptar = wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//*[@id=\"BTN_ACEPTAR\"]")));
 
             // Esperar 5 segundos antes de hacer clic
             Thread.sleep(5000);
@@ -775,7 +786,7 @@ public class PagoConsolidado {
     @Step("Generar Timbre del Pago")
     public void TimbrePago() {
         try {
-            WebElement btnSi = wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//input[contains(@class, 'BTN_YES')]")));
+            WebElement btnSi = wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//*[@id=\"BTN_YES\"]")));
             btnSi.click();
             System.out.println("Timbre del pago generado correctamente.");
         } catch (Exception e) {
@@ -860,115 +871,6 @@ public class PagoConsolidado {
             System.out.println("Salida de la ventana realizada.");
         } catch (Exception e) {
             System.err.println("Error al salir de la ventana: " + e.getMessage());
-        }
-    }
-
-
-
-    private static void BusquedaPagoCR() {
-        try {
-            WebElement busquedaField = wait.until(ExpectedConditions.visibilityOfElementLocated(
-                    By.cssSelector("input[type='search'][aria-controls='TABLE_ProCobranzaPagosAbonos1']")));
-
-            busquedaField.clear();
-            //busquedaField.sendKeys(FolioCR);
-            busquedaField.sendKeys(FolioCR);
-            System.out.println("Se ingresó el folio del contra recibo para su búsqueda: " + FolioCR);
-            busquedaField.sendKeys(Keys.ENTER);
-
-            wait.until(ExpectedConditions.textToBePresentInElementLocated(
-                    By.xpath("//table[@id='TABLE_ProCobranzaPagosAbonos1']//tbody"), FolioCR));
-
-            System.out.println("La búsqueda se completó y los resultados están visibles.");
-        } catch (Exception e) {
-            UtilidadesAllure.manejoError(driver, e, "Error al buscar el pago de CR: " + FolioCR);
-        }
-    }
-
-    @Step("Seleccionar pago CR en el Listado")
-    private static void SeleccionarPagoCR() {
-        try {
-            Thread.sleep(3000);
-            WebElement tablaFacturas = wait.until(ExpectedConditions.visibilityOfElementLocated(
-                    By.id("TABLE_ProCobranzaPagosAbonos1")));
-
-            WebElement fila = wait.until(ExpectedConditions.elementToBeClickable(By.xpath(
-                    "//table[@id='TABLE_ProCobranzaPagosAbonos1']//tr[td[contains(text(),'" + FolioCR + "')]]")));
-
-            ((JavascriptExecutor) driver).executeScript("arguments[0].scrollIntoView({block: 'center'});", fila);
-            try {
-                fila.click();
-            } catch (Exception e) {
-                ((JavascriptExecutor) driver).executeScript("arguments[0].click();", fila);
-            }
-            System.out.println("Pago CR seleccionado correctamente: " + FolioCR);
-        } catch (NoSuchElementException e) {
-            System.out.println("ERROR: No se encontró el pago CR con referencia: " + FolioCR);
-            UtilidadesAllure.manejoError(driver, e, "No se encontró el pago CR con referencia: " + FolioCR);
-        } catch (TimeoutException e) {
-            System.out.println("ERROR: La tabla no cargó los resultados a tiempo.");
-            UtilidadesAllure.manejoError(driver, e, "La tabla de facturas no cargó correctamente.");
-        } catch (Exception e) {
-            System.out.println("ERROR: Ocurrió un problema al seleccionar la factura.");
-            UtilidadesAllure.manejoError(driver, e, "Error inesperado al seleccionar la factura.");
-        }
-    }
-
-    @Step("Cancelar pago contra recibo")
-    private static void BotonCancelarPago() {
-        try {
-            WebElement cancelarButton = wait.until(ExpectedConditions.elementToBeClickable(
-                    By.id("z_BTN_CANCELAR_IMG")));
-            cancelarButton.click();
-            System.out.println("Se presionó el botón de cancelar pago");
-        } catch (Exception e) {
-            UtilidadesAllure.manejoError(driver, e, "Error al presionar el botón de cancelar pago");
-            System.out.println("Error al presionar el botón de cancelar pago");
-        }
-    }
-
-    public void SeleccionaMotivoCancelacion() {
-        try {
-            WebElement combo = driver.findElement(By.id("COMBO_MOTIVOCANCELACION"));
-            Select select = new Select(combo);
-            select.selectByIndex(0);
-
-            WebElement comentarioField = driver.findElement(By.id("EDT_MOTIVO"));
-            comentarioField.clear();
-            comentarioField.sendKeys("Cancelación de pago por motivo de prueba automática. " + FolioCR);
-            System.out.println(comentarioField);
-
-            WebElement botonAceptar = driver.findElement(By.id("BTN_ACEPTAR"));
-            botonAceptar.click();
-        } catch (Exception e) {
-            System.out.println("Error al seleccionar la primera opción: " + e.getMessage());
-        }
-    }
-
-    @Step("Mensaje de Sustitución Requerida")
-    private static void MensajeSustitucionRequerida() {
-        try {
-            WebElement botonSi = wait.until(ExpectedConditions.elementToBeClickable(By.id("tzBTN_YES")));
-            botonSi.click();
-            System.out.println("Se presionó el botón de Sí para la sustitución requerida");
-        } catch (Exception e) {
-            UtilidadesAllure.manejoError(driver, e, "Error al presionar el botón de Sí para la sustitución requerida");
-            System.out.println("Error al presionar el botón de Sí para la sustitución requerida");
-        }
-    }
-
-    @Step("Introducir referencia bancaria")
-    public void IntroducirReferenciaSustitucion() {
-        try {
-            System.out.println("Entra a registrar la referencia bancaria");
-            WebElement campoReferencia = wait.until(ExpectedConditions.visibilityOfElementLocated(By.name("EDT_REFERENCIABANCARIA")));
-            campoReferencia.clear();
-            String referencia = "Sustitución Pago " + FolioCR;
-            campoReferencia.sendKeys(referencia);
-            System.out.println("Referencia ingresada: " + referencia);
-        } catch (NoSuchElementException | TimeoutException e) {
-            UtilidadesAllure.manejoError(driver, e, "Error al ingresar la referencia bancaria.");
-            System.out.println("Error al ingresar la referencia bancaria.");
         }
     }
 

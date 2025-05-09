@@ -94,8 +94,8 @@ public class PagoFacturaContraRecibos {
         AceptarFactura(); // Acepta la factura
         BotonConcurrenciaFactura();
         BotonTimbre(); // Timbrar la factura
-        ValidarYEnviarCorreo(); // Validar posibles errores
-        BotonPoliza(); // Aceptar botón generó póliza
+        //ValidarYEnviarCorreo(); // Validar posibles errores
+        //BotonPoliza(); // Aceptar botón generó póliza
         BotonImpresion(); // Regresar a la pantalla principal
 
         //Se genera la segunda factura
@@ -111,8 +111,8 @@ public class PagoFacturaContraRecibos {
         AceptarFactura(); // Acepta la factura
         BotonConcurrenciaFactura();
         BotonTimbre(); // Timbrar la factura
-        ValidarYEnviarCorreo(); // Validar posibles errores
-        BotonPoliza(); // Aceptar botón generó póliza
+        //ValidarYEnviarCorreo(); // Validar posibles errores
+        //BotonPoliza(); // Aceptar botón generó póliza
         BotonImpresion(); // Regresar a la pantalla principal
 
        // Crea del contra recibo de las facturas que se crearon

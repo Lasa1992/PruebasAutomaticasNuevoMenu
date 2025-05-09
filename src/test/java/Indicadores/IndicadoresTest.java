@@ -9,6 +9,7 @@ import org.openqa.selenium.*;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.support.ui.*;
 import java.time.Duration;
+import java.util.List;
 
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 @DisplayName("Prueba de indicadores")
@@ -67,56 +68,68 @@ public class IndicadoresTest {
 
     public void agregarIndicador() {
         try {
-            // Buscar el botón para cerrar el frame si existe
-            botonQuitarIndicador = driver.findElement(By.xpath("//*[@id=\"z_BTN_CERRARFRAME1_IMG\"]/span"));
-            if (botonQuitarIndicador.isDisplayed()) {
+            // Cerrar indicador anterior si existe
+            List<WebElement> botonesCerrar = driver.findElements(By.xpath("//*[@id=\"z_BTN_CERRARFRAME1_IMG\"]"));
+            if (!botonesCerrar.isEmpty() && botonesCerrar.get(0).isDisplayed()) {
                 validarIndicador();
-                //InicioSesion.handleNovedadesScreen(wait);
             }
 
-            // Usar XPath para el botón de agregar indicador
+            // Verificar si estamos dentro de un iframe
+            List<WebElement> iframes = driver.findElements(By.tagName("iframe"));
+            for (WebElement iframe : iframes) {
+                driver.switchTo().frame(iframe);
+                List<WebElement> botonAgregar = driver.findElements(By.xpath("//*[@id=\"z_BTN_AGREGARINDICADOR1_IMG\"]"));
+                if (!botonAgregar.isEmpty()) {
+                    System.out.println("Botón encontrado dentro de iframe.");
+                    WebElement botonIndicador = wait.until(ExpectedConditions.elementToBeClickable(botonAgregar.get(0)));
+                    botonIndicador.click();
+                    driver.switchTo().defaultContent(); // Siempre regresar al contexto principal
+                    System.out.println("Se dio clic correctamente en el botón de agregar indicador.");
+                    return;
+                }
+                driver.switchTo().defaultContent();
+            }
+
+            // Si no se encontró en iframes, intentar directamente en el DOM principal
             WebElement botonIndicador = wait.until(
-                    ExpectedConditions.elementToBeClickable(By.xpath("//*[@id=\"z_BTN_AGREGARINDICADOR1_IMG\"]/span"))
+                    ExpectedConditions.elementToBeClickable(By.xpath("//*[@id=\"z_BTN_AGREGARINDICADOR1_IMG\"]"))
             );
             botonIndicador.click();
-            System.out.println("Se dio clic correctamente en el botón de agregar indicador.");
+            System.out.println("Se dio clic correctamente en el botón de agregar indicador (fuera de iframe).");
+
         } catch (Exception e) {
             UtilidadesAllure.manejoError(driver, e, "Error al agregar indicador: ");
             System.out.println("No se encontró el botón para agregar el Indicador.");
         }
     }
 
+
+
     public void seleccionarIndicador(int currentRepetition) {
         try {
-            // El ID ahora cambia en función de la repetición actual
-            String dynamicId = "TABLE_CATUSUARIOSPROCESOS_" + (currentRepetition - 1) + "_2";  // Restar 1 ya que la repetición empieza desde 1
+            // XPath dinámico basado en la repetición actual
+            String dynamicXpath = "//*[@id='TABLE_CATUSUARIOSPROCESOS_" + (currentRepetition - 1) + "_2']";
             WebElement indicador;
 
-            // Intentar encontrar el elemento, y si no está visible, hacer scroll
             try {
                 // Intentar localizar el indicador sin hacer scroll inicialmente
-                indicador = wait.until(ExpectedConditions.presenceOfElementLocated(By.id(dynamicId)));
+                indicador = wait.until(ExpectedConditions.presenceOfElementLocated(By.xpath(dynamicXpath)));
 
-                // Mover el scroll hasta el indicador
+                // Hacer scroll hasta el indicador
                 ((JavascriptExecutor) driver).executeScript("arguments[0].scrollIntoView(true);", indicador);
             } catch (TimeoutException te) {
-                // Si el elemento no está visible o no se encuentra, manejar la excepción
                 System.out.println("Indicador no encontrado de inmediato. Intentando hacer scroll.");
-                // Puedes mover el scroll más abajo en la página (ajusta los píxeles según sea necesario)
                 ((JavascriptExecutor) driver).executeScript("window.scrollBy(0,500);");
-                // Vuelve a intentar localizar el indicador
-                indicador = wait.until(ExpectedConditions.elementToBeClickable(By.id(dynamicId)));
+                indicador = wait.until(ExpectedConditions.elementToBeClickable(By.xpath(dynamicXpath)));
             }
 
-            // Obtener el texto del indicador
             nombreIndicador = indicador.getText();
-            System.out.println("Se seleccionó el indicador con ID: " + dynamicId + " y nombre: " + nombreIndicador);
+            System.out.println("Se seleccionó el indicador con XPath: " + dynamicXpath + " y nombre: " + nombreIndicador);
 
-            // Clic en el indicador correspondiente
             indicador.click();
 
             // Botón de grabar después de seleccionar el indicador
-            WebElement botonAgregar = wait.until(ExpectedConditions.elementToBeClickable(By.id("BTN_GRABAR")));
+            WebElement botonAgregar = wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//*[@id=\"BTN_GRABAR\"]")));
             botonAgregar.click();
         } catch (Exception e) {
             UtilidadesAllure.manejoError(driver, e, "Error al seleccionar el indicador:");
@@ -129,24 +142,30 @@ public class IndicadoresTest {
         try {
             InicioSesion.handleNovedadesScreen();
 
-            // Cambiado el selector a XPath
-            botonQuitarIndicador = driver.findElement(By.xpath("//*[@id='BTN_CERRARFRAME1']"));
+            WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
 
-            Thread.sleep(2500);
-            UtilidadesAllure.capturaImagen(driver);
+            List<WebElement> botones = driver.findElements(By.xpath("//*[@id=\"z_BTN_CERRARFRAME1_IMG\"]"));
 
-            if (botonQuitarIndicador.isDisplayed()) {
+            if (!botones.isEmpty()) {
+                WebElement botonQuitarIndicador = wait.until(ExpectedConditions.elementToBeClickable(botones.get(0)));
+
+                UtilidadesAllure.capturaImagen(driver);
                 System.out.println("Indicador encontrado");
                 botonQuitarIndicador.click();
                 InicioSesion.handleAlert();
                 System.out.println("Se quitó correctamente el indicador.");
                 InicioSesion.handleNovedadesScreen();
+            } else {
+                System.out.println("No se encontró el indicador. Se continúa sin error.");
             }
+
         } catch (Exception e) {
             UtilidadesAllure.manejoError(driver, e, "Error al quitar el indicador: ");
-            System.out.println("No se encontró el indicador.");
+            System.out.println("Excepción al quitar el indicador.");
         }
     }
+
+
 
     @AfterAll
     public static void tearDown() {

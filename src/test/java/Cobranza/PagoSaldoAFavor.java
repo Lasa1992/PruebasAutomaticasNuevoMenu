@@ -553,11 +553,20 @@ public class PagoSaldoAFavor {
         try {
             WebElement NumeroClientePago = wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("EDT_NUMEROCLIENTE")));
             WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
-            NumeroClientePago.click();
+
+            // Realizar scroll al elemento y hacer clic con JavaScript
+            ((JavascriptExecutor) driver).executeScript("arguments[0].scrollIntoView(true);", NumeroClientePago);
+            ((JavascriptExecutor) driver).executeScript("arguments[0].click();", NumeroClientePago);
+
             NumeroClientePago.sendKeys(NUMERO_CLIENTE);
             NumeroClientePago.sendKeys(Keys.TAB);
+
         } catch (TimeoutException e) {
+            System.out.println("Error en el método CodigoClientPago: " + e.getMessage());
             UtilidadesAllure.manejoError(driver, e, "Error al asignar el cliente al pago");
+        } catch (Exception e) {
+            System.out.println("Error inesperado en el método CodigoClientPago: " + e.getMessage());
+            UtilidadesAllure.manejoError(driver, e, "Error inesperado al asignar el cliente al pago");
         }
     }
 

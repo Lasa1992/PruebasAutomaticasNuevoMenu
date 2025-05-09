@@ -21,7 +21,7 @@ import java.util.concurrent.*;
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class SuiteGlobal {
 
-    private static final String[] NAVEGADORES = {"chrome",/*firefox""edge"*/};
+    private static final String[] NAVEGADORES = {"chrome",/*firefox","edge"*/};
     private static final int NUMERO_HILOS =2;
     private static final ExecutorService executorService = Executors.newFixedThreadPool(NUMERO_HILOS);
 
@@ -65,6 +65,10 @@ public class SuiteGlobal {
 // Cobranza
                 PagoFacturaConcepto.class,
                 PagoFacturaViaje.class,
+                PagoConsolidado.class,
+                PagoContraReciboSustitucion.class,
+                PagoFactoraje.class,
+                PagoSaldoAFavor.class,
 
 // Cuentas por pagar
                 PagoPasivos.class,

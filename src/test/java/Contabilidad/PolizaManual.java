@@ -68,20 +68,13 @@ public class PolizaManual {
         }
     }
 
-    @Test
-    @Order(3)
-    @Description("Acceder al módulo de Bancos")
-    public void testIngresarModuloBancos() {
-        ingresarModuloBancos();
-        submoduloCheques();
-    }
-
     @RepeatedTest(2)
     @Order(4)
     @Description("Importación de Pólizas y Prepólizas")
     public void ImportacionPoliyPrep() {
 
 
+        SeleccionContaPolizas();
         BotonAgregarManuamente();
         TipoPoliza();
         ConceptoPoliza();
@@ -106,39 +99,42 @@ public class PolizaManual {
     }
 
 
-    @Step("Abrir el módulo de Bancos")
-    private void ingresarModuloBancos() {
+    @Step("Navegar a opción de menú específico")
+    public void SeleccionContaPolizas() {
         try {
-            WebElement botonBancos = wait.until(ExpectedConditions.elementToBeClickable(
-                    By.xpath("//img[contains(@src, '/GMTERPV8_WEB/Imagenes/CONTABILIDAD1')]")
-            ));
-            botonBancos.click();
-            System.out.println("Módulo Bancos: Módulo de Bancos abierto correctamente.");
-            Thread.sleep(1000);
+            WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
+
+            // Primer clic: abre el submenú
+            try {
+                WebElement primerElemento = wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//*[@id='HTM_HTMLTEMPLATE1']/div/ul/li[8]/a/img")));
+                primerElemento.click();
+                System.out.println("Primer elemento del menú clicado.");
+            } catch (Exception e) {
+                System.out.println("No se pudo hacer clic en el primer elemento del menú. Continuando...");
+                return;
+            }
+
+            // Segundo clic: selecciona la opción del submenú
+            try {
+                WebElement segundoElemento = wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//*[@id='HTM_HTMLTEMPLATE1']/div/ul/li[8]/ul/li[3]/a/img")));
+                segundoElemento.click();
+                System.out.println("Segunda opción del submenú seleccionada.");
+            } catch (Exception e) {
+                System.out.println("No se pudo hacer clic en la segunda opción del submenú. Continuando...");
+            }
+
         } catch (Exception e) {
-            UtilidadesAllure.manejoError(driver, e, "Error al abrir el módulo de Contabilidad.");
+            System.out.println("Error general en la navegación del menú. Continuando...");
+            e.printStackTrace();
         }
     }
 
-    @Step("Abrir submódulo de Cheques")
-    private void submoduloCheques() {
-        try {
-            WebElement subPolizascontables = wait.until(ExpectedConditions.elementToBeClickable(
-                    By.xpath("//img[contains(@src, '/GMTERPV8_WEB/Imagenes/CONTABILIDAD/POLIZASCONTABLES')]")
-            ));
-            subPolizascontables.click();
-            System.out.println("Submódulo Cheques: Submódulo de Cheques abierto correctamente.");
-            Thread.sleep(1000);
-        } catch (Exception e) {
-            UtilidadesAllure.manejoError(driver, e, "Error al abrir el submódulo Polizas Contables.");
-        }
-    }
 
-    @Step("Registrar un nuevo Cheque")
+    @Step("Registrar una nueva póliza")
     private void BotonAgregarManuamente() {
         try {
             WebElement botonRegistrar = wait.until(ExpectedConditions.elementToBeClickable(
-                    By.xpath("/html/body/form/table/tbody/tr/td/div/table/tbody/tr[1]/td/table/tbody/tr/td/table/tbody/tr[1]/td/div[3]/div[2]/div[1]/table/tbody/tr/td/table/tbody/tr[1]/td/div/div[1]/div/input")
+                    By.xpath("//*[@id=\"BTN_AGREGAR\"]")
             ));
             botonRegistrar.click();
             System.out.println("Botón Agregar: El botón fue presionado correctamente.");
@@ -216,7 +212,8 @@ public class PolizaManual {
             js.executeScript("arguments[0].dispatchEvent(new Event('input'));", campoCuenta);
 
             // Forzar la escritura del nuevo valor
-            String valor = "000-000-000012";
+            //String valor = "000-000-000012"; // Cambia esto por el valor que necesites este es de IIA
+            String valor = "101-001-000000"; // Cambia esto por el valor que necesites este es de TST08 o KIJ
             js.executeScript("arguments[0].value = arguments[1];", campoCuenta, valor);
             js.executeScript("arguments[0].dispatchEvent(new Event('change'));", campoCuenta);
 

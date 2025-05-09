@@ -122,12 +122,13 @@ public class CreacionViajeTimbreIngreso {
 
     private static void BotonAgregarCartaPorte() {
         try {
-            WebElement additionalButton = wait.until(ExpectedConditions.elementToBeClickable(By.id("BTN_AGREGAR")));
+            WebElement additionalButton = wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//*[@id=\"BTN_AGREGAR\"]")));
             additionalButton.click();
         } catch (TimeoutException e) {
             UtilidadesAllure.manejoError(driver, e, "Botón Agregar Carta Porte no funciona.");
         }
     }
+
 
     @Step("Manejar Tipo de Documento (variable TIPO_DOCUMENTO)")
     public void TipoDocumentoIngreso() {

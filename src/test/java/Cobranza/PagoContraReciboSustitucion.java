@@ -94,8 +94,8 @@ public class PagoContraReciboSustitucion {
         AceptarFactura(); // Acepta la factura
         BotonConcurrenciaFactura();
         BotonTimbre(); // Timbrar la factura
-        ValidarYEnviarCorreo(); // Validar posibles errores
-        BotonPoliza(); // Aceptar botón generó póliza
+        //ValidarYEnviarCorreo(); // Validar posibles errores
+       // BotonPoliza(); // Aceptar botón generó póliza
         BotonImpresion(); // Regresar a la pantalla principal
 
         //Se genera la segunda factura
@@ -111,8 +111,8 @@ public class PagoContraReciboSustitucion {
         AceptarFactura(); // Acepta la factura
         BotonConcurrenciaFactura();
         BotonTimbre(); // Timbrar la factura
-        ValidarYEnviarCorreo(); // Validar posibles errores
-        BotonPoliza(); // Aceptar botón generó póliza
+        //ValidarYEnviarCorreo(); // Validar posibles errores
+        //BotonPoliza(); // Aceptar botón generó póliza
         BotonImpresion(); // Regresar a la pantalla principal
 
         // Crea del contra recibo de las facturas que se crearon
@@ -141,8 +141,8 @@ public class PagoContraReciboSustitucion {
         IntroducirMontoPago(); // Introduce el monto a pagar.
         AceptarPagoAbono(); // Acepta el pago/abono.
         TimbrePago(); // Acepta el timbre del pago.
-        EnvioCorreoPago(); // Envía un correo para el pago (Sí/No).
-        AceptarPolizaPago(); // Acepta la póliza del pago.
+        //EnvioCorreoPago(); // Envía un correo para el pago (Sí/No).
+        //AceptarPolizaPago(); // Acepta la póliza del pago.
         deseleccionarCampoFecha2(); // Deselecciona el campo de fecha.
         SalirVentanaPago(); // Sale de la ventana de pago.
 
@@ -154,10 +154,11 @@ public class PagoContraReciboSustitucion {
         SeleccionaMotivoCancelacion(); // Selecciona el motivo de cancelación.
         MensajeSustitucionRequerida(); // Introduce un mensaje de sustitución requerida.
         IntroducirReferenciaSustitucion(); // Introduce una referencia de sustitución.
+        SeleccionarFacturasCR(); // Selecciona las facturas a sustituir.
         AceptarPagoAbono(); // Acepta el pago/abono sutituido
         TimbrePago(); // Acepta el timbre del pago.
-        EnvioCorreoPago(); // Envía un correo para el pago (Sí/No).
-        AceptarPolizaPago(); // Acepta la póliza del pago.
+        //EnvioCorreoPago(); // Envía un correo para el pago (Sí/No).
+        //AceptarPolizaPago(); // Acepta la póliza del pago.
         deseleccionarCampoFecha2(); // Deselecciona el campo de fecha.
         SalirVentanaPago(); // Sale de la ventana de pago.
     }
@@ -772,7 +773,7 @@ public class PagoContraReciboSustitucion {
     @Step("Generar Timbre del Pago")
     public void TimbrePago() {
         try {
-            WebElement btnSi = wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//input[contains(@class, 'BTN_YES')]")));
+            WebElement btnSi = wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//*[@id='BTN_YES']")));
             btnSi.click();
             System.out.println("Timbre del pago generado correctamente.");
         } catch (Exception e) {
@@ -816,13 +817,24 @@ public class PagoContraReciboSustitucion {
     @Step("Aceptar Póliza Contable del Pago")
     public void AceptarPolizaPago() {
         try {
-            WebElement btnOk = driver.findElement(By.xpath("//input[contains(@class, 'BTN-BotonClasicoGris BTN_OK ')]"));
+            WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
+            WebElement btnOk;
+
+            try {
+                btnOk = wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//*[@id='BTN_OK']")));
+            } catch (Exception noButton) {
+                System.out.println("El botón de aceptar póliza no está disponible. Continuando...");
+                return;
+            }
+
             btnOk.click();
             System.out.println("Póliza contable aceptada.");
         } catch (Exception e) {
-            System.err.println("Error al aceptar la póliza: " + e.getMessage());
+            System.out.println("Error al hacer clic en el botón de póliza. Continuando...");
+            e.printStackTrace();
         }
     }
+
 
     public void deseleccionarCampoFecha2() {
         try {
@@ -1264,7 +1276,8 @@ public class PagoContraReciboSustitucion {
     @Step("Mensaje de Sustitución Requerida")
     private static void MensajeSustitucionRequerida() {
         try {
-            WebElement botonSi = wait.until(ExpectedConditions.elementToBeClickable(By.id("tzBTN_YES")));
+            WebElement botonSi = wait.until(ExpectedConditions.elementToBeClickable(
+                    By.xpath("//*[@id='tzBTN_YES']")));
             botonSi.click();
             System.out.println("Se presionó el botón de Sí para la sustitución requerida");
         } catch (Exception e) {

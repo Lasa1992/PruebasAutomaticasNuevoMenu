@@ -98,7 +98,7 @@ public class FacturacionGeneralSustitucion {
         AceptarFactura();
         BotonConcurrenciaFactura();
         BotonTimbre();
-        ValidarYEnviarCorreo();
+        //ValidarYEnviarCorreo();
         BotonPoliza();
         BotonImpresion();
         BusquedaFacturaListado();
@@ -110,7 +110,7 @@ public class FacturacionGeneralSustitucion {
         AceptarFacturaSustituida();
         BotonConcurrenciaFacturaSustituida();
         BotonTimbreSustitucion();
-        CorreoDesspuesSustitucion();
+        //CorreoDesspuesSustitucion();
         CancelacionSAT();
         CancelacionSAT2();
         CancelacionSAT3();

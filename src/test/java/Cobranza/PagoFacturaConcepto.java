@@ -18,6 +18,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Random;
+import java.util.concurrent.ThreadLocalRandom;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -91,8 +92,8 @@ public class PagoFacturaConcepto {
         AceptarFactura(); // Acepta la factura
         BotonConcurrenciaFactura();
         BotonTimbre(); // Timbrar la factura
-        ValidarYEnviarCorreo(); // Validar posibles errores
-        BotonPoliza();
+//        ValidarYEnviarCorreo(); // Validar posibles errores
+//        BotonPoliza();
         BotonImpresion();
 
         // Bloque donde se controla el pago de la factura
@@ -109,7 +110,7 @@ public class PagoFacturaConcepto {
         IntroducirReferencia(); // Introduce una referencia para el pago.
         AceptarPagoAbono(); // Acepta el pago/abono.
         TimbrePago(); // Acepta el timbre del pago.
-        EnvioCorreoPago(); // Envía un correo para el pago (Sí/No).
+        //EnvioCorreoPago(); // Envía un correo para el pago (Sí/No).
         AceptarPolizaPago(); // Acepta la póliza del pago.
         deseleccionarCampoFecha2(); // Deselecciona el campo de fecha.
         SalirVentanaPago(); // Sale de la ventana de pago.
@@ -375,10 +376,10 @@ public class PagoFacturaConcepto {
             WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
             // Espera hasta que el body esté presente
             wait.until(ExpectedConditions.presenceOfElementLocated(By.tagName("body")));
-            // Intentar localizar el botón "Aceptar"
+            // Intentar localizar el botón "Aceptar" usando XPath
             WebElement botonAceptar;
             try {
-                botonAceptar = wait.until(ExpectedConditions.elementToBeClickable(By.id("BTN_YES")));
+                botonAceptar = wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//*[@id='BTN_YES']")));
             } catch (Exception noButton) {
                 System.out.println("El botón de aceptar Timbre no está disponible. Continuando...");
                 return;
@@ -392,41 +393,45 @@ public class PagoFacturaConcepto {
         }
     }
 
+
     public void ValidarYEnviarCorreo() {
         try {
             WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
-            // Buscar todos los botones con "onclick"
+
             List<WebElement> botones = wait.until(
                     ExpectedConditions.presenceOfAllElementsLocatedBy(By.xpath("//input[@onclick]")));
-            // Filtrar botones que son visibles y clickeables
+
+            System.out.println("Total de botones con onclick encontrados: " + botones.size());
+
             List<WebElement> botonesValidos = botones.stream()
                     .filter(b -> b.isDisplayed() && b.isEnabled())
                     .collect(Collectors.toList());
-            // Si no hay botones disponibles, continuar sin fallar
+
             if (botonesValidos.isEmpty()) {
-                System.out.println("No hay botones visibles y clickeables. Continuando...");
+                System.out.println("⚠ No hay botones visibles y clickeables. Continuando...");
                 return;
             }
-            System.out.println("Botones válidos encontrados:");
-            for (WebElement boton : botonesValidos) {
-                // Se pueden agregar más detalles si es necesario
-            }
-            // Seleccionar aleatoriamente un botón de la lista de botones válidos
-            WebElement botonSeleccionado = botonesValidos.get(new Random().nextInt(botonesValidos.size()));
-            // Intentar hacer clic en el botón seleccionado
+
+            System.out.println("✅ Botones válidos encontrados: " + botonesValidos.size());
+
+            WebElement botonSeleccionado = botonesValidos.get(ThreadLocalRandom.current().nextInt(botonesValidos.size()));
+
             try {
-                System.out.println("Se hizo clic en el botón con ID: " + botonSeleccionado.getAttribute("id"));
+                System.out.println("➡ Clic en botón con ID: " + botonSeleccionado.getAttribute("id")
+                        + ", VALUE: " + botonSeleccionado.getAttribute("value"));
                 botonSeleccionado.click();
             } catch (Exception e) {
-                System.out.println("Click() falló, intentando con JavaScript...");
+                System.out.println("⚠ Click() falló, intentando con JavaScript...");
                 ((JavascriptExecutor) driver).executeScript("arguments[0].click();", botonSeleccionado);
-                System.out.println("Click ejecutado con JavaScript en el botón con ID: " + botonSeleccionado.getAttribute("id"));
+                System.out.println("✅ Click JS ejecutado en botón con ID: " + botonSeleccionado.getAttribute("id"));
             }
+
         } catch (Exception e) {
-            System.err.println("Error al hacer clic en el botón. Continuando...");
+            System.err.println("❌ No se pudo hacer clic en ningún botón visible con 'onclick'.");
             e.printStackTrace();
         }
     }
+
 
     private void BotonPoliza() {
         try {

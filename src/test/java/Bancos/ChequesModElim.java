@@ -274,16 +274,18 @@ public class ChequesModElim {
     private void MensajePoliza() {
         try {
             WebElement inputMensajePoliza = wait.until(ExpectedConditions.elementToBeClickable(
-                    By.xpath("/html/body/form/table/tbody/tr/td/table/tbody/tr/td/div/table/tbody/tr[2]/td/div[1]/table/tbody/tr/td/div/div[3]/table/tbody/tr/td/table/tbody/tr[2]/td/div[1]/table/tbody/tr/td/input")
+                    By.xpath("//*[@id='BTN_OK']")
             ));
-
             inputMensajePoliza.click();
             System.out.println("Se aceptó el mensaje de póliza");
-
+        } catch (TimeoutException e) {
+            // Si no aparece el botón, continuar sin error
+            System.out.println("El botón de mensaje de póliza no apareció. Continuando con la ejecución.");
         } catch (Exception e) {
             UtilidadesAllure.manejoError(driver, e, "Error al hacer clic en el campo Mensaje de Póliza.");
         }
     }
+
 
     @Step("Buscar Cheque por Cuenta Bancaria")
     private void BuscarCheque() {

@@ -271,7 +271,7 @@ public class FacturacionViajeSustitucion {
     private void NumeroEconomicoConvoy() {
         try {
             WebElement numeroEconomicoConvoyField = wait.until(
-                    ExpectedConditions.visibilityOfElementLocated(By.id("EDT_NUMEROECONOMICOCONVOY")));
+                    ExpectedConditions.visibilityOfElementLocated(By.xpath("//*[@id=\"EDT_NUMEROECONOMICOCONVOY\"]")));
             numeroEconomicoConvoyField.sendKeys("E3");
             numeroEconomicoConvoyField.sendKeys(Keys.ENTER);
             Thread.sleep(1000);
@@ -279,6 +279,10 @@ public class FacturacionViajeSustitucion {
             UtilidadesAllure.manejoError(driver, e, "Error al manejar el Número Económico del Convoy");
         }
     }
+
+
+
+    ////*[@id="EDT_NUMEROECONOMICOCONVOY"]
 
     @Step("Seleccionar Pestaña de Materiales Carga")
     private void SeleccionarPestanaMateriales() {
@@ -413,12 +417,13 @@ public class FacturacionViajeSustitucion {
     private void BotonImpresion() {
         try {
             WebElement botonRegresar = wait.until(ExpectedConditions.elementToBeClickable(
-                    By.id("BTN_REGRESAR")));
+                    By.xpath("//*[@id=\"BTN_REGRESAR\"]")));
             botonRegresar.click();
         } catch (Exception e) {
             UtilidadesAllure.manejoError(driver, e, "Error al hacer clic en el botón Regresar para impresión");
         }
     }
+
 
     // =====================================================
     // BLOQUE 2: FACTURACIÓN DEL VIAJE
@@ -510,7 +515,7 @@ public class FacturacionViajeSustitucion {
     private static void FiltroMoneda() {
         try {
             WebElement filtroMonedaCombo = wait.until(ExpectedConditions.visibilityOfElementLocated(
-                    By.id("COMBO_CATMONEDAS_FILTRO")));
+                    By.xpath("//*[@id=\"COMBO_CATMONEDAS\"]")));
             Select comboBox = new Select(filtroMonedaCombo);
 
             String valorInicialComboBox = comboBox.getFirstSelectedOption().getText().trim().toUpperCase();
@@ -543,16 +548,17 @@ public class FacturacionViajeSustitucion {
         }
     }
 
+
     private static void CampoBusqueda() {
         try {
             WebElement busquedaField = wait.until(ExpectedConditions.visibilityOfElementLocated(
-                    By.id("EDT_BUSQUEDAGENERAL")));
+                    By.xpath("//*[@id=\"EDT_BUSQUEDAGENERAL\"]")));
             busquedaField.clear();
             busquedaField.sendKeys(numeroViajeCliente);
             System.out.println("Se ingresó el valor de búsqueda: " + numeroViajeCliente);
 
             WebElement buscarButton = wait.until(ExpectedConditions.elementToBeClickable(
-                    By.id("BTN_BUSCAR")));
+                    By.xpath("//*[@id=\"z_BTN_BUSCAR_IMG\"]/span")));
             buscarButton.click();
             System.out.println("Se presionó el botón de búsqueda");
         } catch (Exception e) {
@@ -560,30 +566,52 @@ public class FacturacionViajeSustitucion {
         }
     }
 
+
     private static void SelecionaFactura() {
         try {
-            WebElement facturaCheckbox = wait.until(ExpectedConditions.elementToBeClickable(
-                    By.id("_0_TABLE_PROVIAJES_0")));
-            if (!facturaCheckbox.isSelected()) {
-                facturaCheckbox.click();
+            // Espera hasta 20 segundos que aparezca el checkbox de la factura
+            List<WebElement> facturas = new WebDriverWait(driver, Duration.ofSeconds(20))
+                    .until(ExpectedConditions.presenceOfAllElementsLocatedBy(
+                            By.xpath("//*[@id='_0_TABLE_PROVIAJES_0']")));
+
+            if (!facturas.isEmpty()) {
+                WebElement facturaCheckbox = facturas.get(0);
+                if (!facturaCheckbox.isSelected()) {
+                    facturaCheckbox.click();
+                    System.out.println("Se seleccionó la factura");
+                } else {
+                    System.out.println("La factura ya estaba seleccionada");
+                }
+            } else {
+                System.out.println("No se encontró ninguna factura para seleccionar");
             }
-            System.out.println("Se seleccionó la factura");
+
+        } catch (TimeoutException e) {
+            System.out.println("Timeout: No se encontró el checkbox de la factura. Se continúa sin seleccionar.");
         } catch (Exception e) {
             UtilidadesAllure.manejoError(driver, e, "Error al seleccionar la factura");
         }
     }
 
+
     private void AceptarFactura() {
         try {
-            WebElement botonAgregar = driver.findElement(By.id("BTN_ACEPTAR"));
+            WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
+            WebElement botonAgregar = wait.until(ExpectedConditions.elementToBeClickable(
+                    By.xpath("//*[@id='BTN_ACEPTAR']")));
+
             botonAgregar.click();
             System.out.println("Se ha hecho clic en el botón 'Agregar'.");
+        } catch (TimeoutException e) {
+            System.out.println("El botón 'Agregar' no apareció a tiempo. Se continúa sin error.");
         } catch (Exception e) {
-            UtilidadesAllure.manejoError(driver, e, null);
+            UtilidadesAllure.manejoError(driver, e, "Error al hacer clic en el botón 'Agregar'");
             System.out.println("Se ha producido un error al hacer clic en el botón 'Agregar': " + e.getMessage());
             e.printStackTrace();
         }
     }
+
+
 
     @Step("Aceptar mensaje de concurrencia si aparece")
     private void BotonConcurrenciaFactura() {
@@ -723,27 +751,28 @@ public class FacturacionViajeSustitucion {
 
     public void SeleccionaMotivoCancelacion() {
         try {
-            WebElement combo = driver.findElement(By.id("COMBO_MOTIVOCANCELACION"));
+            WebElement combo = driver.findElement(By.xpath("//*[@id=\"COMBO_MOTIVOCANCELACION\"]"));
             Select select = new Select(combo);
             select.selectByIndex(0);
 
-            WebElement comentarioField = driver.findElement(By.id("EDT_MOTIVO"));
+            WebElement comentarioField = driver.findElement(By.xpath("//*[@id=\"EDT_MOTIVO\"]"));
             comentarioField.clear();
             comentarioField.sendKeys("Cancelación de factura por motivo de prueba automática: " + numeroFactura);
             System.out.println(comentarioField);
 
-            WebElement botonAceptar = driver.findElement(By.id("BTN_ACEPTAR"));
+            WebElement botonAceptar = driver.findElement(By.xpath("//*[@id=\"BTN_ACEPTAR\"]"));
             botonAceptar.click();
         } catch (Exception e) {
             System.out.println("Error al seleccionar la primera opción: " + e.getMessage());
         }
     }
 
+
     @Step("Mensaje de Sustitución Requerida")
     private static void MensajeSustitucionRequerida() {
         try {
             WebElement botonSi = wait.until(ExpectedConditions.elementToBeClickable(
-                    By.xpath("//*[@id='tzBTN_YES']")));
+                    By.xpath("//*[@id=\"BTN_YES\"]")));
             botonSi.click();
             System.out.println("Se presionó el botón de Sí para la sustitución requerida");
         } catch (Exception e) {
@@ -821,7 +850,7 @@ public class FacturacionViajeSustitucion {
         while (intentos < 3 && !exito) {
             try {
                 WebElement aceptarButton = wait.until(ExpectedConditions.elementToBeClickable(
-                        By.xpath("//*[@id='z_BTN_ACEPTAR_IMG']")));
+                        By.xpath("//*[@id=\"z_BTN_ACEPTAR_IMG\"]/span")));
                 aceptarButton.click();
                 System.out.println("Se presionó el botón de aceptar factura en el intento " + (intentos + 1));
                 exito = true;

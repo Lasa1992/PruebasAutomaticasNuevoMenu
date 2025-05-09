@@ -549,20 +549,22 @@ public class CartaPorteSustitucion {
         try {
             WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
 
-            // Espera 3 segundos antes de continuar
+            // Espera a que el <body> esté presente
             wait.until(ExpectedConditions.presenceOfElementLocated(By.tagName("body")));
 
-            // Intentar localizar el botón "Aceptar"
+            // Intentar localizar el botón "Aceptar" usando XPath
             WebElement botonAceptar;
             try {
-                botonAceptar = wait.until(ExpectedConditions.elementToBeClickable(By.id("BTN_YES")));
+                botonAceptar = wait.until(ExpectedConditions.elementToBeClickable(
+                        By.xpath("//*[@id='BTN_YES']"))
+                );
             } catch (Exception noButton) {
                 System.out.println("El botón de aceptar Timbre no está disponible. Continuando...");
                 return;
             }
 
-            // Si el botón se encontró, hacer clic
-            botonAceptar.click();
+            // Hacer clic usando JavaScript para evitar intercepciones
+            ((JavascriptExecutor) driver).executeScript("arguments[0].click();", botonAceptar);
             System.out.println("Se presionó el botón de aceptar Timbre");
 
         } catch (Exception e) {
@@ -572,12 +574,13 @@ public class CartaPorteSustitucion {
     }
 
 
+
     @Step("Aceptar Cancelación en el SAT")
     private static void CancelacionSAT() {
         try {
-            // Espera explícita hasta que el botón de aceptar sea clicable
+            // Espera explícita hasta que el botón de aceptar sea clicable usando XPath
             WebElement aceptarButton = wait.until(ExpectedConditions.elementToBeClickable(
-                    By.id("tzBTN_YES")));
+                    By.xpath("//*[@id='tzBTN_YES']")));
 
             // Hacer clic en el botón de aceptar
             aceptarButton.click();
@@ -591,9 +594,9 @@ public class CartaPorteSustitucion {
     @Step("Aceptar Cancelación en el SAT (Segundo Mensaje)")
     private static void CancelacionSAT2() {
         try {
-            // Espera explícita hasta que el botón de aceptar sea clicable
+            // Espera explícita hasta que el botón de aceptar sea clicable usando XPath
             WebElement aceptarButton = wait.until(ExpectedConditions.elementToBeClickable(
-                    By.id("tzBTN_YES")));
+                    By.xpath("//*[@id='tzBTN_YES']")));
 
             // Hacer clic en el botón de aceptar
             aceptarButton.click();
@@ -607,43 +610,44 @@ public class CartaPorteSustitucion {
     @Step("Aceptar Cancelación en el SAT (Tercer Mensaje)")
     private static void CancelacionSAT3() {
         try {
-            // Intentar encontrar el botón inmediatamente sin esperar
-            WebElement aceptarButton = driver.findElement(By.id("BTN_OK"));
+            // Intentar encontrar el botón inmediatamente sin esperar, usando XPath
+            WebElement aceptarButton = driver.findElement(By.xpath("//*[@id='BTN_OK']"));
 
             // Verificar si el botón es visible y habilitado antes de hacer clic
             if (aceptarButton.isDisplayed() && aceptarButton.isEnabled()) {
                 aceptarButton.click();
                 System.out.println("Se hizo clic en el botón de aceptar para la cancelación en el SAT.");
             } else {
-                System.out.println("El botón 'tzBTN_YES' está presente pero no es clicable.");
+                System.out.println("El botón 'BTN_OK' está presente pero no es clicable.");
             }
 
         } catch (NoSuchElementException e) {
-            System.out.println("No se encontró el botón 'tzBTN_YES' en la página.");
+            System.out.println("No se encontró el botón 'BTN_OK' en la página.");
         } catch (Exception e) {
-            System.out.println(" Error inesperado al presionar el botón de aceptar en la cancelación SAT: " + e.getMessage());
+            System.out.println("Error inesperado al presionar el botón de aceptar en la cancelación SAT: " + e.getMessage());
             UtilidadesAllure.manejoError(driver, e, "Error al presionar el botón en la cancelación SAT.");
         }
     }
 
+
     @Step("Aceptar Cancelación en el SAT (Cuarto Mensaje)")
     private static void CancelacionSAT4() {
         try {
-            // Intentar encontrar el botón inmediatamente sin esperar
-            WebElement aceptarButton = driver.findElement(By.id("BTN_OK"));
+            // Intentar encontrar el botón inmediatamente sin esperar usando XPath
+            WebElement aceptarButton = driver.findElement(By.xpath("//*[@id='BTN_OK']"));
 
             // Verificar si el botón es visible y habilitado antes de hacer clic
             if (aceptarButton.isDisplayed() && aceptarButton.isEnabled()) {
                 aceptarButton.click();
                 System.out.println("Se hizo clic en el botón de aceptar para la cancelación en el SAT.");
             } else {
-                System.out.println("El botón 'tzBTN_YES' está presente pero no es clicable.");
+                System.out.println("El botón 'BTN_OK' está presente pero no es clicable.");
             }
 
         } catch (NoSuchElementException e) {
-            System.out.println("No se encontró el botón 'tzBTN_YES' en la página.");
+            System.out.println("No se encontró el botón 'BTN_OK' en la página.");
         } catch (Exception e) {
-            System.out.println(" Error inesperado al presionar el botón de aceptar en la cancelación SAT: " + e.getMessage());
+            System.out.println("Error inesperado al presionar el botón de aceptar en la cancelación SAT: " + e.getMessage());
             UtilidadesAllure.manejoError(driver, e, "Error al presionar el botón en la cancelación SAT.");
         }
     }

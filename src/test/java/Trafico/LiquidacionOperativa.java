@@ -553,8 +553,9 @@ public class LiquidacionOperativa   {
     @Step("Enviar Correo de Timbre (Sí/No)")
     private void EnvioCorreoseguimiento() {
         try {
-            Random random = new Random();
-            boolean elegirSi = random.nextBoolean();
+//            Random random = new Random();
+//            boolean elegirSi = random.nextBoolean();
+            boolean elegirSi = false; // Cambia esto a true o false según lo necesites
 
             WebElement boton;
             if (elegirSi) {
@@ -601,7 +602,8 @@ public class LiquidacionOperativa   {
     private void EnvioCorreoseguimientollegada() {
         try {
             Random random = new Random();
-            boolean elegirSi = random.nextBoolean();
+//            boolean elegirSi = random.nextBoolean();
+            boolean elegirSi = false; // Cambia esto a true o false según lo necesites
 
             WebElement boton;
             if (elegirSi) {

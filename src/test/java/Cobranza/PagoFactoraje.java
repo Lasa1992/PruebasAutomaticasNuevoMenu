@@ -597,8 +597,12 @@ public class PagoFactoraje {
     @Step("Asignar Cliente al Pago")
     private void CodigoClientPago() {
         try {
-            WebElement NumeroClientePago = wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("EDT_NUMEROCLIENTE")));
             WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
+            WebElement NumeroClientePago = wait.until(ExpectedConditions.elementToBeClickable(By.id("EDT_NUMEROCLIENTE")));
+
+            // Asegura que el elemento esté en pantalla y no tapado
+            ((JavascriptExecutor) driver).executeScript("arguments[0].scrollIntoView(true);", NumeroClientePago);
+
             NumeroClientePago.click();
             NumeroClientePago.sendKeys(NUMERO_CLIENTE);
             NumeroClientePago.sendKeys(Keys.TAB);
@@ -617,8 +621,11 @@ public class PagoFactoraje {
             // Instanciar Select
             Select comboBox = new Select(comboBoxElement);
 
-            // Texto exacto a buscar (ajusta si hay espacios no visibles como tabs u otros caracteres)
-            String textoExacto = "0123456789 - BANAMEX PESOS";
+            // Texto exacto a buscar (ajusta si hay espacios no visibles como tabs u otros caracteres) para IIA
+            //String textoExacto = "0123456789 - BANAMEX PESOS";
+
+            //Texto exacto a buscar (ajusta si hay espacios no visibles como tabs u otros caracteres) para IIA
+            String textoExacto = "014278945612378945 - BANCOMER 007"; // esta cuenta se debe de cambiar por bd a validar
 
             // Intentar seleccionar la opción
             comboBox.selectByVisibleText(textoExacto);

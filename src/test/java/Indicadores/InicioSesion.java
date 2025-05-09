@@ -186,8 +186,11 @@ public class InicioSesion {
         try {
             WebDriverWait wait = getWait();
             WebElement novedadesScreen = wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("dwwCELL_POPUPMAIN")));
-            WebElement acceptButton = novedadesScreen.findElement(By.id("z_BTN_ACEPTAR_IMG"));
+
+            WebElement acceptButton = novedadesScreen.findElement(By.xpath("//*[@id=\"z_BTN_ACEPTAR_IMG\"]"));
             acceptButton.click();
+
+            System.out.println("✅ Pantalla de novedades cerrada con éxito.");
         } catch (Exception e) {
             System.out.println("⚠ Pantalla de novedades no encontrada.");
         }
