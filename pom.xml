@@ -1,23 +1,60 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
+                             https://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>com.example</groupId>
     <artifactId>selenium-junit-allure</artifactId>
     <version>1.0-SNAPSHOT</version>
 
+    <properties>
+        <!-- Java settings -->
+        <maven.compiler.source>17</maven.compiler.source>
+        <maven.compiler.target>17</maven.compiler.target>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+
+        <!-- Unified JUnit 5 version -->
+        <junit.jupiter.version>5.10.3</junit.jupiter.version>
+    </properties>
+
+    <dependencyManagement>
+        <dependencies>
+            <!-- BOM to align all JUnit 5 and Platform dependencies -->
+            <dependency>
+                <groupId>org.junit</groupId>
+                <artifactId>junit-bom</artifactId>
+                <version>${junit.jupiter.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
     <dependencies>
-        <!-- JUnit 5 (Jupiter) -->
+        <!-- JUnit Jupiter API + Engine -->
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter</artifactId>
-            <version>5.10.3</version>
             <scope>test</scope>
         </dependency>
 
-        <!-- Selenium -->
+        <!-- Parameterized tests support -->
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter-params</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+        <!-- JUnit Platform Launcher -->
+        <dependency>
+            <groupId>org.junit.platform</groupId>
+            <artifactId>junit-platform-launcher</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+        <!-- Selenium WebDriver -->
         <dependency>
             <groupId>org.seleniumhq.selenium</groupId>
             <artifactId>selenium-java</artifactId>
@@ -25,7 +62,7 @@
             <scope>test</scope>
         </dependency>
 
-        <!-- Allure JUnit 5 Integration -->
+        <!-- Allure JUnit5 integration -->
         <dependency>
             <groupId>io.qameta.allure</groupId>
             <artifactId>allure-junit5</artifactId>
@@ -33,28 +70,26 @@
             <scope>test</scope>
         </dependency>
 
-        <!-- WebDriver Manager -->
+        <!-- WebDriverManager for auto‐driver resolution -->
         <dependency>
             <groupId>io.github.bonigarcia</groupId>
             <artifactId>webdrivermanager</artifactId>
             <version>5.9.2</version>
         </dependency>
 
-        <!-- SLF4J API -->
+        <!-- SLF4J + Logback for logging -->
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>
             <version>2.0.0</version>
         </dependency>
-
-        <!-- Logback (SLF4J Implementation) -->
         <dependency>
             <groupId>ch.qos.logback</groupId>
             <artifactId>logback-classic</artifactId>
             <version>1.4.12</version>
         </dependency>
 
-        <!-- Apache POI for Excel Files -->
+        <!-- Apache POI for Excel reading/writing -->
         <dependency>
             <groupId>org.apache.poi</groupId>
             <artifactId>poi</artifactId>
@@ -71,80 +106,34 @@
             <version>5.1.1</version>
         </dependency>
         <dependency>
-            <groupId>org.apache.commons</groupId>
-            <artifactId>commons-collections4</artifactId>
-            <version>4.4</version>
-        </dependency>
-
-        <!-- JetBrains Annotations -->
-        <dependency>
-            <groupId>org.jetbrains</groupId>
-            <artifactId>annotations</artifactId>
-            <version>15.0</version>
-            <scope>compile</scope>
-        </dependency>
-
-        <!-- JUnit Platform Dependencies -->
-        <dependency>
-            <groupId>org.junit.platform</groupId>
-            <artifactId>junit-platform-suite-api</artifactId>
-            <version>1.10.0</version>
-            <scope>test</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>org.junit.platform</groupId>
-            <artifactId>junit-platform-launcher</artifactId>
-            <version>1.10.0</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-    <groupId>com.typesafe.akka</groupId>
-    <artifactId>akka-actor_2.13</artifactId>
-    <version>2.8.0</version>
-</dependency>
-
-
-        <dependency>
             <groupId>org.apache.logging.log4j</groupId>
             <artifactId>log4j-core</artifactId>
-            <version>2.20.0</version>
+            <version>2.20.0</version> <!-- o la versión que estés usando -->
         </dependency>
-    </dependencies>
 
-    <properties>
-        <maven.compiler.source>17</maven.compiler.source>
-        <maven.compiler.target>17</maven.compiler.target>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <maven.build.skip>false</maven.build.skip>
-    </properties>
+    </dependencies>
 
     <build>
         <plugins>
-            <!-- Maven Surefire Plugin for Running JUnit 5 Tests in Parallel -->
+            <!-- Surefire to run the tests -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
                 <version>3.0.0-M7</version>
                 <configuration>
-                    <!-- Habilitar ejecución en paralelo -->
-                    <parallel>methods</parallel>
-                    <!-- Número de hilos para ejecución paralela -->
-                    <threadCount>3</threadCount>
-                    <!-- Número de procesos en paralelo -->
-                    <forkCount>3</forkCount>
-                    <!-- Reutilizar procesos para mejorar el rendimiento -->
+                    <!-- Let JUnit 5 handle parallelization via junit-platform.properties -->
+                    <parallel>none</parallel>
+                    <threadCount>1</threadCount>
+                    <forkCount>1</forkCount>
                     <reuseForks>true</reuseForks>
-                    <!-- Deshabilitar ajuste automático de hilos según núcleos -->
                     <perCoreThreadCount>false</perCoreThreadCount>
-                    <!-- Configurar Allure results directory -->
                     <systemPropertyVariables>
                         <allure.results.directory>${project.build.directory}/allure-results</allure.results.directory>
                     </systemPropertyVariables>
                 </configuration>
             </plugin>
 
-            <!-- Allure Maven Plugin for Generating Reports -->
+            <!-- Allure Report generation -->
             <plugin>
                 <groupId>io.qameta.allure</groupId>
                 <artifactId>allure-maven</artifactId>
@@ -160,14 +149,4 @@
             </plugin>
         </plugins>
     </build>
-
-    <profiles>
-        <!-- Perfil para habilitar la ejecución de pruebas manualmente -->
-        <profile>
-            <id>run-tests</id>
-            <properties>
-                <skipTests>false</skipTests>
-            </properties>
-        </profile>
-    </profiles>
 </project>

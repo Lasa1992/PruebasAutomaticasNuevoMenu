@@ -20,10 +20,10 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-    public class SubastaLog {
+public class SubastaLog {
 
-        public static WebDriver driver;
-        public static WebDriverWait wait;
+    public static WebDriver driver;
+    public static WebDriverWait wait;
 
 
     // Guardamos aquí el RFC elegido en cada iteración
@@ -31,27 +31,27 @@ import java.util.regex.Pattern;
 
 
     // Clase interna Cliente
-        static class Cliente {
-            String rfc;
-            String email;
-            String contrasena;
+    static class Cliente {
+        String rfc;
+        String email;
+        String contrasena;
 
-            public Cliente(String rfc, String email, String contrasena) {
-                this.rfc = rfc;
-                this.email = email;
-                this.contrasena = contrasena;
-            }
+        public Cliente(String rfc, String email, String contrasena) {
+            this.rfc = rfc;
+            this.email = email;
+            this.contrasena = contrasena;
         }
+    }
 
-        @BeforeEach
-        public void setup() {
-            driver = new ChromeDriver();
-            wait = new WebDriverWait(driver, Duration.ofSeconds(4));
+    @BeforeEach
+    public void setup() {
+        driver = new ChromeDriver();
+        wait = new WebDriverWait(driver, Duration.ofSeconds(4));
 
-            driver.manage().window().maximize();
+        driver.manage().window().maximize();
 
-            driver.get("https://logisticav1.gmtransport.co/");
-        }
+        driver.get("https://logisticav1.gmtransport.co/");
+    }
 
     @AfterEach
     void tearDown() {
@@ -122,61 +122,61 @@ import java.util.regex.Pattern;
     }
 
 
-        @Description("Llena los campos de inicio de sesion con informacion.")
-        public static void Iniciosesion() {
-            Cliente[] clientes = {
-                    new Cliente("IIA040805DZ4", "elisa.logistica@gmtransporterp.com", "123456"),
-                    new Cliente("LOGI2222224T5", "logistico2@gmail.com", "123456"),
-                    new Cliente("LOGI3333335T6", "logi3@gmail.com", "123456"),
-                  //  new Cliente("LOGI4444445T6", "logi4@gmail.com", "123456"),
-                   // new Cliente("LOGI1111112Q4", "logistico1@gmail.com", "123456")
+    @Description("Llena los campos de inicio de sesion con informacion.")
+    public static void Iniciosesion() {
+        Cliente[] clientes = {
+                new Cliente("IIA040805DZ4", "elisa.logistica@gmtransporterp.com", "123456"),
+                new Cliente("LOGI2222224T5", "logistico2@gmail.com", "123456"),
+                new Cliente("LOGI3333335T6", "logi3@gmail.com", "123456"),
+                //  new Cliente("LOGI4444445T6", "logi4@gmail.com", "123456"),
+                // new Cliente("LOGI1111112Q4", "logistico1@gmail.com", "123456")
 
 
 
-            };
+        };
 
-            Random random = new Random();
-            Cliente cliente = clientes[random.nextInt(clientes.length)];
+        Random random = new Random();
+        Cliente cliente = clientes[random.nextInt(clientes.length)];
 
-            currentRFC = cliente.rfc;
-
-
-            WebElement inputRFC = wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//*[@id=\"outlined-adornment-rfc-login\"]")));
-            WebElement inputEmail = wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//*[@id=\"outlined-adornment-email-login\"]")));
-            WebElement inputContrasena = wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//*[@id=\"outlined-adornment-password-login\"]")));
+        currentRFC = cliente.rfc;
 
 
-            inputRFC.clear();
-            inputEmail.clear();
-            inputContrasena.clear();
+        WebElement inputRFC = wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//*[@id=\"outlined-adornment-rfc-login\"]")));
+        WebElement inputEmail = wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//*[@id=\"outlined-adornment-email-login\"]")));
+        WebElement inputContrasena = wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//*[@id=\"outlined-adornment-password-login\"]")));
 
-            inputRFC.sendKeys(cliente.rfc);
-            inputEmail.sendKeys(cliente.email);
-            inputContrasena.sendKeys(cliente.contrasena);
 
-            System.out.println("Intentando iniciar sesión con: " + cliente.email);
-        }
+        inputRFC.clear();
+        inputEmail.clear();
+        inputContrasena.clear();
 
-        @Description("Da clic en el botón de 'Iniciar sesión' para ingresar al sistema.")
-        public static void BotonIniciosesion() {
-            WebElement submitButton = wait.until(ExpectedConditions.elementToBeClickable(
-                    By.xpath("//*[@id=\"root\"]/div/div[1]/div[3]/div[2]/div/div[2]/form/div[4]/button")
-            ));
-            submitButton.click();
-        }
+        inputRFC.sendKeys(cliente.rfc);
+        inputEmail.sendKeys(cliente.email);
+        inputContrasena.sendKeys(cliente.contrasena);
 
-        @Description("Maneja la alerta de inicio de sesion en caso de tener una sesion ya abierta con el usuario.")
-        public static void MensajeAlerta() {
-            try {
-                Alert alert = wait.until(ExpectedConditions.alertIsPresent());
-                if (alert != null) {
-                    alert.accept();
-                    System.out.println("Alerta aceptada.");
-                }
-            } catch (Exception e) {
-                System.out.println("No se encontró una alerta o ocurrió un error.");
+        System.out.println("Intentando iniciar sesión con: " + cliente.email);
+    }
+
+    @Description("Da clic en el botón de 'Iniciar sesión' para ingresar al sistema.")
+    public static void BotonIniciosesion() {
+        WebElement submitButton = wait.until(ExpectedConditions.elementToBeClickable(
+                By.xpath("//*[@id=\"root\"]/div/div[1]/div[3]/div[2]/div/div[2]/form/div[4]/button")
+        ));
+        submitButton.click();
+    }
+
+    @Description("Maneja la alerta de inicio de sesion en caso de tener una sesion ya abierta con el usuario.")
+    public static void MensajeAlerta() {
+        try {
+            Alert alert = wait.until(ExpectedConditions.alertIsPresent());
+            if (alert != null) {
+                alert.accept();
+                System.out.println("Alerta aceptada.");
             }
+        } catch (Exception e) {
+            System.out.println("No se encontró una alerta o ocurrió un error.");
         }
+    }
 
     @Description("Maneja la alerta de inicio de sesión en caso de tener una sesión ya abierta con el usuario.")
     public static void BotonCrearSubasta() {
@@ -836,5 +836,3 @@ import java.util.regex.Pattern;
     }
 
 }
-
-
