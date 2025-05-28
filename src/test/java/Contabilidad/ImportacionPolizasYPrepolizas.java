@@ -207,20 +207,31 @@ public class ImportacionPolizasYPrepolizas {
     @Step("Importar archivo Excel")
     private void Importararchivo() {
         try {
+            // Ruta del archivo a importar
+            String rutaArchivo;
+            if ("TST080808000".equals(Variables.RFC)) {
+                rutaArchivo = "C:\\RepositorioPrueAuto\\XLSXPruebas\\ImportarPolizas 2025-05-22 KIJ TST08.xlsx";
+            } else {
+                rutaArchivo = "C:\\RepositorioPrueAuto\\XLSXPruebas\\ImportarPolizas.xlsx";
+            }
+
             WebElement fileInput = wait.until(ExpectedConditions.elementToBeClickable(
                     By.xpath("/html/body/form/table/tbody/tr/td/table/tbody/tr/td/div/table/tbody/tr[2]/td/div[1]/table/tbody/tr/td/table/tbody/tr[1]/td/div/table/tbody/tr/td/table/tbody/tr[1]/td/div/div[4]/div[1]/div/input")
             ));
-            fileInput.sendKeys("C:\\RepositorioPrueAuto\\XLSXPruebas\\ImportarPolizas.xlsx");
+            fileInput.sendKeys(rutaArchivo);
+
             WebElement uploadButton = wait.until(ExpectedConditions.elementToBeClickable(
                     By.xpath("/html/body/form/table/tbody/tr/td/table/tbody/tr/td/div/table/tbody/tr[2]/td/div[1]/table/tbody/tr/td/table/tbody/tr[1]/td/div/table/tbody/tr/td/table/tbody/tr[1]/td/div/div[4]/div[2]/div/table/tbody/tr/td/input")
             ));
             uploadButton.click();
+
             System.out.println("Importar Archivo: El archivo fue importado correctamente.");
             Thread.sleep(1000);
         } catch (Exception e) {
             UtilidadesAllure.manejoError(driver, e, "Error al importar archivo.");
         }
     }
+
 
     @Step("Aceptar mensaje de éxito")
     private void AceptarMensajeExito() {

@@ -403,8 +403,7 @@ public class FacturacionConceptoDescImpr {
             }
             WebElement botonSeleccionado = botonesValidos.get(new Random().nextInt(botonesValidos.size()));
             try {
-                System.out.println("Se hizo clic en el botón con ID: " + botonSeleccionado.getAttribute("id"));
-                botonSeleccionado.click();
+                System.out.println("No se mostro mensaje para enviar por correo la factura.");
             } catch (Exception e) {
                 System.out.println("Click() falló, intentando con JavaScript...");
                 ((JavascriptExecutor) driver).executeScript("arguments[0].click();", botonSeleccionado);

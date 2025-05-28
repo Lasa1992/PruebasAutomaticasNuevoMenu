@@ -37,10 +37,9 @@ public class PagoFactoraje {
 
     private static final String NUMERO_CLIENTE = Variables.CLIENTE; // Número de cliente configurable
     private double MontoaPAGAR;
+    private static String rutaArchivoFactoraje = "C:\\RepositorioPrueAuto\\XLSXPruebas\\Factoraje 27272.xml";
 
     private static final String Forma_Pago   = "TRANSFERENCIA ELECTRÓNICA DE FONDOS";
-    private static final String rutaArchivoFactoraje  = "C:\\RepositorioPrueAuto\\XLSXPruebas\\Factoraje 27272.xml";
-
 
     @BeforeEach
     public void setup() {
@@ -96,8 +95,8 @@ public class PagoFactoraje {
         AceptarFactura(); // Acepta la factura
         BotonConcurrenciaFactura();
         BotonTimbre(); // Timbrar la factura
-        //ValidarYEnviarCorreo(); // Validar posibles errores
-        //BotonPoliza(); // Aceptar botón generó póliza
+        ValidarYEnviarCorreo(); // Validar posibles errores
+        BotonPoliza(); // Aceptar botón generó póliza
         BotonImpresion(); // Regresar a la pantalla principal
 
         //Se genera la segunda factura
@@ -113,8 +112,8 @@ public class PagoFactoraje {
         AceptarFactura(); // Acepta la factura
         BotonConcurrenciaFactura();
         BotonTimbre(); // Timbrar la factura
-        //ValidarYEnviarCorreo(); // Validar posibles errores
-        //BotonPoliza(); // Aceptar botón generó póliza
+        ValidarYEnviarCorreo(); // Validar posibles errores
+        BotonPoliza(); // Aceptar botón generó póliza
         BotonImpresion(); // Regresar a la pantalla principal
 
 
@@ -622,10 +621,10 @@ public class PagoFactoraje {
             Select comboBox = new Select(comboBoxElement);
 
             // Texto exacto a buscar (ajusta si hay espacios no visibles como tabs u otros caracteres) para IIA
-            //String textoExacto = "0123456789 - BANAMEX PESOS";
+            String textoExacto = "0123456789 - BANAMEX PESOS";
 
             //Texto exacto a buscar (ajusta si hay espacios no visibles como tabs u otros caracteres) para IIA
-            String textoExacto = "014278945612378945 - BANCOMER 007"; // esta cuenta se debe de cambiar por bd a validar
+            //String textoExacto = "014278945612378945 - BANCOMER 007"; // esta cuenta se debe de cambiar por bd a validar
 
             // Intentar seleccionar la opción
             comboBox.selectByVisibleText(textoExacto);

@@ -87,6 +87,14 @@ public class LiquidacionOperativa   {
         MonedaCartaPorte();
         FolioRuta();
         NumeroEconomicoConvoy();
+
+        //Crear Anticipo desde Viaje
+        SeleccionarAsignarOperador();
+        seleccionarCheckboxAplicarAnticipo();
+        ingresarAnticipoAleatorio();
+        seleccionarBotonAceptarTrayecto();
+
+        //Continua con la creación de viaje
         SeleccionarPestanaMateriales();
         BotonImportarMaterial();
         ImportacionMaterial();
@@ -94,7 +102,7 @@ public class LiquidacionOperativa   {
         BotonAceptarViaje();
         BotonConcurrencia();
         AceptarMensajeTimbre();
-        EnvioCorreo();
+        //EnvioCorreo();
         BotonImpresion();
         SelecionarCartaporteListado();
         Darsalida();
@@ -454,10 +462,12 @@ public class LiquidacionOperativa   {
 
             WebElement boton;
             if (elegirSi) {
-                boton = wait.until(ExpectedConditions.elementToBeClickable(By.id("BTN_YES")));
+                boton = wait.until(ExpectedConditions.elementToBeClickable(
+                        By.xpath("//*[@id='BTN_YES']")));
                 System.out.println("Se eligió la opción Sí para el envío del correo.");
             } else {
-                boton = wait.until(ExpectedConditions.elementToBeClickable(By.id("BTN_NO")));
+                boton = wait.until(ExpectedConditions.elementToBeClickable(
+                        By.xpath("//*[@id='BTN_NO']")));
                 System.out.println("Se eligió la opción No para el envío del correo.");
             }
             boton.click();
@@ -466,6 +476,7 @@ public class LiquidacionOperativa   {
                     "Error al elegir entre Sí o No para el envío del correo de timbre");
         }
     }
+
 
     @Step("Cerrar Ventana de Impresión (BTN_REGRESAR)")
     private void BotonImpresion() {
@@ -1254,6 +1265,84 @@ public class LiquidacionOperativa   {
             System.err.println("Error inesperado al intentar dar clic en el botón Aceptar (Póliza): " + e.getMessage());
         }
     }
+
+    @Step("Seleccionar botón Asignar Camión")
+    private void SeleccionarAsignarOperador() {
+        try {
+            WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
+
+            WebElement botonAsignarCamion = wait.until(ExpectedConditions.elementToBeClickable(
+                    By.xpath("//*[@id='BTN_ASIGNARCAMION']")));
+
+            botonAsignarCamion.click();
+
+            System.out.println("✅ Botón 'Asignar Camión' fue seleccionado correctamente.");
+        } catch (Exception e) {
+            UtilidadesAllure.manejoError(driver, e, "❌ Error al hacer clic en el botón Asignar Camión.");
+        }
+    }
+
+    @Step("Seleccionar checkbox Aplicar Anticipo")
+    private void seleccionarCheckboxAplicarAnticipo() {
+        try {
+            WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
+
+            WebElement checkbox = wait.until(ExpectedConditions.elementToBeClickable(
+                    By.xpath("//*[@id='CBOX_APLICARANTICIPO_1']")));
+
+            if (!checkbox.isSelected()) {
+                checkbox.click();
+                System.out.println("✅ Checkbox 'Aplicar Anticipo' fue seleccionado.");
+            } else {
+                System.out.println("ℹ️ Checkbox 'Aplicar Anticipo' ya estaba seleccionado.");
+            }
+
+        } catch (Exception e) {
+            UtilidadesAllure.manejoError(driver, e, "❌ Error al seleccionar el checkbox Aplicar Anticipo.");
+        }
+    }
+
+    @Step("Ingresar anticipo aleatorio en el campo EDT_ANTICIPO")
+    private void ingresarAnticipoAleatorio() {
+        try {
+            WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
+
+            // Esperar a que el campo esté presente y habilitado
+            WebElement campoAnticipo = wait.until(ExpectedConditions.elementToBeClickable(
+                    By.xpath("//*[@id='EDT_ANTICIPO']")));
+
+            // Generar número aleatorio entre 100 y 999
+            int anticipo = new Random().nextInt(900) + 100;
+
+            // Limpiar el campo y enviar el valor
+            campoAnticipo.clear();
+            campoAnticipo.sendKeys(String.valueOf(anticipo));
+
+            System.out.println("✅ Anticipo ingresado: " + anticipo);
+
+        } catch (Exception e) {
+            UtilidadesAllure.manejoError(driver, e, "❌ Error al ingresar el anticipo aleatorio.");
+        }
+    }
+
+    @Step("Seleccionar botón Aceptar Trayecto")
+    private void seleccionarBotonAceptarTrayecto() {
+        try {
+            WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
+
+            // Espera a que el botón sea clickeable
+            WebElement botonAceptarTrayecto = wait.until(ExpectedConditions.elementToBeClickable(
+                    By.xpath("//*[@id='BTN_ACEPTARTRAYECTO']")));
+
+            botonAceptarTrayecto.click();
+            System.out.println("✅ Botón 'Aceptar Trayecto' seleccionado correctamente.");
+
+        } catch (Exception e) {
+            UtilidadesAllure.manejoError(driver, e, "❌ Error al seleccionar el botón 'Aceptar Trayecto'.");
+        }
+    }
+
+
 
 
 }

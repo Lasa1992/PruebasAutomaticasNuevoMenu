@@ -109,8 +109,8 @@ public class PagoFacturaViaje {
         SelecionaFactura(); // Selecciona la factura generada.
         AceptarFactura(); // Acepta la factura generada.
         AceptarTimbre(); // Acepta el proceso EDI relacionado con la factura.
-        EnvioCorreoFactura(); // Envía un correo para la factura generada (Sí/No).
-        AceptarPoliza(); // Acepta la póliza generada.
+        //EnvioCorreoFactura(); // Envía un correo para la factura generada (Sí/No).
+        //AceptarPoliza(); // Acepta la póliza generada.
         AceptarImpresion(); // Acepta el cuadro de diálogo de impresión.
 
 
@@ -128,8 +128,8 @@ public class PagoFacturaViaje {
         IntroducirReferencia(); // Introduce una referencia para el pago.
         AceptarPagoAbono(); // Acepta el pago/abono.
         TimbrePago(); // Acepta el timbre del pago.
-        EnvioCorreoPago(); // Envía un correo para el pago (Sí/No).
-        AceptarPolizaPago(); // Acepta la póliza del pago.
+        //EnvioCorreoPago(); // Envía un correo para el pago (Sí/No).
+        //AceptarPolizaPago(); // Acepta la póliza del pago.
         deseleccionarCampoFecha2(); // Deselecciona el campo de fecha.
         SalirVentanaPago(); // Sale de la ventana de pago.
 

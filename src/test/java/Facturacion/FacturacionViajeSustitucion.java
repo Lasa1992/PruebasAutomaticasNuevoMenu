@@ -107,8 +107,8 @@ public class FacturacionViajeSustitucion {
         AceptarFactura();
         BotonConcurrenciaFactura();
         AceptarTimbre();
-        //EnvioCorreoFactura();
-        //AceptarPoliza();
+        EnvioCorreoFactura();
+        AceptarPoliza();
         AceptarImpresion();
 
         // ======================
@@ -399,19 +399,31 @@ public class FacturacionViajeSustitucion {
             Random random = new Random();
             boolean elegirSi = random.nextBoolean();
 
-            WebElement boton;
-            if (elegirSi) {
-                boton = wait.until(ExpectedConditions.elementToBeClickable(By.id("BTN_YES")));
-                System.out.println("Se eligió la opción Sí para el envío del correo.");
-            } else {
-                boton = wait.until(ExpectedConditions.elementToBeClickable(By.id("BTN_NO")));
-                System.out.println("Se eligió la opción No para el envío del correo.");
-            }
+            // XPaths de los botones "Sí" y "No"
+            String xpathSi = "//*[@id=\"BTN_YES\"]";
+            String xpathNo = "//*[@id=\"BTN_NO\"]";
+
+            String xpathElegido = elegirSi ? xpathSi : xpathNo;
+            String opcion = elegirSi ? "Sí" : "No";
+
+            WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
+
+            // Esperar hasta que el botón esté presente y sea clickeable, refrescando si es necesario
+            WebElement boton = wait.until(ExpectedConditions.refreshed(
+                    ExpectedConditions.elementToBeClickable(By.xpath(xpathElegido))
+            ));
+
+            System.out.println("Se eligió la opción " + opcion + " para el envío del correo.");
             boton.click();
+
+        } catch (StaleElementReferenceException staleEx) {
+            System.out.println("Elemento obsoleto, reintentando...");
+            EnvioCorreo(); // reintenta
         } catch (Exception e) {
             UtilidadesAllure.manejoError(driver, e, "Error al elegir entre Sí o No para el envío del correo de timbre");
         }
     }
+
 
     @Step("Botón de Impresión")
     private void BotonImpresion() {
@@ -598,7 +610,7 @@ public class FacturacionViajeSustitucion {
         try {
             WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
             WebElement botonAgregar = wait.until(ExpectedConditions.elementToBeClickable(
-                    By.xpath("//*[@id='BTN_ACEPTAR']")));
+                    By.xpath("//*[@id=\"bzBTN_ACEPTAR\"]")));
 
             botonAgregar.click();
             System.out.println("Se ha hecho clic en el botón 'Agregar'.");
@@ -677,13 +689,14 @@ public class FacturacionViajeSustitucion {
     private static void AceptarPoliza() {
         try {
             WebElement aceptarPolizaButton = wait.until(ExpectedConditions.elementToBeClickable(
-                    By.id("BTN_OK")));
+                    By.xpath("//*[@id='BTN_OK']")));
             aceptarPolizaButton.click();
             System.out.println("Se presionó el botón de aceptar póliza");
         } catch (Exception e) {
             UtilidadesAllure.manejoError(driver, e, "Error al presionar el botón de aceptar póliza");
         }
     }
+
 
     private static void AceptarImpresion() {
         try {

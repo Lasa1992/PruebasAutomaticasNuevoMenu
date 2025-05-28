@@ -689,26 +689,23 @@ public class CartaPorteComercioExterior {
             System.out.println("Error al buscar la Carta Porte en el listado: " + e.getMessage());
         }
     }
-    ////*[@id="BTN_MODIFICAR"]
+
 
     public void BotonModificarCartaPorte() {
         try {
-            // Esperar a que el menú de opciones sea clickeable por XPath
-            WebElement menuModificar = wait.until(ExpectedConditions.elementToBeClickable(
-                    By.xpath("//*[@id=\"BTN_MODIFICAR\"]"))
+            // Esperar a que el botón 'Modificar' sea clickeable por XPath
+            WebElement botonModificar = wait.until(ExpectedConditions.elementToBeClickable(
+                    By.xpath("//*[@id='BTN_MODIFICAR']"))
             );
 
-            ((JavascriptExecutor) driver).executeScript("arguments[0].scrollIntoView(true);", menuModificar);
-            ((JavascriptExecutor) driver).executeScript("arguments[0].click();", menuModificar);
-            Thread.sleep(1000); // Espera breve antes de continuar
+            // Scroll hasta el botón para asegurarse de que esté visible
+            ((JavascriptExecutor) driver).executeScript("arguments[0].scrollIntoView(true);", botonModificar);
 
-            // Esperar y hacer clic en la opción "Modificar"
-            WebElement opcionModificar = wait.until(ExpectedConditions.elementToBeClickable(
-                    By.xpath("//*[@id=\"BTN_MODIFICAR\"]"))
-            );
+            // Hacer clic en el botón de 'Modificar'
+            botonModificar.click();  // Directamente con el clic, sin necesidad de JavascriptExecutor aquí
 
-            ((JavascriptExecutor) driver).executeScript("arguments[0].scrollIntoView(true);", opcionModificar);
-            ((JavascriptExecutor) driver).executeScript("arguments[0].click();", opcionModificar);
+            // Si la página tiene cambios dinámicos, espera a que el siguiente paso esté disponible
+            wait.until(ExpectedConditions.stalenessOf(botonModificar));  // Espera que el botón ya no esté presente si la página cambia
 
             System.out.println("Se hizo clic en la opción 'Modificar'.");
 
@@ -718,12 +715,13 @@ public class CartaPorteComercioExterior {
     }
 
 
+
     @Step("Seleccionar Pestaña de Materiales Carga")
     private void SeleccionarPestanaMateriales2() {
         try {
             // Esperar a que la pestaña esté visible usando XPath
             WebElement pestana = wait.until(ExpectedConditions.visibilityOfElementLocated(
-                    By.xpath("//*[@id=\"TAB_TAB1_2\"]/div/a")
+                    By.xpath("//*[@id=\"TAB_TAB1_2\"]")
             ));
 
             // Buscar el <a> interno

@@ -550,10 +550,16 @@ public class FacturacionViajeComplemento {
 
     private static void AceptarTimbre() {
         try {
-            WebElement aceptarEDIButton = wait.until(ExpectedConditions.elementToBeClickable(By.id("BTN_YES")));
+            WebElement aceptarEDIButton = wait.until(ExpectedConditions.elementToBeClickable(
+                    By.xpath("//*[@id=\"BTN_YES\"]")));
+
+            // Esperar 5 segundos antes de hacer clic
+            Thread.sleep(5000);
+
             aceptarEDIButton.click();
             System.out.println("Se presionó el botón de aceptar timbre");
         } catch (Exception e) {
+            System.out.println("No se encontró el botón de aceptar timbre o hubo un error al hacer clic.");
             UtilidadesAllure.manejoError(driver, e, "Error al presionar el botón de aceptar timbre");
         }
     }
