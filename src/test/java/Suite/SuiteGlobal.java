@@ -6,6 +6,10 @@ import Contabilidad.*;
 import CuentasPorPagar.*;
 import Facturacion.*;
 import Indicadores.*;
+import Inventarios.Compras;
+import Mantenimiento.CargaCombus;
+import Mantenimiento.DescargaCombus;
+import Mantenimiento.OrdenesServicio;
 import Trafico.*;
 import org.junit.jupiter.api.*;
 import org.junit.platform.engine.TestExecutionResult;
@@ -54,30 +58,31 @@ public class SuiteGlobal {
     private Map<String, TestResult> ejecutarPruebasEnNavegador(String navegador) {
         Class<?>[] pruebas = {
 
-                // Indicadores
+        // Indicadores
                 IndicadoresTest.class,
                 ParametrosGenerales.class,
-
-// Bancos
+        // Bancos
                 ChequesModElim.class,
                 MovimientoBancarioModElim.class,
-
-// Cobranza
+        // Inventarios
+                Compras.class,
+        //Mantenimiento
+                OrdenesServicio.class,
+                DescargaCombus.class,
+                CargaCombus.class,
+        // Cobranza
                 PagoFacturaConcepto.class,
                 PagoFacturaViaje.class,
                 PagoConsolidado.class,
                 PagoContraReciboSustitucion.class,
                 PagoFactoraje.class,
                 PagoSaldoAFavor.class,
-
-// Cuentas por pagar
+        // Cuentas por pagar
                 PagoPasivos.class,
-
-// Contabilidad
+        // Contabilidad
                 ImportacionPolizasYPrepolizas.class,
                 PolizaManual.class,
-
-// Facturación
+        // Facturación
                 FacturacionGeneral.class,
                 FacturacionGeneralDescImpr.class,
                 FacturacionGeneralSustitucion.class,
@@ -86,8 +91,7 @@ public class SuiteGlobal {
                 FacturacionConceptoDescImpr.class,
                 FacturacionListadoViajes.class,
                 FacturacionViajeSustitucion.class,
-
-// Tráfico
+        // Tráfico
                 CartaPorteComercioExterior.class,
                 CartaPorteImpresionDescarga.class,
                 CartaPorteSustitucion.class,

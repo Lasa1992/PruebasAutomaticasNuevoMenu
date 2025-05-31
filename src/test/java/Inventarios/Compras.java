@@ -24,6 +24,7 @@ public class Compras {
     private static String FolioRequisicion;
     private static String FolioOC;
     private static String FolioCompra;
+    //Se requiere generar en la bd que se valide la categoria de pasivo "PA" y almacen "ALMACÉN PA"
 
     @BeforeEach
     public void setup() {
@@ -361,21 +362,26 @@ public class Compras {
     @Step("Seleccionar botón GenerarOC y confirmar conceptos")
     private static void BotonGenerarOC() {
         try {
-            // Clic en el botón GenerarOC
+            // Esperar que no haya ningún overlay visible antes de hacer clic
+            wait.until(ExpectedConditions.invisibilityOfElementLocated(
+                    By.xpath("//div[contains(@style, 'z-index') and contains(@style,'opacity')]")
+            ));
+
+            // Esperar y hacer clic en el botón GenerarOC
             WebElement botonGenerarOC = wait.until(ExpectedConditions.elementToBeClickable(
-                    By.xpath("//*[@id=\"bzBTN_GENERAOC\"]")));
+                    By.xpath("//*[@id='bzBTN_GENERAOC']")));
             botonGenerarOC.click();
             System.out.println("Botón 'GenerarOC' fue clickeado correctamente.");
 
-            // Marcar checkbox 'Marcar todos los Artículos'
+            // Esperar a que el checkbox sea clickeable y hacer clic
             WebElement checkMarcarTodos = wait.until(ExpectedConditions.elementToBeClickable(
-                    By.xpath("//*[@id=\"CBOX_MARCARTODOSCONCEPTOS_1\"]")));
+                    By.xpath("//*[@id='CBOX_MARCARTODOSCONCEPTOS_1']")));
             checkMarcarTodos.click();
             System.out.println("Checkbox 'Marcar todos artículos' fue seleccionado.");
 
-            // Clic en el botón Aceptar
+            // Esperar a que el botón Aceptar sea clickeable y hacer clic
             WebElement botonAceptar = wait.until(ExpectedConditions.elementToBeClickable(
-                    By.xpath("//*[@id=\"BTN_ACEPTAR\"]")));
+                    By.xpath("//*[@id='BTN_ACEPTAR']")));
             botonAceptar.click();
             System.out.println("Botón 'Aceptar' fue clickeado correctamente.");
 
@@ -383,6 +389,7 @@ public class Compras {
             UtilidadesAllure.manejoError(driver, e, "Error al generar la OC y confirmar los conceptos.");
         }
     }
+
 
     @Step("Generar Orden de Compra - Clic en botón Aceptar y obtener folio de la OC")
     public void GenerarOC() {
@@ -511,7 +518,7 @@ public class Compras {
             Select selectMetodo = new Select(comboMetodoPago);
             selectMetodo.selectByVisibleText("PPD");
 
-            System.out.println("Pasivo de compra creado correctamente.");
+            System.out.println("Pasivo de compra creado correctamente: PA-" + folioRandom);
 
         } catch (Exception e) {
             UtilidadesAllure.manejoError(driver, e, "Error al crear el pasivo de compra.");
