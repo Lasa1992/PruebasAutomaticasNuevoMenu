@@ -365,18 +365,11 @@ public class FacturacionConceptoDescImpr {
 
     private void BotonTimbre() {
         try {
-            WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
-            wait.until(ExpectedConditions.presenceOfElementLocated(By.tagName("body")));
-
-            WebElement botonAceptar;
-            try {
-                botonAceptar = wait.until(ExpectedConditions.elementToBeClickable(By.id("BTN_YES")));
-            } catch (Exception noButton) {
-                System.out.println("El botón de aceptar Timbre no está disponible. Continuando...");
-                return;
-            }
+            WebElement botonAceptar = driver.findElement(By.xpath("//*[@id='BTN_YES']"));
+            // Espera que sea clickeable si existe
             botonAceptar.click();
             System.out.println("Se presionó el botón de aceptar Timbre");
+
         } catch (Exception e) {
             System.out.println("Error al presionar el botón de aceptar Timbre. Continuando...");
             e.printStackTrace();

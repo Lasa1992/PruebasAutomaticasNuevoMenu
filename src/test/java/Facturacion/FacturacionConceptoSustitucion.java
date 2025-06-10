@@ -333,11 +333,19 @@ public class FacturacionConceptoSustitucion {
 
     private void AceptarFactura() {
         try {
+            // Localizar el botón "Agregar" por su ID
             WebElement botonAgregar = driver.findElement(By.id("BTN_ACEPTAR"));
+
+            // Hacer clic en el botón
             botonAgregar.click();
+
+            // Imprimir un mensaje para confirmar que se ha hecho clic en el botón
             System.out.println("Se ha hecho clic en el botón 'Agregar'.");
+
         } catch (Exception e) {
+            //Captura el mensaje de error, toma una captura de pantalla y lo despliega en el reporte de Allure.
             UtilidadesAllure.manejoError(driver, e, null);
+            // Manejar cualquier excepción que ocurra
             System.out.println("Se ha producido un error al hacer clic en el botón 'Agregar': " + e.getMessage());
             e.printStackTrace();
         }
@@ -368,18 +376,8 @@ public class FacturacionConceptoSustitucion {
 
     private void BotonTimbre() {
         try {
-            WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
-            wait.until(ExpectedConditions.presenceOfElementLocated(By.tagName("body")));
-
-            // Verifica si el botón está presente antes de esperar que sea clickeable
-            List<WebElement> botones = driver.findElements(By.id("//*[@id=\"BTN_YES\"]"));
-            if (botones.isEmpty()) {
-                System.out.println("El botón de aceptar Timbre no está disponible. Continuando...");
-                return;
-            }
-
+            WebElement botonAceptar = driver.findElement(By.xpath("//*[@id='BTN_YES']"));
             // Espera que sea clickeable si existe
-            WebElement botonAceptar = wait.until(ExpectedConditions.elementToBeClickable(botones.get(0)));
             botonAceptar.click();
             System.out.println("Se presionó el botón de aceptar Timbre");
 

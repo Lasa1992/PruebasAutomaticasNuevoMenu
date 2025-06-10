@@ -390,21 +390,8 @@ public class FacturaConceptoTimbrada {
 
     private void BotonTimbre() {
         try {
-            WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
-
-            // Espera 3 segundos antes de continuar
-            wait.until(ExpectedConditions.presenceOfElementLocated(By.tagName("body")));
-
-            // Intentar localizar el botón "Aceptar"
-            WebElement botonAceptar;
-            try {
-                botonAceptar = wait.until(ExpectedConditions.elementToBeClickable(By.id("BTN_YES")));
-            } catch (Exception noButton) {
-                System.out.println("El botón de aceptar Timbre no está disponible. Continuando...");
-                return;
-            }
-
-            // Si el botón se encontró, hacer clic
+            WebElement botonAceptar = driver.findElement(By.xpath("//*[@id='BTN_YES']"));
+            // Espera que sea clickeable si existe
             botonAceptar.click();
             System.out.println("Se presionó el botón de aceptar Timbre");
 

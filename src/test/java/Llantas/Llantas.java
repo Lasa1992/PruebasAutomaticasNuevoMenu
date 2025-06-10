@@ -205,25 +205,20 @@ public class Llantas {
 
     private static void IngresarCostoLlanta() {
         try {
-            // Generar número aleatorio entre 30000 y 50000
+
+            // Generar número aleatorio entre 1000 y 1800
             Random random = new Random();
-            int costoLlanta = 10000 + random.nextInt(18001); // 50000 - 30000 + 1
+            int costoLlanta = 1000 + random.nextInt(801); // 1800 - 1000 + 1
 
             // Esperar a que el campo sea clickeable
-            WebElement campoCostoLlanta = wait.until(ExpectedConditions.elementToBeClickable(
-                    By.xpath("//*[@id=\"EDT_COSTOLLANTA\"]")));
+            WebElement campoCostoLlanta = driver.findElement(
+                    By.xpath("//*[@id=\"EDT_COSTOLLANTA\"]"));
 
             // Ingresar el valor generado
             campoCostoLlanta.click();
             Thread.sleep(3000);
-            campoCostoLlanta.clear();
-            campoCostoLlanta.clear();
-            campoCostoLlanta.click();
-            Thread.sleep(3000);
-            campoCostoLlanta.clear();
-            //campoCostoLlanta.sendKeys(String.valueOf(costoLlanta));
-            campoCostoLlanta.sendKeys("$" + 12515.000000); // Asegurarse de que el formato sea correcto
-            Thread.sleep(3000);
+            campoCostoLlanta.sendKeys(String.valueOf(costoLlanta));
+            campoCostoLlanta.sendKeys(Keys.TAB);
 
             System.out.println("Se ingresó el Costo de Llanta: $" + costoLlanta);
         } catch (Exception e) {
@@ -256,6 +251,8 @@ public class Llantas {
                 System.out.println("⚠️ Alerta detectada: " + alertText);
                 driver.switchTo().alert().accept(); // Cierra la alerta
             }
+
+            System.out.println("Botón 'Registrar Llanta' fue clickeado correctamente con número Económico: " + Economico);
 
             System.out.println("Se hizo clic en el botón 'Registrar Llanta' (BTN_ACEPTAR).");
         } catch (Exception e) {

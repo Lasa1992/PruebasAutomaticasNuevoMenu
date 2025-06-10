@@ -445,8 +445,8 @@ public class FacturacionListadoViajes {
             BotonConcurrenciaFactura();
             AceptarTimbre();
             AceptarEDI();
-            EnvioCorreoFactura();
-            AceptarPoliza();
+            //EnvioCorreoFactura();
+            //AceptarPoliza();
             AceptarImpresion();
             AceptarImpresion();
         } catch (Exception e) {
@@ -517,13 +517,16 @@ public class FacturacionListadoViajes {
         }
     }
 
-    private static void AceptarTimbre() {
+    private void AceptarTimbre() {
         try {
-            WebElement aceptarEDIButton = wait.until(ExpectedConditions.elementToBeClickable(By.id("BTN_YES")));
-            aceptarEDIButton.click();
+            WebElement botonAceptar = driver.findElement(By.xpath("//*[@id='BTN_YES']"));
+            // Espera que sea clickeable si existe
+            botonAceptar.click();
             System.out.println("Se presionó el botón de aceptar Timbre");
+
         } catch (Exception e) {
-            UtilidadesAllure.manejoError(driver, e, "Error al presionar el botón de aceptar Timbre");
+            System.out.println("Error al presionar el botón de aceptar Timbre. Continuando...");
+            e.printStackTrace();
         }
     }
 

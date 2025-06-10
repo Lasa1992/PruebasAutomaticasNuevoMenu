@@ -209,8 +209,8 @@ public class ImportacionPolizasYPrepolizas {
         try {
             // Ruta del archivo a importar
             String rutaArchivo;
-            if ("TST080808000".equals(Variables.RFC)) {
-                rutaArchivo = "C:\\RepositorioPrueAuto\\XLSXPruebas\\ImportarPolizas 2025-05-22 KIJ TST08.xlsx";
+            if ("CACX7605101P8".equals(Variables.RFC)) {
+                rutaArchivo = "C:\\RepositorioPrueAuto\\XLSXPruebas\\ImportarPolizas 2025-06-04 CACX.xlsx";
             } else {
                 rutaArchivo = "C:\\RepositorioPrueAuto\\XLSXPruebas\\ImportarPolizas.xlsx";
             }

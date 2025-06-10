@@ -507,22 +507,15 @@ public class FacturacionViajeComplemento {
         }
     }
 
-    private static void AceptarFactura() {
-        int intentos = 0;
-        boolean exito = false;
-        while (intentos < 3 && !exito) {
-            try {
-                WebElement aceptarButton = wait.until(ExpectedConditions.elementToBeClickable(By.id("BTN_ACEPTAR")));
-                aceptarButton.click();
-                System.out.println("Se presionó el botón de aceptar factura en el intento " + (intentos + 1));
-                exito = true;
-            } catch (Exception e) {
-                intentos++;
-                if (intentos == 3) {
-                    UtilidadesAllure.manejoError(driver, e, "Error al presionar el botón de aceptar factura");
-                    System.out.println("Error al presionar el botón de aceptar factura después de 3 intentos");
-                }
-            }
+    private void AceptarFactura() {
+        try {
+            WebElement botonAgregar = driver.findElement(By.xpath("//*[@id=\"BTN_ACEPTAR\"]"));
+            botonAgregar.click();
+            System.out.println("Se ha hecho clic en el botón 'Agregar'.");
+        } catch (Exception e) {
+            UtilidadesAllure.manejoError(driver, e, null);
+            System.out.println("Se ha producido un error al hacer clic en el botón 'Agregar': " + e.getMessage());
+            e.printStackTrace();
         }
     }
 

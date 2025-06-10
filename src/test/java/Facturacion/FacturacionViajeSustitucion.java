@@ -610,7 +610,7 @@ public class FacturacionViajeSustitucion {
         try {
             WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
             WebElement botonAgregar = wait.until(ExpectedConditions.elementToBeClickable(
-                    By.xpath("//*[@id=\"bzBTN_ACEPTAR\"]")));
+                    By.xpath("//*[@id=\"BTN_ACEPTAR\"]")));
 
             botonAgregar.click();
             System.out.println("Se ha hecho clic en el botón 'Agregar'.");
