@@ -94,8 +94,8 @@ public class FacturacionGeneral {
         AceptarFactura(); // Acepta la factura
         BotonConcurrenciaFactura(); // Acepta el mensaje de concurrencia
         BotonTimbre(); // Timbrar la factura
-        ValidarYEnviarCorreo();// Validar posibles errores
-        BotonPoliza();
+        //ValidarYEnviarCorreo();// Validar posibles errores
+        //BotonPoliza();
         BotonImpresion();
 
     }

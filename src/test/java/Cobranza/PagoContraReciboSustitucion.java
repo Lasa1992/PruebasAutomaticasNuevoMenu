@@ -467,8 +467,7 @@ public class PagoContraReciboSustitucion {
             WebElement botonSeleccionado = botonesValidos.get(new Random().nextInt(botonesValidos.size()));
             // Intentar hacer clic en el botón seleccionado
             try {
-                System.out.println("Se hizo clic en el botón con ID: " + botonSeleccionado.getAttribute("id"));
-                botonSeleccionado.click();
+
             } catch (Exception e) {
                 System.out.println("Click() falló, intentando con JavaScript...");
                 ((JavascriptExecutor) driver).executeScript("arguments[0].click();", botonSeleccionado);

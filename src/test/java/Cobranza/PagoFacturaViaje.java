@@ -597,9 +597,9 @@ public class PagoFacturaViaje {
         try {
             // Espera explícita hasta que el checkbox de la factura sea visible y clicable
             WebElement facturaCheckbox = wait.until(ExpectedConditions.elementToBeClickable(
-                    By.id("_0_TABLE_PROVIAJES_0")));
+                    By.xpath("//*[@id='_0_TABLE_PROVIAJES_0']")));
 
-            // Seleccionar el checkbox de la factura
+            // Seleccionar el checkbox de la factura si no está seleccionado
             if (!facturaCheckbox.isSelected()) {
                 facturaCheckbox.click();
             }
@@ -610,13 +610,14 @@ public class PagoFacturaViaje {
         }
     }
 
+
     private static void AceptarFactura() {
         try {
             // Inicialización de WebDriverWait
             WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(3));
 
             WebElement aceptarButton = wait.until(ExpectedConditions.elementToBeClickable(
-                    By.xpath("/html/body/form/table/tbody/tr/td/table/tbody/tr/td/div/table/tbody/tr[2]/td/div[1]/table/tbody/tr/td/table/tbody/tr[1]/td/div/div[3]/div[6]/div/table/tbody/tr/td/a/span")
+                    By.xpath("//*[@id=\"BTN_ACEPTAR\"]")
             ));
             aceptarButton.click();
             System.out.println("Se presionó el botón de aceptar factura.");

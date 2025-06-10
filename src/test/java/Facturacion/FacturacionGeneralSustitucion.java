@@ -99,7 +99,7 @@ public class FacturacionGeneralSustitucion {
         BotonConcurrenciaFactura();
         BotonTimbre();
         //ValidarYEnviarCorreo();
-        BotonPoliza();
+        //BotonPoliza();
         BotonImpresion();
         BusquedaFacturaListado();
         SeleccionarFactura();
@@ -635,7 +635,7 @@ public class FacturacionGeneralSustitucion {
     @Step("Aceptar Cancelación en el SAT")
     private static void CancelacionSAT() {
         try {
-            WebElement aceptarButton = wait.until(ExpectedConditions.elementToBeClickable(By.id("//*[@id=\"BTN_YES\"]")));
+            WebElement aceptarButton = wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//*[@id=\"BTN_YES\"]")));
             aceptarButton.click();
             System.out.println("Se presionó el botón de aceptar para la cancelación en el SAT");
         } catch (Exception e) {

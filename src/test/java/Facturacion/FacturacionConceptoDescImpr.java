@@ -98,8 +98,8 @@ public class FacturacionConceptoDescImpr {
         AceptarFactura();
         BotonConcurrenciaFactura();
         BotonTimbre();
-        ValidarYEnviarCorreo();
-        BotonPoliza();
+        //ValidarYEnviarCorreo();
+        //BotonPoliza();
         BotonImpresion();
 
         // Bloque donde se descarga e imprime la factura

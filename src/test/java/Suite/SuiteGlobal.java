@@ -10,6 +10,7 @@ import Inventarios.Compras;
 import Mantenimiento.CargaCombus;
 import Mantenimiento.DescargaCombus;
 import Mantenimiento.OrdenesServicio;
+import Nominas.PrenominaCalculoCierrePago;
 import Trafico.*;
 import org.junit.jupiter.api.*;
 import org.junit.platform.engine.TestExecutionResult;
@@ -26,7 +27,7 @@ import java.util.concurrent.*;
 public class SuiteGlobal {
 
     private static final String[] NAVEGADORES = {"chrome",/*firefox","edge"*/};
-    private static final int NUMERO_HILOS =2;
+    private static final int NUMERO_HILOS =4; // Número de hilos para ejecutar pruebas en paralelo
     private static final ExecutorService executorService = Executors.newFixedThreadPool(NUMERO_HILOS);
 
     // Mapa global para almacenar los resultados de todas las pruebas en todos los navegadores
@@ -98,7 +99,9 @@ public class SuiteGlobal {
                 CopiarCartaPorte.class,
                 ViajeACartaPorte.class,
                 LiquidacionFiscal.class,
-                LiquidacionOperativa.class
+                LiquidacionOperativa.class,
+        // Nóminas
+                PrenominaCalculoCierrePago.class
         };
 
         Map<String, TestResult> resultados = new LinkedHashMap<>();

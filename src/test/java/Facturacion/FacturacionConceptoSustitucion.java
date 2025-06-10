@@ -97,8 +97,8 @@ public class FacturacionConceptoSustitucion {
         AceptarFactura();
         BotonConcurrenciaFactura();
         BotonTimbre();
-        ValidarYEnviarCorreo();
-        BotonPoliza();
+        //ValidarYEnviarCorreo();
+        //BotonPoliza();
         BotonImpresion();
 
         // Bloque donde se sustituirá la factura
@@ -458,14 +458,16 @@ public class FacturacionConceptoSustitucion {
 
     private static void BusquedaFacturaListado() {
         try {
+            // Buscar el campo de búsqueda con XPath en lugar de CSS Selector
             WebElement busquedaField = wait.until(ExpectedConditions.visibilityOfElementLocated(
-                    By.cssSelector("input[type='search'][aria-controls='TABLE_ProFacturasPorConcepto']")));
+                    By.xpath("//input[@type='search' and @aria-controls='TABLE_ProFacturasPorConcepto']")));
 
             busquedaField.clear();
             busquedaField.sendKeys(FolioFactura);
             System.out.println("Se ingresó el folio de la factura para su búsqueda: " + FolioFactura);
             busquedaField.sendKeys(Keys.ENTER);
 
+            // Esperar a que la tabla muestre el folio buscado
             wait.until(ExpectedConditions.textToBePresentInElementLocated(
                     By.xpath("//table[@id='TABLE_ProFacturasPorConcepto']//tbody"), FolioFactura));
 
@@ -474,6 +476,7 @@ public class FacturacionConceptoSustitucion {
             UtilidadesAllure.manejoError(driver, e, "Error al buscar la factura: " + FolioFactura);
         }
     }
+
 
     @Step("Seleccionar Factura en el Listado")
     private static void SeleccionarFactura() {
@@ -632,18 +635,23 @@ public class FacturacionConceptoSustitucion {
 
             WebElement botonAceptar;
             try {
-                botonAceptar = wait.until(ExpectedConditions.elementToBeClickable(By.id("BTN_YES")));
+                // Usar XPath en lugar de ID
+                botonAceptar = wait.until(ExpectedConditions.elementToBeClickable(
+                        By.xpath("//*[@id='BTN_YES']")));
             } catch (Exception noButton) {
                 System.out.println("El botón de aceptar Timbre no está disponible. Continuando...");
                 return;
             }
+
             botonAceptar.click();
             System.out.println("Se presionó el botón de aceptar Timbre");
+
         } catch (Exception e) {
             System.out.println("Error al presionar el botón de aceptar Timbre. Continuando...");
             e.printStackTrace();
         }
     }
+
 
     @Step("Enviar Correo Después de Sustitución")
     private static void CorreoDesspuesSustitucion() {

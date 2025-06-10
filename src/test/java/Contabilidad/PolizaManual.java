@@ -213,7 +213,8 @@ public class PolizaManual {
 
             // Forzar la escritura del nuevo valor
             //String valor = "000-000-000012"; // Cambia esto por el valor que necesites este es de IIA
-            String valor = "101-001-000000"; // Cambia esto por el valor que necesites este es de TST08 o KIJ
+            //String valor = "101-001-000000"; // Cambia esto por el valor que necesites este es de TST08 o KIJ
+            String valor = "201-001-000001"; // Cambia esto por el valor que necesites este es de cacx
             js.executeScript("arguments[0].value = arguments[1];", campoCuenta, valor);
             js.executeScript("arguments[0].dispatchEvent(new Event('change'));", campoCuenta);
 

@@ -95,8 +95,8 @@ public class PagoFactoraje {
         AceptarFactura(); // Acepta la factura
         BotonConcurrenciaFactura();
         BotonTimbre(); // Timbrar la factura
-        ValidarYEnviarCorreo(); // Validar posibles errores
-        BotonPoliza(); // Aceptar botón generó póliza
+        //ValidarYEnviarCorreo(); // Validar posibles errores
+        //BotonPoliza(); // Aceptar botón generó póliza
         BotonImpresion(); // Regresar a la pantalla principal
 
         //Se genera la segunda factura
@@ -112,8 +112,8 @@ public class PagoFactoraje {
         AceptarFactura(); // Acepta la factura
         BotonConcurrenciaFactura();
         BotonTimbre(); // Timbrar la factura
-        ValidarYEnviarCorreo(); // Validar posibles errores
-        BotonPoliza(); // Aceptar botón generó póliza
+        //ValidarYEnviarCorreo(); // Validar posibles errores
+        //BotonPoliza(); // Aceptar botón generó póliza
         BotonImpresion(); // Regresar a la pantalla principal
 
 
@@ -135,8 +135,8 @@ public class PagoFactoraje {
         IntroducirReferencia(); // Introduce una referencia para el pago de factoraje
         AceptarPagoAbono(); // Acepta el pago/abono.
         TimbrePago(); // Acepta el timbre del pago.
-        EnvioCorreoPago(); // Envía un correo para el pago (Sí/No).
-        AceptarPolizaPago(); // Acepta la póliza del pago.
+        //EnvioCorreoPago(); // Envía un correo para el pago (Sí/No).
+        //AceptarPolizaPago(); // Acepta la póliza del pago.
         deseleccionarCampoFecha2(); // Deselecciona el campo de fecha.
         SalirVentanaPago(); // Sale de la ventana de pago.
     }
@@ -610,7 +610,7 @@ public class PagoFactoraje {
         }
     }
 
-    @Step("Seleccionar cuenta bancaria específica: 0123456789 - BANAMEX PESOS")
+    @Step("Seleccionar cuenta bancaria")
     public void SeleccionarCuentaBancaria() {
         try {
             // Localizar el combo box
@@ -620,8 +620,10 @@ public class PagoFactoraje {
             // Instanciar Select
             Select comboBox = new Select(comboBoxElement);
 
+            String textoExacto = "014278945612378945 - BBVA 8945"; // Ajusta este texto según la cuenta que necesites seleccionar funciona en CACX
+
             // Texto exacto a buscar (ajusta si hay espacios no visibles como tabs u otros caracteres) para IIA
-            String textoExacto = "0123456789 - BANAMEX PESOS";
+            //String textoExacto = "0123456789 - BANAMEX PESOS";
 
             //Texto exacto a buscar (ajusta si hay espacios no visibles como tabs u otros caracteres) para IIA
             //String textoExacto = "014278945612378945 - BANCOMER 007"; // esta cuenta se debe de cambiar por bd a validar

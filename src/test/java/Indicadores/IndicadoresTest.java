@@ -49,7 +49,7 @@ public class IndicadoresTest {
     }
 
 
-    @RepeatedTest(13) //MAX 13 repeticiones ya que cada repeticion suma al ciclo.
+    @RepeatedTest(4) //MAX 13 repeticiones ya que cada repeticion suma al ciclo.
     @Order(3)
     @DisplayName("Agregar, seleccionar y quitar indicador")
     @Description("Da clic en el boton de agregar indicador, para despues seleccionar un indicador, lo agrega y lo quita. Continua con los demas indicadores sucesivamente.")

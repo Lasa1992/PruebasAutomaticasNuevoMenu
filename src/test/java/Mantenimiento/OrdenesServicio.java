@@ -552,15 +552,15 @@ public class OrdenesServicio {
 
             // 4. Seleccionar "PA" en el combo de categorías de pasivos
             //si no se tiene el check de varias categorias de pasivos en pasivos se usa este check
-//            WebElement comboCategoria = wait.until(ExpectedConditions.elementToBeClickable(
-//                    By.xpath("//*[@id=\"COMBO_CATCATEGORIASPASIVOS\"]")));
-//            Select selectCategoria = new Select(comboCategoria);
-//            selectCategoria.selectByVisibleText("PA");
+            WebElement comboCategoria = wait.until(ExpectedConditions.elementToBeClickable(
+                    By.xpath("//*[@id=\"COMBO_CATCATEGORIASPASIVOS\"]")));
+            Select selectCategoria = new Select(comboCategoria);
+            selectCategoria.selectByVisibleText("PA");
 
-            WebElement campoCategoria = wait.until(ExpectedConditions.visibilityOfElementLocated(
-                    By.xpath("//*[@id=\"EDT_CODIGO\"]")));
-            campoCategoria.click();
-            campoCategoria.sendKeys("16");
+//            WebElement campoCategoria = wait.until(ExpectedConditions.visibilityOfElementLocated(
+//                    By.xpath("//*[@id=\"EDT_CODIGO\"]")));
+//            campoCategoria.click();
+//            campoCategoria.sendKeys("16");
 
             // 5. Seleccionar "PPD" en el combo de método de pago
             WebElement comboMetodoPago = wait.until(ExpectedConditions.elementToBeClickable(

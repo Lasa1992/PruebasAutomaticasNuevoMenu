@@ -121,7 +121,8 @@ public class CargaCombus {
             // Indicar valor "16" en el campo contenedor
             WebElement contenedor = wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//*[@id='EDT_CODIGOCONTENEDOR']")));
             contenedor.clear();
-            contenedor.sendKeys("16");
+            //contenedor.sendKeys("16"); // cuando es IIA
+            contenedor.sendKeys("05"); // cuando es CACX
 
             // Número aleatorio de 4 dígitos
             String numeroOrden = String.format("%04d", random.nextInt(10000));
@@ -130,9 +131,13 @@ public class CargaCombus {
             System.out.println("El número de comprobante generado es: " + numeroOrden);
 
             // Número aleatorio de 3 dígitos
-            String listros = String.format("%02d", random.nextInt(1000));
-            WebElement listrosSolicitados = wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//*[@id=\"EDT_LITROSCARGADOS\"]")));
+            int litros = 40 + random.nextInt(61); // genera un número entre 40 (inclusive) y 100 (inclusive)
+            String listros = String.valueOf(litros);
+
+            WebElement listrosSolicitados = wait.until(ExpectedConditions.elementToBeClickable(
+                    By.xpath("//*[@id=\"EDT_LITROSCARGADOS\"]")));
             listrosSolicitados.sendKeys(listros);
+
             System.out.println("El número de litros cargados es: " + listros);
 
             // Descripción concatenada
@@ -142,11 +147,28 @@ public class CargaCombus {
             // Botón Aceptar
             WebElement botonAceptar = wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//*[@id='BTN_ACEPTAR']")));
             botonAceptar.click();
+            System.out.println("Botón Aceptar fue clickeado correctamente y se genera la carga de combustible.");
 
         } catch (Exception e) {
             e.printStackTrace();
             throw new RuntimeException("Error en el método GenerarCarga: " + e.getMessage());
         }
     }
+
+    @Step("Hacer clic en el botón Aplicar")
+    private static void clickBotonAplicar() {
+        try {
+            // Esperar a que el botón Aplicar sea visible y clickeable
+            WebElement botonAplicar = wait.until(ExpectedConditions.elementToBeClickable(
+                    By.xpath("//*[@id='BTN_APLICAR']")));
+
+            botonAplicar.click();
+            System.out.println("Botón 'Aplicar' fue clickeado correctamente.");
+
+        } catch (Exception e) {
+            UtilidadesAllure.manejoError(driver, e, "Error al hacer clic en el botón Aplicar.");
+        }
+    }
+
 
 }

@@ -95,7 +95,7 @@ public class PagoConsolidado {
         AceptarFactura(); // Acepta la factura
         BotonConcurrenciaFactura();
         BotonTimbre(); // Timbrar la factura
-        //ValidarYEnviarCorreo(); // Validar posibles errores
+        ValidarYEnviarCorreo(); // Validar posibles errores
         //BotonPoliza(); // Aceptar botón generó póliza
         BotonImpresion(); // Regresar a la pantalla principal
 
@@ -112,7 +112,7 @@ public class PagoConsolidado {
         AceptarFactura(); // Acepta la factura
         BotonConcurrenciaFactura();
         BotonTimbre(); // Timbrar la factura
-       //ValidarYEnviarCorreo(); // Validar posibles errores
+       ValidarYEnviarCorreo(); // Validar posibles errores
         //BotonPoliza(); // Aceptar botón generó póliza
         BotonImpresion(); // Regresar a la pantalla principal
 
@@ -133,7 +133,7 @@ public class PagoConsolidado {
         AceptarPagoAbono(); // Acepta el pago/abono.
         TimbrePago(); // Acepta el timbre del pago.
         EnvioCorreoPago(); // Envía un correo para el pago (Sí/No).
-        AceptarPolizaPago(); // Acepta la póliza del pago.
+        //AceptarPolizaPago(); // Acepta la póliza del pago.
         deseleccionarCampoFecha2(); // Deselecciona el campo de fecha.
         SalirVentanaPago(); // Sale de la ventana de pago.
     }

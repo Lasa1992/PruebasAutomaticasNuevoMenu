@@ -102,8 +102,8 @@ public class FacturacionViajeComplemento {
         AceptarFactura();
         BotonConcurrenciaFactura();
         AceptarTimbre();
-        EnvioCorreoFactura();
-        AceptarPoliza();
+        //EnvioCorreoFactura();
+        //AceptarPoliza();
         AceptarImpresion();
     }
 

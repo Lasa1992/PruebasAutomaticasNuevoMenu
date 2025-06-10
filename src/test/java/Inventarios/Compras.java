@@ -12,6 +12,7 @@ import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.Select;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
+import java.util.List;
 import java.util.Random;
 
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
@@ -353,7 +354,7 @@ public class Compras {
             WebElement botonAutorizar = wait.until(ExpectedConditions.elementToBeClickable(
                     By.xpath("//*[@id=\"bzBTN_AUTORIZAR\"]")));
             botonAutorizar.click();
-            System.out.println("Botón 'Autorizar' fue clickeado correctamente.");
+            System.out.println("Botón 'Autorizar' del listado de requisiciones fue clickeado correctamente.");
         } catch (Exception e) {
             UtilidadesAllure.manejoError(driver, e, "Error al hacer clic en el botón Autorizar.");
         }
@@ -362,24 +363,26 @@ public class Compras {
     @Step("Seleccionar botón GenerarOC y confirmar conceptos")
     private static void BotonGenerarOC() {
         try {
-            // Esperar que no haya ningún overlay visible antes de hacer clic
-            wait.until(ExpectedConditions.invisibilityOfElementLocated(
-                    By.xpath("//div[contains(@style, 'z-index') and contains(@style,'opacity')]")
-            ));
+            // 1. Esperar a que desaparezca el overlay (si existe) usando XPath
+            List<WebElement> overlays = driver.findElements(
+                    By.xpath("//div[contains(@style, 'z-index') and contains(@style,'opacity')]"));
+            if (!overlays.isEmpty()) {
+                wait.until(ExpectedConditions.invisibilityOf(overlays.get(0)));
+            }
 
-            // Esperar y hacer clic en el botón GenerarOC
+            // 2. Clic en el botón GenerarOC
             WebElement botonGenerarOC = wait.until(ExpectedConditions.elementToBeClickable(
-                    By.xpath("//*[@id='bzBTN_GENERAOC']")));
+                    By.xpath("//*[@id='BTN_GENERAOC']")));
             botonGenerarOC.click();
-            System.out.println("Botón 'GenerarOC' fue clickeado correctamente.");
+            System.out.println("Botón 'GenerarOC' fue clickeado correctamente desde el listado de Requisiciones.");
 
-            // Esperar a que el checkbox sea clickeable y hacer clic
+            // 3. Clic en checkbox de marcar todos los artículos
             WebElement checkMarcarTodos = wait.until(ExpectedConditions.elementToBeClickable(
-                    By.xpath("//*[@id='CBOX_MARCARTODOSCONCEPTOS_1']")));
+                    By.xpath("//*[@id=\"CBOX_MARCARTODOSCONCEPTOS_1\"]")));
             checkMarcarTodos.click();
             System.out.println("Checkbox 'Marcar todos artículos' fue seleccionado.");
 
-            // Esperar a que el botón Aceptar sea clickeable y hacer clic
+            // 4. Clic en botón Aceptar
             WebElement botonAceptar = wait.until(ExpectedConditions.elementToBeClickable(
                     By.xpath("//*[@id='BTN_ACEPTAR']")));
             botonAceptar.click();
@@ -508,7 +511,7 @@ public class Compras {
 
             // 4. Seleccionar "PA" en el combo de categorías de pasivos
             WebElement comboCategoria = wait.until(ExpectedConditions.elementToBeClickable(
-                    By.xpath("//*[@id=\"COMBO_CATCATEGORIASPASIVOS\"]")));
+                    By.xpath("//*[@id=\"COMBO_CATEGORIASPROVEEDOR\"]")));
             Select selectCategoria = new Select(comboCategoria);
             selectCategoria.selectByVisibleText("PA");
 

@@ -695,7 +695,7 @@ public class CartaPorteComercioExterior {
         try {
             // Esperar a que el botón 'Modificar' sea clickeable por XPath
             WebElement botonModificar = wait.until(ExpectedConditions.elementToBeClickable(
-                    By.xpath("//*[@id='BTN_MODIFICAR']"))
+                    By.xpath("//*[@id=\"OPT_MODIFICAR\"]"))
             );
 
             // Scroll hasta el botón para asegurarse de que esté visible

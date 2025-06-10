@@ -118,7 +118,8 @@ public class DescargaCombus {
             // 2. Indicar valor "16" en el campo contenedor
             WebElement contenedor = wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//*[@id='EDT_CODIGOCONTENEDOR']")));
             contenedor.clear();
-            contenedor.sendKeys("16");
+            //contenedor.sendKeys("16"); // cuando es IIA/
+            contenedor.sendKeys("05"); // cuando es CACX
 
             // 3. Fecha actual en formato DD/MM/YYYY
             // Obtener la fecha desde el campo EDT_FECHA
