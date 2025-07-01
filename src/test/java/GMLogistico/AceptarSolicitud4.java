@@ -18,7 +18,7 @@ import java.util.concurrent.ThreadLocalRandom;
 import java.util.stream.Collectors;
 
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-public class AceptarSolicitud2 {
+public class AceptarSolicitud4 {
 
     public static WebDriver driver;
     public static WebDriverWait wait;
@@ -86,7 +86,7 @@ public class AceptarSolicitud2 {
         MensajeAlerta();
     }
 
-    @RepeatedTest(256)
+    @RepeatedTest(439)
     @Order(2)
     @Description("Aceptar Postulacion")
     public void AceptarPostulacionAleatoria() {
@@ -163,7 +163,7 @@ public class AceptarSolicitud2 {
                 new Cliente("LOGI1111112Q4", "logistico1@gmail.com", "123456")
         };
 
-        Cliente cliente = clientes[1];
+        Cliente cliente = clientes[3];
 
         currentRFC = cliente.rfc;
 

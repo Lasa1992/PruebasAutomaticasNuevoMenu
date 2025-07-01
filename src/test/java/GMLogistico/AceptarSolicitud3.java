@@ -5,11 +5,17 @@ import org.junit.jupiter.api.*;
 import org.openqa.selenium.*;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
+import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
 import java.time.Duration;
+import java.util.Arrays;
 import java.util.List;
+import java.util.Random;
+import java.util.Set;
+import java.util.concurrent.ThreadLocalRandom;
+import java.util.stream.Collectors;
 
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class AceptarSolicitud3 {
@@ -34,14 +40,33 @@ public class AceptarSolicitud3 {
     @BeforeAll
     public static void setup() {
         ChromeOptions options = new ChromeOptions();
-        options.addArguments("--headless=new"); // Modo headless usando el nuevo modo de Chrome
-        options.addArguments("--window-size=1920,1080"); // Definir tamaño para evitar problemas de render
-        options.addArguments("--disable-gpu"); // Opcional, para compatibilidad total
-        options.addArguments("--no-sandbox"); // Opcional, para ambientes Linux o CI
+        // Forzar headless de forma standard y legacy
+        options.addArguments("--headless=new");
+        options.addArguments("--headless");         // fallback
+        // Evitar infobars y mensajes de automatización
+        options.setExperimentalOption("excludeSwitches",
+                Arrays.asList("enable-automation", "enable-logging"));
+        options.setExperimentalOption("useAutomationExtension", false);
+        // Deshabilitar shortcuts que abren DevTools
+        options.addArguments("--disable-dev-shm-usage");
+        options.addArguments("--disable-features=IsolateOrigins,site-per-process");
+        // Tamaño de ventana y sandbox
+        options.addArguments("--window-size=1920,1080");
+        options.addArguments("--no-sandbox");
+        options.addArguments("--disable-gpu");
 
         driver = new ChromeDriver(options);
+        // Inyectar en Chrome un pequeño snippet para desactivar F12 / Ctrl+Shift+I
+        ((JavascriptExecutor) driver).executeScript(
+                "window.addEventListener('keydown', e => { " +
+                        "  if ((e.key === 'F12') || (e.ctrlKey && e.shiftKey && e.key==='I')) {" +
+                        "    e.preventDefault(); e.stopPropagation();" +
+                        "  }" +
+                        "});"
+        );
+
         wait = new WebDriverWait(driver, Duration.ofSeconds(20));
-        driver.manage().window().maximize();
+        driver.manage().window().setSize(new Dimension(1920, 1080));
         driver.get("https://logisticav1.gmtransport.co/");
     }
 
@@ -61,24 +86,31 @@ public class AceptarSolicitud3 {
         MensajeAlerta();
     }
 
-    @RepeatedTest(2100)
+    @RepeatedTest(150)
     @Order(2)
-    @Description("Generación de Cheque con Datos Aleatorios")
-    public void AceptarSolicitud() {
+    @Description("Aceptar Postulacion")
+    public void AceptarPostulacionAleatoria() {
         try {
-            ClickBotonCompletos();
+
+            clickTabCompletos();
+            pause();
             ClickIconoPostulaciones();
+            pause();
             BotonAceptarSolicitud();
-            CheckDocumento();
-            ValidarTablaYSubirDocumento();
+            pause();
             clickBotonEnviarAceptacion();
-            clickBotonAceptar();
+            pause();
+            clickBotonAceptarConfirmacion();
+            pause();
+
+
+
         } catch (Exception e) {
-            System.out.println("Error dentro de AceptarSolicitud(): " + e.getMessage());
+            System.out.println("Error dentro de Aceptar Postulacion(): " + e.getMessage());
             try {
                 regresarAPaginaSubasta();
             } catch (Exception ex) {
-                System.out.println("No se pudo regresar a Subasta. Reiniciando sesión...");
+                System.out.println("No se pudo regresar al listado de Subastas. Reiniciando sesión...");
                 reiniciarSesionDesdeCero();
             }
         }
@@ -92,7 +124,7 @@ public class AceptarSolicitud3 {
             }
 
             driver = new ChromeDriver();
-            wait = new WebDriverWait(driver, Duration.ofSeconds(10));
+            wait = new WebDriverWait(driver, Duration.ofSeconds(20));
             driver.manage().window().maximize();
             driver.get("https://logisticav1.gmtransport.co/");
 
@@ -163,26 +195,33 @@ public class AceptarSolicitud3 {
         try {
             Alert alert = wait.until(ExpectedConditions.alertIsPresent());
             if (alert != null) {
-                System.out.println("Texto de la alerta detectada: " + alert.getText());
                 alert.accept();
-                System.out.println("Alerta aceptada correctamente.");
+                System.out.println("Alerta aceptada.");
             }
-        } catch (TimeoutException e) {
+        } catch (Exception e) {
             System.out.println("No se encontró alerta o no era necesaria.");
-        } catch (NoAlertPresentException e) {
-            System.out.println("No hay ninguna alerta activa.");
         }
     }
 
+    @Description("Hace clic en la pestaña 'Completos'.")
+    public static void clickTabCompletos() {
+        try {
+            // Esperar a que desaparezca cualquier backdrop/modal que impida el clic
+            wait.until(ExpectedConditions.invisibilityOfElementLocated(
+                    By.cssSelector("div.MuiBackdrop-root")
+            ));
 
-    @Description("Da clic en el botón 'Completos'.")
-    public static void ClickBotonCompletos() {
-        WebElement botonCompletos = wait.until(ExpectedConditions.elementToBeClickable(
-                By.xpath("//button[contains(@class, 'MuiTab-root') and contains(text(), 'Completos')]")
-        ));
-        botonCompletos.click();
-        System.out.println("Botón 'Completos' clickeado.");
+            WebElement botonCompletos = wait.until(ExpectedConditions.elementToBeClickable(
+                    By.xpath("//button[normalize-space()='Completos']")
+            ));
+            botonCompletos.click();
+            System.out.println("Se hizo clic en la pestaña 'Completos'.");
+        } catch (Exception e) {
+            System.out.println("No se pudo hacer clic en 'Completos': " + e.getMessage());
+            Assertions.fail("Fallo al hacer clic en la pestaña 'Completos'");
+        }
     }
+
 
     @Description("Da clic en el botón de postulaciones.")
     public static void ClickIconoPostulaciones() {
@@ -213,52 +252,53 @@ public class AceptarSolicitud3 {
         }
     }
 
-    @Description("Activar el checkbox de documento.")
-    public static void CheckDocumento() {
-        WebElement checkboxDoc = wait.until(ExpectedConditions.elementToBeClickable(
-                By.xpath("/html/body/div[2]/div[3]/div/div[1]/div[1]/div[2]/div/div[1]/div/div[3]/span")
-        ));
-        checkboxDoc.click();
-        System.out.println("Checkbox documento activado.");
-    }
-
-    @Description("Validar tabla y subir documento si está vacía.")
-    public static void ValidarTablaYSubirDocumento() {
-        List<WebElement> filas = driver.findElements(By.xpath("//tbody[@class='MuiTableBody-root css-1xnox0e']/tr"));
-
-        if (filas.isEmpty()) {
-            System.out.println("Tabla vacía. Subiendo documento...");
-
-            WebElement inputFile = wait.until(ExpectedConditions.presenceOfElementLocated(
-                    By.id("contained-button-file")
+    @Description("Clic en el botón 'Enviar' para aceptar la postulación.")
+    public static void clickBotonEnviarAceptacion() {
+        try {
+            WebElement botonEnviar = wait.until(ExpectedConditions.elementToBeClickable(
+                    By.xpath("//button[@type='submit' and normalize-space()='Enviar']")
             ));
-            inputFile.sendKeys("C:\\Users\\Lasa9\\IdeaProjects\\GMQA\\src\\test\\java\\GMLogistico\\Doc 100 KB.pdf");
 
-            System.out.println("Documento subido exitosamente.");
-        } else {
-            System.out.println("La tabla ya tiene documentos, no se sube ninguno.");
+            // Scroll al botón, por si está fuera de vista
+            ((JavascriptExecutor) driver).executeScript("arguments[0].scrollIntoView(true);", botonEnviar);
+
+            // Clic forzado (opcional si hay overlays)
+            ((JavascriptExecutor) driver).executeScript("arguments[0].click();", botonEnviar);
+
+            System.out.println("Botón 'Enviar' clickeado exitosamente.");
+        } catch (Exception e) {
+            System.out.println("No se pudo hacer clic en 'Enviar': " + e.getMessage());
+            Assertions.fail("Fallo al hacer clic en el botón 'Enviar'.");
         }
     }
 
+    @Description("Hace clic en el botón 'Aceptar' del mensaje de confirmación.")
+    public static void clickBotonAceptarConfirmacion() {
+        try {
+            WebElement botonAceptar = wait.until(ExpectedConditions.elementToBeClickable(
+                    By.xpath("//button[@type='submit' and normalize-space()='Aceptar']")
+            ));
 
+            // Asegurarse de que está visible
+            ((JavascriptExecutor) driver).executeScript("arguments[0].scrollIntoView(true);", botonAceptar);
 
+            // Forzar clic con JavaScript en caso de overlays o ripple effects
+            ((JavascriptExecutor) driver).executeScript("arguments[0].click();", botonAceptar);
 
-    @Description("Clic en el botón Enviar para aceptar la postulación.")
-    public static void clickBotonEnviarAceptacion() {
-        WebElement botonEnviar = wait.until(ExpectedConditions.elementToBeClickable(
-                By.xpath("//button[@type='submit' and contains(text(), 'Enviar')]")
-        ));
-        botonEnviar.click();
-        System.out.println("Botón Enviar clickeado exitosamente.");
+            System.out.println("Botón 'Aceptar' clickeado exitosamente.");
+        } catch (Exception e) {
+            System.out.println("No se pudo hacer clic en 'Aceptar': " + e.getMessage());
+            Assertions.fail("Fallo al hacer clic en el botón 'Aceptar'.");
+        }
     }
 
-    @Description("Clic en el botón Aceptar para confirmar aceptación.")
-    public static void clickBotonAceptar() {
-        WebElement botonAceptar = wait.until(ExpectedConditions.elementToBeClickable(
-                By.xpath("//button[@type='submit' and contains(text(), 'Aceptar')]")
-        ));
-        botonAceptar.click();
-        System.out.println("Botón Aceptar clickeado exitosamente.");
+    /** Pausa la ejecución 2 segundos sin propagar la InterruptedException. */
+    private static void pause() {
+        try {
+            Thread.sleep(2000);
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+        }
     }
 
 

@@ -12,6 +12,7 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 import java.time.Duration;
 import java.util.List;
 
+
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class TerminaViajeTrans4 {
 
@@ -84,13 +85,13 @@ public class TerminaViajeTrans4 {
         loginRealizado = true;
     }
 
-    @RepeatedTest(400)
+    @RepeatedTest(85)
     @Order(2)
     @Description("Generación de Cheque con Datos Aleatorios")
     public void AceptarSolicitud() {
 
         irAListadoDeViajes();
-        // Filtros();
+        Filtros();
         pause();
         // abrirMenuYSeleccionarDocumentar();
         seleccionarYDocumentarRegistroPorDocumentarTransportista();
@@ -251,7 +252,7 @@ public class TerminaViajeTrans4 {
         try {
             int pagina = 1;
             while (true) {
-                System.out.println("🔍 Página " + pagina + ": buscando registros...");
+
                 // 1) Obtener todas las filas de la tabla
                 List<WebElement> filas = wait.until(
                         ExpectedConditions.visibilityOfAllElementsLocatedBy(
@@ -281,6 +282,8 @@ public class TerminaViajeTrans4 {
                         ((JavascriptExecutor) driver)
                                 .executeScript("arguments[0].click();", documentar);
                         System.out.println("✅ Opción 'Documentar' seleccionada.");
+
+                        System.out.println("🔍 Página " + pagina + ": buscando registros...");
                         return;
                     }
                 }

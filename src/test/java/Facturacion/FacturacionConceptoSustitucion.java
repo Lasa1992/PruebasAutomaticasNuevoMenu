@@ -128,7 +128,7 @@ public class FacturacionConceptoSustitucion {
     private static void handleImageButton() {
         try {
             WebElement imageButton = wait.until(ExpectedConditions.elementToBeClickable(
-                    By.xpath("//img[contains(@src, '/GMTERPV8_WEB/Imagenes/FACTURACION1')]")));
+                    By.xpath("//*[@id=\"HTM_HTMLTEMPLATE1\"]/div/ul/li[3]/a/img")));
             imageButton.click();
         } catch (Exception e) {
             UtilidadesAllure.manejoError(driver, e, "Botón Módulo Facturación no funciona.");
@@ -139,7 +139,7 @@ public class FacturacionConceptoSustitucion {
     private static void handleSubMenuButton() {
         try {
             WebElement subMenuButton = wait.until(ExpectedConditions.elementToBeClickable(
-                    By.xpath("//img[contains(@src, '/GMTERPV8_WEB/Imagenes/FACTURACION/PORCONCEPTO1')]")));
+                    By.xpath("//*[@id=\"HTM_HTMLTEMPLATE1\"]/div/ul/li[3]/ul/li[2]/a/img")));
             subMenuButton.click();
         } catch (Exception e) {
             UtilidadesAllure.manejoError(driver, e, "Botón listado de Facturas por Concepto no funciona.");

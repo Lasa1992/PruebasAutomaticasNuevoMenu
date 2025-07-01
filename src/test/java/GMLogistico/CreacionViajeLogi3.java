@@ -86,7 +86,7 @@ public class CreacionViajeLogi3 {
         MensajeAlerta();
     }
 
-    @RepeatedTest(2000)
+    @RepeatedTest(361)
     @Order(2)
     @Description("Generación Viaje Logistico")
     public void CrearViaje() {

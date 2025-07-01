@@ -86,7 +86,7 @@ public class CreacionViajeLogi5 {
         MensajeAlerta();
     }
 
-    @RepeatedTest(3980)
+    @RepeatedTest(1568)
     @Order(2)
     @Description("Generación Viaje Logistico")
     public void CrearViaje() {
@@ -623,7 +623,7 @@ public class CreacionViajeLogi5 {
                         + "div[2]/div/div/div/div/div[2]/div/div/div/div/div/div[1]/div/div/div/input"
         );
         // 2) XPath de la opción “FLETE”
-        By optionLocator = By.xpath("//ul[@role='listbox']//li[normalize-space(text())='FLETE']");
+        By optionLocator = By.xpath("//ul[@role='listbox']//li[normalize-space(text())='Flete']");
 
         try {
             // 3) Abrir el dropdown
@@ -711,13 +711,6 @@ public class CreacionViajeLogi5 {
             throw new RuntimeException("Fallo en agregarConcepto()", e);
         }
     }
-
-
-
-
-
-
-
 
 
 

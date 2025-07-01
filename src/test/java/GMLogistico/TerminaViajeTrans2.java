@@ -85,14 +85,13 @@ public class TerminaViajeTrans2 {
         loginRealizado = true;
     }
 
-
-    @RepeatedTest(4000)
+    @RepeatedTest(114)
     @Order(2)
     @Description("Generación de Cheque con Datos Aleatorios")
     public void AceptarSolicitud() {
 
         irAListadoDeViajes();
-        // Filtros();
+        Filtros();
         pause();
         // abrirMenuYSeleccionarDocumentar();
         seleccionarYDocumentarRegistroPorDocumentarTransportista();
@@ -253,7 +252,7 @@ public class TerminaViajeTrans2 {
         try {
             int pagina = 1;
             while (true) {
-                System.out.println("🔍 Página " + pagina + ": buscando registros...");
+
                 // 1) Obtener todas las filas de la tabla
                 List<WebElement> filas = wait.until(
                         ExpectedConditions.visibilityOfAllElementsLocatedBy(
@@ -283,6 +282,8 @@ public class TerminaViajeTrans2 {
                         ((JavascriptExecutor) driver)
                                 .executeScript("arguments[0].click();", documentar);
                         System.out.println("✅ Opción 'Documentar' seleccionada.");
+
+                        System.out.println("🔍 Página " + pagina + ": buscando registros...");
                         return;
                     }
                 }
