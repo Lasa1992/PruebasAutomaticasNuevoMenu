@@ -111,6 +111,7 @@ public class Llantas {
         //Cerramos la ventana de Llantas
         CerrarVentanaLlantas();
 
+        //nos aseguramos de que el WebDriver se libere correctamente
 
     }
 

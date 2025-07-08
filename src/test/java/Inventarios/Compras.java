@@ -127,7 +127,7 @@ public class Compras {
     private static void BotonAgregarListadoRecq() {
         try {
             WebElement additionalButton = wait.until(ExpectedConditions.elementToBeClickable(
-                    By.xpath("//*[@id=\"bzBTN_AGREGAR\"]")));
+                    By.xpath("//*[@id=\"BTN_AGREGAR\"]")));
             additionalButton.click();
             System.out.println("Botón Agregar Requisición seleccionado correctamente...");
         } catch (Exception e) {
@@ -355,6 +355,7 @@ public class Compras {
                     By.xpath("//*[@id=\"bzBTN_AUTORIZAR\"]")));
             botonAutorizar.click();
             System.out.println("Botón 'Autorizar' del listado de requisiciones fue clickeado correctamente.");
+            Thread.sleep(4000);
         } catch (Exception e) {
             UtilidadesAllure.manejoError(driver, e, "Error al hacer clic en el botón Autorizar.");
         }
