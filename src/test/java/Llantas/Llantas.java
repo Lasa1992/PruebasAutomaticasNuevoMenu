@@ -73,9 +73,6 @@ public class Llantas {
         IngresarCostoLlanta();
         BotonRegistrarLlanta();
 
-        //Entramos a la pantalla de asignación de llantas
-        //BuscarLlanta(); //No se si es necesario, ya que al registrar la llanta se debería mostrar en el listado
-        //SeleccionarLlantaListado(); //No es necesario, ya que al registrar la llanta se debería mostrar en el listado
         BotonAsignar();
 
         //Desasignamos la llanta
@@ -303,60 +300,6 @@ public class Llantas {
         }
     }
 
-    private static void BuscarLlanta() {
-        try {
-            Thread.sleep(2000); // Idealmente reemplaza con WebDriverWait si es posible
-
-            WebElement busquedaField = wait.until(ExpectedConditions.visibilityOfElementLocated(
-                    By.xpath("//*[@id='TABLE_ProLlantas_filter']//input")));
-
-            // Asegura que el campo está habilitado e interactuable
-            wait.until(ExpectedConditions.elementToBeClickable(busquedaField));
-
-            busquedaField.clear();
-            busquedaField.sendKeys(Economico);
-            System.out.println("Se ingresó el número económico de la llanta para su búsqueda: " + Economico);
-            busquedaField.sendKeys(Keys.ENTER);
-
-            wait.until(ExpectedConditions.textToBePresentInElementLocated(
-                    By.xpath("//table[@id='TABLE_ProLlantas']//tbody"), Economico));
-
-            System.out.println("La búsqueda se completó y los resultados están visibles.");
-        } catch (Exception e) {
-            UtilidadesAllure.manejoError(driver, e, "Error al buscar la llanta: " + Economico);
-        }
-    }
-
-
-    @Step("Seleccionar Llanta en el Listado")
-    private static void SeleccionarLlantaListado() {
-        try {
-            Thread.sleep(3000);
-            WebElement tablaLlantas = wait.until(ExpectedConditions.visibilityOfElementLocated(
-                    By.id("TABLE_ProLlantas")));
-
-            WebElement fila = wait.until(ExpectedConditions.elementToBeClickable(By.xpath(
-                    "//table[@id='TABLE_ProLlantas']//tr[td[contains(text(),'" + Economico + "')]]")));
-
-            ((JavascriptExecutor) driver).executeScript("arguments[0].scrollIntoView({block: 'center'});", fila);
-            try {
-                fila.click();
-                Thread.sleep(3000);
-            } catch (Exception e) {
-                ((JavascriptExecutor) driver).executeScript("arguments[0].click();", fila);
-            }
-            System.out.println("Llanta seleccionada correctamente: " + Economico);
-        } catch (NoSuchElementException e) {
-            System.out.println("ERROR: No se encontró la llanta con numero economico: " + Economico);
-            UtilidadesAllure.manejoError(driver, e, "No se encontró la llanta con numero exonomico: " + Economico);
-        } catch (TimeoutException e) {
-            System.out.println("ERROR: La tabla no cargó los resultados a tiempo.");
-            UtilidadesAllure.manejoError(driver, e, "La tabla de llantas no cargó correctamente.");
-        } catch (Exception e) {
-            System.out.println("ERROR: Ocurrió un problema al seleccionar la llanta.");
-            UtilidadesAllure.manejoError(driver, e, "Error inesperado al seleccionar la llanta.");
-        }
-    }
 
     @Step("Seleccionar Botón Asignar/Desasignar Llantas")
     private static void BotonAsignar() {
