@@ -13,6 +13,7 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 
 import java.time.Duration;
 import java.util.List;
+import java.util.Objects;
 import java.util.Random;
 
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
@@ -75,12 +76,6 @@ public class Llantas {
 
         BotonAsignar();
 
-        //Desasignamos la llanta
-        BotonDesasignarPosicion1();
-        seleccionarLlantaAsignada();
-        kilometrajeActualizado();
-        DesasignarLlanta();
-
         //Asignamos la llanta a una unidad
         SeleccionarUnidad();
         seleccionarLlanta();
@@ -89,6 +84,12 @@ public class Llantas {
         kilometrosLlanta();
         BotonAsignarLlanta();
 
+        //Desasignamos la llanta
+        BotonDesasignar();
+        SeleccionarNumeroEconomico();
+        kilometrajeActualizado();
+        DesasignarLlanta();
+
         //Rotamos la llanta
         RotacionLlanta();
         PosicionesLlantas();
@@ -96,17 +97,19 @@ public class Llantas {
 
         //Revisión de la llanta
         RevisionLlanta();
-        seleccionarLlantaAsignada();
+        SeleccionarNumeroEconomico();
         kilometrajeActualizado();
         profundidadLlanta();
         comentarioRevisionLlanta();
         guardarRevisionLlanta();
 
-        //Desasignamos la llanta
-        BotonDesasignar();
-        seleccionarLlantaAsignada();
-        kilometrajeActualizado();
-        DesasignarLlanta();
+        //Revisión General
+        RevisionGeneral();
+        kilometrajeRevisionGeneral();
+        ProfundidadActualGeneral();
+        PresionActualGeneral();
+        SeleccionarEstatusLlantaNuevaGeneral();
+        GuardarRevisionGeneral();
 
         //Cerramos la ventana de Llantas
         CerrarVentanaLlantas();
@@ -507,52 +510,76 @@ public class Llantas {
         }
     }
 
-
     private static void kilometrajeActualizado() {
-        try {
-            // Esperar a que el campo sea visible y clickeable
-            WebElement campoKilometraje = wait.until(ExpectedConditions.elementToBeClickable(
-                    By.xpath("//*[@id=\"EDT_KILOMETRAJELLANTA3\"]")));
-            // Limpiar el campo y enviar el valor del kilometraje actualizado
-            campoKilometraje.clear();
-            kilometrosRecord = kilometrosRecord + 100; // Incrementar el kilometraje en 100
-            campoKilometraje.sendKeys(String.valueOf(kilometrosRecord));
-            campoKilometraje.sendKeys(Keys.ENTER);
-            System.out.println("Se ingresó el kilometraje actualizado: " + kilometrosRecord);
-        } catch (Exception e) {
-            UtilidadesAllure.manejoError(driver, e, "Error al ingresar el kilometraje actualizado.");
+        //Arreglo de campo Kilometraje de Desasignar y Revisión
+        String[] xpaths = {
+                "//*[@id=\"EDT_KILOMETRAJELLANTA\"]",
+                "//*[@id=\"EDT_KILOMETRAJELLANTA3\"]"
+        };
+
+        boolean exito = false;
+
+        for (String xpath : xpaths) {
+            try {
+                WebElement campoKilometraje = wait.until(ExpectedConditions.elementToBeClickable(By.xpath(xpath)));
+                campoKilometraje.clear();
+                kilometrosRecord += 100;
+                campoKilometraje.sendKeys(String.valueOf(kilometrosRecord));
+                campoKilometraje.sendKeys(Keys.ENTER);
+                System.out.println("Se ingresó el kilometraje actualizado: " + kilometrosRecord);
+                exito = true;
+                break;
+            } catch (Exception e) {
+                // Continúa con el siguiente XPath si falla
+            }
+        }
+
+        if (!exito) {
+            UtilidadesAllure.manejoError(driver, null, "Error al ingresar el kilometraje actualizado.");
         }
     }
 
     private static void profundidadLlanta() {
         try {
-            int AuxProfundidad; // Profundidad de llanta de ejemplo
             // Toma el campo profundidad interna y le resta 1 al valor actual
             WebElement campoProfundidadInterna = wait.until(ExpectedConditions.elementToBeClickable(
                     By.xpath("//*[@id=\"EDT_PROFUNDIDADINTERNAACTUALREV\"]")));
+            campoProfundidadInterna.click();
+            String ValorProfundidad = campoProfundidadInterna.getDomProperty("value");
+            if(ValorProfundidad != null && !ValorProfundidad.trim().isEmpty()){
+                    double AuxProfundidad = Double.parseDouble(ValorProfundidad);
+                    double nuevaProfundidad = AuxProfundidad - 1;
+                    campoProfundidadInterna.sendKeys(String.valueOf(nuevaProfundidad));
+                    System.out.println("la profunidad interna es de " + nuevaProfundidad);
+                    nuevaProfundidad = 0.00; // Reiniciar el valor para la profundidad de la llanta
 
-            AuxProfundidad = Integer.valueOf(campoProfundidadInterna.getText())-1;
-            campoProfundidadInterna.sendKeys(String.valueOf(AuxProfundidad)); // Valor de profundidad de ejemplo
-            System.out.println("Se ingresó la profundidad Interna de la llanta: "+ AuxProfundidad);
-            AuxProfundidad = 0; // Reiniciar el valor para la profundidad externa
+                    // Toma el campo profundidad Media y le resta 1 al valor actual
+                    WebElement campoProfundidadMedia = wait.until(ExpectedConditions.elementToBeClickable(
+                            By.xpath("//*[@id=\"EDT_PROFUNDIDADMEDIAACTUALREV\"]")));
+                    campoProfundidadMedia.click();
+                    ValorProfundidad = campoProfundidadMedia.getDomProperty("value");
+                    AuxProfundidad= Double.parseDouble(ValorProfundidad);
+                    nuevaProfundidad= AuxProfundidad - 1;
+                    campoProfundidadMedia.sendKeys(String.valueOf(nuevaProfundidad));
+                    System.out.println("la profunidad Media es de " + nuevaProfundidad);
+                    nuevaProfundidad = 0.00; // Reiniciar el valor para la profundidad de la llanta
 
-            // Toma el campo profundidad Media y le resta 1 al valor actual
-            WebElement campoProfundidadMedia = wait.until(ExpectedConditions.elementToBeClickable(
-                    By.xpath("//*[@id=\"EDT_PROFUNDIDADMEDIAACTUALREV\"]")));
-            AuxProfundidad = Integer.valueOf(campoProfundidadMedia.getText())-1;
-            campoProfundidadMedia.sendKeys(String.valueOf(AuxProfundidad)); // Valor de profundidad de ejemplo
-            System.out.println("Se ingresó la profundidad Media de la llanta: "+ AuxProfundidad);
-            AuxProfundidad = 0; // Reiniciar el valor para la profundidad de la llanta
+                    // Toma el campo profundidad Externa y le resta 1 al valor actual
+                    WebElement campoProfundidadExterna = wait.until(ExpectedConditions.elementToBeClickable(
+                            By.xpath("//*[@id=\"EDT_PROFUNDIDADEXTERNAACTUALREV\"]")));
+                    campoProfundidadExterna.click();
+                    ValorProfundidad = campoProfundidadExterna.getDomProperty("value");
+                    AuxProfundidad= Double.parseDouble(ValorProfundidad);
+                    nuevaProfundidad= AuxProfundidad - 1;
+                    campoProfundidadExterna.sendKeys(String.valueOf(nuevaProfundidad));
+                    System.out.println("la profunidad externa es de " + nuevaProfundidad);
+                    nuevaProfundidad = 0.00; // Reiniciar el valor para la profundidad de la llanta
 
-            // Toma el campo profundidad externa y le resta 1 al valor actual
-            WebElement campoProfundidadExterna = wait.until(ExpectedConditions.elementToBeClickable(
-                    By.xpath("//*[@id=\"EDT_PROFUNDIDADEXTERNAACTUALREV\"]")));
-            AuxProfundidad = Integer.valueOf(campoProfundidadExterna.getText())-1;
-            campoProfundidadExterna.sendKeys(String.valueOf(AuxProfundidad)); // Valor de profundidad de ejemplo
-            System.out.println("Se ingresó la profundidad Externa de la llanta: "+ AuxProfundidad);
-            AuxProfundidad = 0; // Reiniciar el valor para la profundidad de la llanta
-        } catch (Exception e) {
-            UtilidadesAllure.manejoError(driver, e, "Error al ingresar la profundidad de la llanta.");
+            }else {
+                System.out.println("El campo profunidad esta vacio");
+            }
+        } catch (Exception e){
+            System.out.println("Error al ingresar profundidad");
         }
     }
 
@@ -615,6 +642,138 @@ public class Llantas {
         }
     }
 
+    private static void SeleccionarNumeroEconomico() {
+        try{
+            Thread.sleep(2000);
+            WebElement comboElement = wait.until(ExpectedConditions.visibilityOfElementLocated(
+                    By.xpath("//*[@id=\"COMBO_PROLLANTASASIGNADAS\"]")));
+            Select combo = new Select(comboElement);
+            combo.selectByValue("2");
+            System.out.println("Se selecciono Número Económico para Desasignar.");
+
+        }catch (Exception e) {
+            try{
+                //Thread.sleep(2000);
+                WebElement comboElement = wait.until(ExpectedConditions.visibilityOfElementLocated(
+                        By.xpath("//*[@id=\"COMBO_PROLLANTASASIGNADAS1\"]")));
+                Select combo = new Select(comboElement);
+                combo.selectByValue("2");
+                System.out.println("Se selecciono Número Económico para Revisión");
+
+            }catch (Exception ex) {
+                UtilidadesAllure.manejoError(driver, e, "Error al seleccionar Número Económico.");
+            }
+        }
+    }
+
+    private static void RevisionGeneral(){
+        try {
+            WebElement botonDesasignar = wait.until(ExpectedConditions.elementToBeClickable(
+                    By.xpath("//*[@id=\"RADIO_ASIGNARDESASIGNAR_5\"]")));
+            botonDesasignar.click();
+            System.out.println("Radio button 'Revisión General' fue clickeado correctamente.");
+        } catch (Exception e) {
+            UtilidadesAllure.manejoError(driver, e, "Error al hacer clic en el radio button Revisión General.");
+        }
+    }
+
+    private static void kilometrajeRevisionGeneral(){
+        try {
+            Thread.sleep(3000);
+
+            By localizarCampo = By.xpath("//*[@id=\"zrl_1_EDT_KILOMETRAJELLANTALOOPER\"]");
+
+            WebElement campoKilometraje = wait.until(ExpectedConditions.elementToBeClickable(localizarCampo));
+            campoKilometraje.click();
+            kilometrosRecord = kilometrosRecord + 100;
+            campoKilometraje = wait.until(ExpectedConditions.elementToBeClickable(localizarCampo));
+            campoKilometraje.sendKeys(String.valueOf(kilometrosRecord));
+            campoKilometraje.sendKeys(Keys.ENTER);
+
+            System.out.println("Se ingresó el kilometraje actualizado: " + kilometrosRecord);
+
+        } catch (Exception e) {
+            UtilidadesAllure.manejoError(driver, e, "Error al ingresar el kilometraje actualizado.");
+        }
+    }
+
+    private static void ProfundidadActualGeneral(){
+        try {
+            Thread.sleep(3000);
+
+            By localizarCampo = By.xpath("//*[@id=\"zrl_1_EDT_PROFUNDIDADACTUALLOOPER\"]");
+
+            WebElement campoProfundidad = wait.until(ExpectedConditions.elementToBeClickable(localizarCampo));
+            campoProfundidad.click();
+            campoProfundidad = wait.until(ExpectedConditions.elementToBeClickable(localizarCampo));
+            campoProfundidad.sendKeys("10");
+            campoProfundidad.sendKeys(Keys.TAB);
+
+            System.out.println("Se ingresó la Profundidad Actual");
+
+        } catch (Exception e) {
+            UtilidadesAllure.manejoError(driver, e, "Error al ingresar Profundidad Actual.");
+        }
+    }
+
+    private static void PresionActualGeneral(){
+        try {
+            Thread.sleep(3000);
+
+            By localizarCampo = By.xpath("//*[@id=\"zrl_1_EDT_PRESIONACTUALLOOPER\"]");
+
+            WebElement campoPresion = wait.until(ExpectedConditions.elementToBeClickable(localizarCampo));
+            campoPresion.click();
+            campoPresion = wait.until(ExpectedConditions.elementToBeClickable(localizarCampo));
+            campoPresion.sendKeys("35");
+            campoPresion.sendKeys(Keys.TAB);
+
+            System.out.println("Se ingresó la presión de la llanta: 35 PSI.");
+
+        } catch (Exception e) {
+            UtilidadesAllure.manejoError(driver, e, "Error al ingresar la Presión de la llanta.");
+        }
+    }
+
+    private static void SeleccionarEstatusLlantaNuevaGeneral() {
+        try {
+            Thread.sleep(3000);
+
+            By localizarCampo = By.xpath("//*[@id=\"zrl_1_COMBO_CATESTATUSLLANTALOOPER\"]");
+
+            // Esperar que el combo esté visible
+            WebElement comboEstatusLlanta = wait.until(ExpectedConditions.elementToBeClickable(localizarCampo));
+            // Crear el objeto Select y seleccionar por texto visible
+            Select selectEstatus = new Select(comboEstatusLlanta);
+            selectEstatus.selectByVisibleText("NUEVA");
+
+            System.out.println("Se seleccionó la opción 'NUEVA' en el combo Estatus Llanta.");
+        } catch (Exception e) {
+            UtilidadesAllure.manejoError(driver, e, "Error al seleccionar la opción 'NUEVA' en el combo Estatus Llanta.");
+        }
+    }
+
+    private static void GuardarRevisionGeneral() {
+        try {
+            // Esperar a que el botón de guardar sea visible y clickeable
+            WebElement botonGuardar = wait.until(ExpectedConditions.elementToBeClickable(
+                    By.xpath("//*[@id=\"BTN_ACEPTARREVISION1\"]")));
+
+            // Hacer clic en el botón de guardar
+            botonGuardar.click();
+
+            if (isAlertPresent()) {
+                String alertText = driver.switchTo().alert().getText();
+                System.out.println("⚠️ Alerta detectada: " + alertText);
+                driver.switchTo().alert().accept(); // Cierra la alerta
+            }
+
+            System.out.println("Revisión General guardada correctamente.");
+        } catch (Exception e) {
+            UtilidadesAllure.manejoError(driver, e, "Error al guardar la revisión General.");
+        }
+    }
+
     private static void CerrarVentanaLlantas() {
         try {
             Thread.sleep(3000);
@@ -627,39 +786,4 @@ public class Llantas {
         }
     }
 
-    private static void BotonDesasignarPosicion1() {
-        try {
-            Thread.sleep(3000);
-            WebElement comboElement = wait.until(ExpectedConditions.visibilityOfElementLocated(
-                    By.xpath("//*[@id=\"COMBO_PROLLANTASASIGNADAS\"]")));
-
-            Select combo = new Select(comboElement);
-            boolean encontrado = false;
-
-            System.out.println("Opciones disponibles en el combo:");
-            for (WebElement opcion : combo.getOptions()) {
-                System.out.println(" - " + opcion.getText());
-            }
-
-            for (WebElement opcion : combo.getOptions()) {
-                String textoOpcion = opcion.getText().trim().toLowerCase();
-                String economicoBuscado = "[Posición: 1]";
-                economicoBuscado = economicoBuscado.trim().toLowerCase();
-
-                if (textoOpcion.contains(economicoBuscado)) {
-                    combo.selectByVisibleText(opcion.getText());
-                    System.out.println("✅ Se seleccionó la opción (ignorando mayúsculas/minúsculas): " + opcion.getText());
-                    encontrado = true;
-                    break;
-                }
-            }
-
-            if (!encontrado) {
-                throw new NoSuchElementException("❌ No se encontró una opción en el combo que contenga (ignorando mayúsculas): " + Economico);
-            }
-
-        } catch (Exception e) {
-            UtilidadesAllure.manejoError(driver, e, "Error al seleccionar la opción que contiene (sin importar mayúsculas): " + Economico);
-        }
-    }
 }
