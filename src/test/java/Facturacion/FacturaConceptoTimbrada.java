@@ -7,13 +7,10 @@ import io.qameta.allure.Description;
 import io.qameta.allure.Step;
 import org.junit.jupiter.api.*;
 import org.openqa.selenium.*;
-import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import org.openqa.selenium.support.ui.Select;
 import org.openqa.selenium.support.ui.FluentWait;
-
-
 
 import java.time.Duration;
 import java.util.List;
@@ -26,15 +23,13 @@ public class FacturaConceptoTimbrada {
 
     private static WebDriver driver;
     private static WebDriverWait wait;
+
     //Se crean variables para almacenar la información concatenada de las Facturas y mostrarlas en el reporte de Allure
     static StringBuilder informacionFactura = new StringBuilder();
     static StringBuilder informacionConcepto = new StringBuilder();
     static StringBuilder informacionTimbrado = new StringBuilder();
 
-
     private static final String NUMERO_CLIENTE = Variables.CLIENTE; // Cambia el número aquí según sea necesario
-
-
 
     @BeforeEach
     public void setup() {
@@ -92,6 +87,7 @@ public class FacturaConceptoTimbrada {
         AsignarCodigoConceptoFacturacion(); // Aquí le pasas el código único
         IngresaPrecioUnitario(); // Ingresa el precio unitario
         BotonAgregarConcepto(); // Agrega el concepto
+        ObtenerFolioFactura();
         AceptarFactura(); // Acepta la factura
         BotonConcurrenciaFactura(); // Acepta el mensaje de concurrencia
         BotonTimbre(); // Timbrar la factura
@@ -108,7 +104,7 @@ public class FacturaConceptoTimbrada {
         InicioSesion.cerrarSesion(); // Asegurar que se libere el WebDriver correctamente
     }
 
-    private static void handleImageButton() {
+    public static void handleImageButton() {
         try {
             WebElement imageButton = wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//img[contains(@src, '/GMTERPV8_WEB/Imagenes/FACTURACION1')]")));
             imageButton.click();
@@ -118,7 +114,7 @@ public class FacturaConceptoTimbrada {
         }
     }
 
-    private static void handleSubMenuButton() {
+    public static void handleSubMenuButton() {
         try {
             WebElement subMenuButton = wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//img[contains(@src, '/GMTERPV8_WEB/Imagenes/FACTURACION/PORCONCEPTO1')]")));
             subMenuButton.click();
@@ -129,7 +125,7 @@ public class FacturaConceptoTimbrada {
         }
     }
 
-    private static void BotonAgregarListado() {
+    public static void BotonAgregarListado() {
         try {
             WebElement additionalButton = wait.until(ExpectedConditions.elementToBeClickable(By.id("BTN_AGREGAR")));
             additionalButton.click();
@@ -142,7 +138,7 @@ public class FacturaConceptoTimbrada {
     }
 
     @Step("Asignar El cliente que se le va a Facturar")
-    private static void AsignarCliente() {
+    public static void AsignarCliente() {
         FluentWait<WebDriver> fluentWait = new FluentWait<>(driver)
                 .withTimeout(Duration.ofSeconds(10))
                 .pollingEvery(Duration.ofMillis(500))
@@ -169,7 +165,7 @@ public class FacturaConceptoTimbrada {
 
 
 
-    private static void MonedaFactura() {
+    public static void MonedaFactura() {
         try {
             // Encuentra el primer combo box (select) por ID
             Select primerComboBox = new Select(driver.findElement(By.id("COMBO_CATMONEDAS")));
@@ -183,6 +179,7 @@ public class FacturaConceptoTimbrada {
 
             // Selecciona la opción en el primer combo box
             primerComboBox.selectByVisibleText(opcionSeleccionada);
+            Variables.MonedaFactura = opcionSeleccionada;
 
             // Imprime la opción seleccionada
             System.out.println("La Moneda es: " + opcionSeleccionada);
@@ -200,7 +197,7 @@ public class FacturaConceptoTimbrada {
         }
     }
 
-    private void ConceptofacturacionAgregar() {
+    public void ConceptofacturacionAgregar() {
         try {
             WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(5));
             // Espera explícita hasta que el botón sea clicable
@@ -215,7 +212,7 @@ public class FacturaConceptoTimbrada {
         }
     }
 
-    private void IngresaValorCantidad() {
+    public void IngresaValorCantidad() {
         try {
             WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
             WebElement nuevoCampo = wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("EDT_CANTIDAD")));
@@ -236,7 +233,7 @@ public class FacturaConceptoTimbrada {
         }
     }
 
-    private void AsignarCodigoConceptoFacturacion() {
+    public void AsignarCodigoConceptoFacturacion() {
         try {
             Thread.sleep(1000);
 
@@ -292,7 +289,7 @@ public class FacturaConceptoTimbrada {
         }
     }
 
-    private void IngresaPrecioUnitario() {
+    public void IngresaPrecioUnitario() {
         try {
             WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
             WebElement CampoPrecioUnitario = wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("EDT_PRECIOUNITARIO")));
@@ -312,7 +309,7 @@ public class FacturaConceptoTimbrada {
     }
 
 
-    private void BotonAgregarConcepto() {
+    public void BotonAgregarConcepto() {
         try {
             // Localizar el botón "Agregar" por su ID
             WebElement botonAgregar = driver.findElement(By.id("BTN_ACEPTARDETALLE"));
@@ -346,7 +343,20 @@ public class FacturaConceptoTimbrada {
         Allure.addAttachment("Informacion del Concepto", informacionConcepto.toString());
     }
 
-    private void AceptarFactura() {
+    @Step("Obtener Folio de Factura")
+    public void ObtenerFolioFactura() {
+        try {
+            WebElement folioFacturaField = wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("EDT_FOLIO")));
+            String FolioFactura = folioFacturaField.getAttribute("value");
+            //Facturas.add(FolioFactura); // Ejemplo de folio de la factura a la lista de facturas
+            Variables.Facturas = "FACTURA CFDI "+FolioFactura+"-CALMXLI"; // Ejemplo de folio de la factura a la lista de facturas
+            System.out.println("Documento Obtenido: " + Variables.Facturas);
+        } catch (TimeoutException e) {
+            UtilidadesAllure.manejoError(driver, e, "Error al obtener el folio de la factura");
+        }
+    }
+
+    public void AceptarFactura() {
         try {
             // Localizar el botón "Agregar" por su ID
             WebElement botonAgregar = driver.findElement(By.id("BTN_ACEPTAR"));
@@ -367,7 +377,7 @@ public class FacturaConceptoTimbrada {
     }
 
     @Step("Aceptar mensaje de concurrencia si aparece")
-    private void BotonConcurrenciaFactura() {
+    public void BotonConcurrenciaFactura() {
         try {
             // Esperar unos segundos para ver si aparece el mensaje de concurrencia
             WebElement botonAceptarConcurrencia = wait.until(ExpectedConditions.elementToBeClickable(
@@ -388,7 +398,7 @@ public class FacturaConceptoTimbrada {
         }
     }
 
-    private void BotonTimbre() {
+    public void BotonTimbre() {
         try {
             WebElement botonAceptar = driver.findElement(By.xpath("//*[@id='BTN_YES']"));
             // Espera que sea clickeable si existe
@@ -448,7 +458,7 @@ public class FacturaConceptoTimbrada {
     }
 
 
-    private void BotonPoliza() {
+    public void BotonPoliza() {
         try {
             WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
 
@@ -466,7 +476,7 @@ public class FacturaConceptoTimbrada {
         }
     }
 
-    private void BotonImpresion() {
+    public void BotonImpresion() {
         try {
             WebDriverWait shortWait = new WebDriverWait(driver, Duration.ofSeconds(3));
 

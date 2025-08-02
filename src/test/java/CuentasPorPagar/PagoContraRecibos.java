@@ -1,33 +1,27 @@
 package CuentasPorPagar;
+
 import Indicadores.InicioSesion;
 import Indicadores.Variables;
 import io.qameta.allure.Description;
 import io.qameta.allure.Step;
 import org.junit.jupiter.api.*;
 import org.openqa.selenium.*;
-import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import org.openqa.selenium.support.ui.Select;
-
 import java.time.Duration;
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
-import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.Random;
 
-
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-public class PagoPasivos {
+public class PagoContraRecibos {
 
     private static WebDriver driver;
     private static WebDriverWait wait;
 
-    private static final String CODIGO_PROVEEDOR = Variables.PROVEEDOR;
 
-    private String folioGuardado; // Variable de instancia para almacenar el folio
+    private static final String CODIGO_PROVEEDOR = Variables.PROVEEDOR;
 
     @BeforeEach
     public void setup() {
@@ -55,37 +49,17 @@ public class PagoPasivos {
 
     @Test
     @Order(2)
-    @Description("Ingresar al modulo de Cuentas por Pagar.")
-    public void ingresarModuloCuentasPorPagar() {
-        BotonCuentasPorPagar();
-        BotonPasivos();
-    }
+    @Description("Se genera Pago de  Contra Recibo")
+    public void PagoContraRecibo() {
 
-    @RepeatedTest(1)
-    @Order(3)
-    @Description("Se genera Pago de pasivo")
-    public void PagoPasivo() {
+        //Accedemos al Metodo para crear Contra Recibo
+        ContraRecibos contrarecibo = new ContraRecibos();
+        contrarecibo.setup();
+        contrarecibo.ContraRecibo();
 
-        //Accedemos a los metodos de la clase PasivoManual
-        PasivoManual pasivo = new PasivoManual();
-        pasivo.setup();
-        pasivo.BotonCuentasPorPagar();
-        pasivo.BotonPasivos();
-        pasivo.AgregarPasivo();
-        pasivo.QuitarCampoFecha();
-        pasivo.CodigoProveedor();
-        pasivo.NoDocumento();
-        pasivo.CopiarFolio();
-        pasivo.MonedaPasivo();
-        pasivo.SubtotalPasivo();
-        pasivo.IVAPasivo();
-        pasivo.AceptarPasivo();
-        pasivo.AceptarPoliza();
-
-        //Se crea pago de Pago pasivo
-        BotonPagoRapido();
-        FechaDesde();
-        FechaHasta();
+        //Se crea pago de Contra Recibo
+        PagarContraRecibo();
+        CodigoProveedor();
         BotonAplicar();
         seleccionarCheckboxPasivo();
         BotonGenerarPago();
@@ -93,10 +67,9 @@ public class PagoPasivos {
         CuentaBancaria();
         ChequeTransferencia();
         BotonGenerar();
-        BotonImprimir();
+        BotonPagar();
         AceptarAlerta();
         MensajePoliza();
-        CorreoProveedor();
         Impresion();
         CerrarVentanaPago();
         SalirPasivosPendientes();
@@ -105,7 +78,7 @@ public class PagoPasivos {
 
     @AfterAll
     public static void tearDown() {
-        System.out.println("🔒 Cerrando sesión y liberando WebDriver desde FacturacionGeneral...");
+        System.out.println("🔒 Cerrando sesión y liberando WebDriver desde Pasivos...");
         InicioSesion.cerrarSesion(); // Asegurar que se libere el WebDriver correctamente
     }
 
@@ -125,104 +98,61 @@ public class PagoPasivos {
         }
     }
 
-    @Step("Hacer clic en el botón de Pagos")
-    public void BotonPasivos() {
+    @Step("Hacer clic en el botón de Contra Recibos")
+    public void BotonContraRecibos() {
         try {
-            // Esperar a que el botón de Pagos esté presente y clickeable
+            // Esperar a que el botón de Contra Recibos esté presente y clickeable
             WebElement botonPagos = wait.until(ExpectedConditions.elementToBeClickable(By.xpath(
-                    "//*[@id=\"HTM_HTMLTEMPLATE1\"]/div/ul/li[7]/ul/li[2]/a/img")));
+                    "//*[@id=\"HTM_HTMLTEMPLATE1\"]/div/ul/li[7]/ul/li[3]/a/img")));
 
             // Hacer clic en el botón
             botonPagos.click();
-            System.out.println("Se hizo clic en el botón de Pagos.");
-            Thread.sleep(1000);
+            System.out.println("Se hizo clic en el botón de Contra Recibos.");
 
         } catch (Exception e) {
-            System.err.println("Error al hacer clic en el botón de Pagos: " + e.getMessage());
+            System.err.println("Error al hacer clic en el botón de Contra Recibos: " + e.getMessage());
         }
     }
 
-    @Step("Hacer clic en el botón de Pago Rápido")
-    public void BotonPagoRapido() {
+    @Step("Hace clic en el botón Pagar Contra Recibo")
+    public void PagarContraRecibo() {
         try {
-            // Esperar a que el botón esté presente y clickeable
-            WebElement botonPagoRapido = wait.until(ExpectedConditions.elementToBeClickable(By.xpath(
-                    "//*[@id=\"BTN_PAGORAPIDO\"]")));
+            WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
 
-            // Hacer clic en el botón
-            botonPagoRapido.click();
-            System.out.println("Se hizo clic en el botón de Pago Rápido.");
+            // Esperar que el botón "Pagar Contra Recibo" esté presente en el DOM usando XPath
+            WebElement botonAgregar = wait.until(ExpectedConditions.presenceOfElementLocated(By.xpath(
+                    "//*[@id=\"BTN_PAGARCONTRARECIBOS\"]"
+            )));
+            wait.until(ExpectedConditions.visibilityOf(botonAgregar));
+
+            // Hacer clic en la opción del menú
+            botonAgregar.click();
+            System.out.println("Se hizo clic en el botón Pagar Contra Recibo.");
 
         } catch (Exception e) {
-            System.err.println("Error al hacer clic en el botón de Pago Rápido: " + e.getMessage());
+            System.err.println("Error al hacer clic en el botón Pagar Contra Recibosr: " + e.getMessage());
         }
     }
 
-    @Step("Ingresar la fecha actual en el campo Fecha Desde")
-    public void FechaDesde() {
+    @Step("Ingresar el número 1 en el campo Código de Proveedor")
+    public void CodigoProveedor() {
         try {
-            // Obtener la fecha actual en formato dd/MM/yyyy
-            String fechaActual = LocalDate.now().format(DateTimeFormatter.ofPattern("dd/MM/yyyy"));
-
-            // Localizar el campo de Fecha Desde
-            WebElement inputFechaDesde = wait.until(ExpectedConditions.presenceOfElementLocated(By.xpath(
-                    "/html/body/form/table/tbody/tr/td/table/tbody/tr/td/div/table/tbody/tr[2]/td/div[1]/table/tbody/tr/td/table/tbody/tr[1]/td/div/div[2]/table/tbody/tr/td/table/tbody/tr[1]/td/div/div[2]/table/tbody/tr/td/div/div[2]/div[1]/div/table/tbody/tr/td/table/tbody/tr/td/ul/li[2]/input")));
-
-            // Hacer clic en el campo para activarlo
-            inputFechaDesde.click();
-            Thread.sleep(300); // Pequeña pausa para evitar bloqueos
-
-            // Usar JavaScript para establecer el valor de la fecha
-            ((JavascriptExecutor) driver).executeScript("arguments[0].setAttribute('value', arguments[1]);", inputFechaDesde, fechaActual);
-            Thread.sleep(500);
-
-            // Simular tecla "TAB" para que el sistema registre el cambio
-            inputFechaDesde.sendKeys(Keys.TAB);
-
-            System.out.println("Se ingresó la fecha actual (" + fechaActual + ") en el campo Fecha Desde.");
-
+            WebElement inputCodigo = wait.until(ExpectedConditions.presenceOfElementLocated(By.xpath(
+                    "//*[@id=\"EDT_NUMEROPROVEEDORDESDE\"]")));
+            inputCodigo.clear();
+            inputCodigo.sendKeys(CODIGO_PROVEEDOR);
+            System.out.println("Se ingresó el número " + CODIGO_PROVEEDOR + " en el campo Código de Proveedor.");
         } catch (Exception e) {
-            System.err.println("Error en FechaDesde: " + e.getMessage());
+            System.err.println("Error en CódigoProveedor: " + e.getMessage());
         }
     }
-
-    @Step("Ingresar la fecha de 3 meses después en el campo Fecha Hasta")
-    public void FechaHasta() {
-        try {
-            // Obtener la fecha de 3 meses después en formato dd/MM/yyyy
-            String fechaTresMeses = LocalDate.now().plus(3, ChronoUnit.MONTHS)
-                    .format(DateTimeFormatter.ofPattern("dd/MM/yyyy"));
-
-            // Localizar el campo de Fecha Hasta
-            WebElement inputFechaHasta = wait.until(ExpectedConditions.presenceOfElementLocated(By.xpath(
-                    "/html/body/form/table/tbody/tr/td/table/tbody/tr/td/div/table/tbody/tr[2]/td/div[1]/table/tbody/tr/td/table/tbody/tr[1]/td/div/div[2]/table/tbody/tr/td/table/tbody/tr[1]/td/div/div[2]/table/tbody/tr/td/div/div[2]/div[2]/div/table/tbody/tr/td/table/tbody/tr/td/ul/li[2]/input")));
-
-            // Hacer clic en el campo para activarlo
-            inputFechaHasta.click();
-            Thread.sleep(300);
-
-            // Usar JavaScript para establecer el valor de la fecha
-            ((JavascriptExecutor) driver).executeScript("arguments[0].setAttribute('value', arguments[1]);", inputFechaHasta, fechaTresMeses);
-            Thread.sleep(500);
-
-            // Simular tecla "TAB" para que el sistema registre el cambio
-            inputFechaHasta.sendKeys(Keys.TAB);
-
-            System.out.println("Se ingresó la fecha de 3 meses después (" + fechaTresMeses + ") en el campo Fecha Hasta.");
-
-        } catch (Exception e) {
-            System.err.println("Error en FechaHasta: " + e.getMessage());
-        }
-    }
-
-
 
     @Step("Hacer clic en el botón Aplicar")
     public void BotonAplicar() {
         try {
             // Esperar a que el botón Aplicar esté presente y clickeable
             WebElement botonAplicar = wait.until(ExpectedConditions.elementToBeClickable(By.xpath(
-                    "/html/body/form/table/tbody/tr/td/table/tbody/tr/td/div/table/tbody/tr[2]/td/div[1]/table/tbody/tr/td/table/tbody/tr[1]/td/div/div[2]/table/tbody/tr/td/table/tbody/tr[1]/td/div/div[2]/table/tbody/tr/td/div/div[2]/div[9]/div/a/span/span")));
+                    "//*[@id=\"BTN_APLICAR\"]")));
 
             // Hacer clic en el botón
             botonAplicar.click();
@@ -233,7 +163,6 @@ public class PagoPasivos {
         }
     }
 
-
     public void seleccionarCheckboxPasivo() {
         try {
             WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
@@ -241,24 +170,25 @@ public class PagoPasivos {
 
             // **Clic en el ícono de búsqueda**
             WebElement iconoBuscar = wait.until(ExpectedConditions.elementToBeClickable(
-                    By.id("TABLE_PROPASIVOSPENDIENTESDEPAGO_TITRES_RECH_3")));
+                    By.xpath("//*[@id=\"TABLE_PROPASIVOSPENDIENTESDEPAGO_TITRES_RECH_3\"]")));
             iconoBuscar.click();
             System.out.println("Se hizo clic en el ícono de búsqueda.");
             Thread.sleep(500);
 
+            System.out.println("valor de numero " + Variables.DocumentoGeneradoPasivo);
             // **Interacción con el campo de búsqueda**
             WebElement inputBuscar = wait.until(ExpectedConditions.elementToBeClickable(
                     By.cssSelector("form > input")));
-            inputBuscar.sendKeys(Variables.numeroDocumentoGenerado);
+            inputBuscar.sendKeys(Variables.DocumentoGeneradoPasivo);
             Thread.sleep(1000);
             inputBuscar.sendKeys(Keys.ENTER);
-            System.out.println("Se ingresó y buscó el documento: " + Variables.numeroDocumentoGenerado);
+            System.out.println("Se ingresó y buscó el documento: " + Variables.DocumentoGeneradoPasivo);
             Thread.sleep(500);
 
             // **Esperar y seleccionar la fila correcta con el número de documento**
             WebElement filaSeleccionada = wait.until(ExpectedConditions.presenceOfElementLocated(
-                    By.xpath("//tr[contains(@class, 'TABLE-Selected') and .//td[contains(@class, 'wbcolCOL_NUMERODOCUMETO')]//div[text()='" + Variables.numeroDocumentoGenerado + "']]")));
-            System.out.println("Se encontró la fila del documento: " + Variables.numeroDocumentoGenerado);
+                    By.xpath("//tr[contains(@class, 'TABLE-Selected') and .//td[contains(@class, 'wbcolCOL_NUMERODOCUMETO')]//div[text()='" + Variables.DocumentoGeneradoPasivo + "']]")));
+            System.out.println("Se encontró la fila del documento: " + Variables.DocumentoGeneradoPasivo);
 
             // **Buscar el checkbox dentro de la fila seleccionada**
             WebElement checkBox = filaSeleccionada.findElement(By.xpath(".//td[contains(@class, 'wbcolCOL_MARCAR')]//input[@type='checkbox']"));
@@ -305,17 +235,16 @@ public class PagoPasivos {
         }
     }
 
-
-    @Step("Hacer clic en el botón para generar pago")
+    @Step("Hacer clic en el botón para Generar Pago")
     public void BotonGenerarPago() {
         try {
             // **Localizar el botón usando el XPath proporcionado**
-            WebElement botonGenerarPago = driver.findElement(By.xpath(
-                    "/html/body/form/table/tbody/tr/td/table/tbody/tr/td/div/table/tbody/tr[2]/td/div[1]/table/tbody/tr/td/table/tbody/tr[1]/td/div/div[2]/table/tbody/tr/td/table/tbody/tr[1]/td/div/div[1]/table/tbody/tr/td/div/div[1]/div/table/tbody/tr/td/input"));
+            WebElement botonGenerarContraRecibo = driver.findElement(By.xpath(
+                    "//*[@id=\"BTN_GENERARPAGO\"]"));
 
             // **Hacer clic en el botón**
-            botonGenerarPago.click();
-            System.out.println("Se hizo clic en el botón para generar pago.");
+            botonGenerarContraRecibo.click();
+            System.out.println("Se hizo clic en el botón para Generar Pago.");
             Thread.sleep(2000);
 
 
@@ -323,7 +252,6 @@ public class PagoPasivos {
             System.err.println("Error en BotonGenerarPago: " + e.getMessage());
         }
     }
-
 
     @Step("Aceptar la alerta del navegador")
     public void AlertaPago() {
@@ -348,7 +276,7 @@ public class PagoPasivos {
         try {
             // Localizar el campo de selección de cuenta bancaria
             WebElement selectCuenta = wait.until(ExpectedConditions.presenceOfElementLocated(By.xpath(
-                    "/html/body/form/table/tbody/tr/td[2]/div/table/tbody/tr[2]/td/div[1]/table/tbody/tr/td/table/tbody/tr[1]/td/div/div[2]/table/tbody/tr/td/div/div[1]/table/tbody/tr/td/div/div[3]/div[1]/table/tbody/tr/td/table/tbody/tr[1]/td/div/div[2]/div[1]/div/table/tbody/tr/td/table/tbody/tr/td/ul/li[2]/table/tbody/tr/td/select")));
+                    "//*[@id=\"COMBO_CATCUENTASBANCARIAS\"]")));
 
             // Crear objeto Select
             Select select = new Select(selectCuenta);
@@ -378,10 +306,10 @@ public class PagoPasivos {
         try {
             // Localizar ambos inputs (Cheque y Transferencia)
             WebElement opcionCheque = wait.until(ExpectedConditions.presenceOfElementLocated(By.xpath(
-                    "/html/body/form/table/tbody/tr/td[2]/div/table/tbody/tr[2]/td/div[1]/table/tbody/tr/td/table/tbody/tr[1]/td/div/div[2]/table/tbody/tr/td/div/div[1]/table/tbody/tr/td/div/div[3]/div[1]/table/tbody/tr/td/table/tbody/tr[1]/td/div/div[3]/div[1]/div/table/tbody/tr[1]/td/label/input")));
+                    "//*[@id=\"RADIO_TIPOMOVIMIENTO_1\"]")));
 
             WebElement opcionTransferencia = wait.until(ExpectedConditions.presenceOfElementLocated(By.xpath(
-                    "/html/body/form/table/tbody/tr/td[2]/div/table/tbody/tr[2]/td/div[1]/table/tbody/tr/td/table/tbody/tr[1]/td/div/div[2]/table/tbody/tr/td/div/div[1]/table/tbody/tr/td/div/div[3]/div[1]/table/tbody/tr/td/table/tbody/tr[1]/td/div/div[3]/div[1]/div/table/tbody/tr[2]/td/label/input")));
+                    "//*[@id=\"RADIO_TIPOMOVIMIENTO_2\"]")));
 
             // Crear una lista con ambas opciones
             WebElement[] opciones = {opcionCheque, opcionTransferencia};
@@ -396,7 +324,6 @@ public class PagoPasivos {
 
             Thread.sleep(2000);
 
-
         } catch (Exception e) {
             System.err.println("Error en ChequeTransferencia: " + e.getMessage());
         }
@@ -407,7 +334,7 @@ public class PagoPasivos {
         try {
             // Esperar a que el botón Generar esté presente y clickeable
             WebElement botonGenerar = wait.until(ExpectedConditions.elementToBeClickable(By.xpath(
-                    "/html/body/form/table/tbody/tr/td[2]/div/table/tbody/tr[2]/td/div[1]/table/tbody/tr/td/table/tbody/tr[1]/td/div/div[2]/table/tbody/tr/td/div/div[1]/table/tbody/tr/td/div/div[3]/div[1]/table/tbody/tr/td/table/tbody/tr[2]/td/div[2]/input")));
+                    "//*[@id=\"BTN_GENERAR\"]")));
 
             // Hacer clic en el botón
             botonGenerar.click();
@@ -415,28 +342,27 @@ public class PagoPasivos {
 
             Thread.sleep(2000);
 
-
         } catch (Exception e) {
             System.err.println("Error al hacer clic en el botón Generar: " + e.getMessage());
         }
     }
 
-    @Step("Hacer clic en el botón Imprimir")
-    public void BotonImprimir() {
+    @Step("Hacer clic en el botón Pagar")
+    public void BotonPagar() {
         try {
-            // Esperar a que el botón Imprimir esté presente y clickeable
-            WebElement botonImprimir = wait.until(ExpectedConditions.elementToBeClickable(By.xpath(
-                    "/html/body/form/table/tbody/tr/td[2]/div/table/tbody/tr[2]/td/div[1]/table/tbody/tr/td/table/tbody/tr[1]/td/div/div[2]/table/tbody/tr/td/div/div[1]/table/tbody/tr/td/div/div[5]/div[1]/div/input")));
+            // Esperar a que el botón Pagar esté presente y clickeable
+            WebElement botonPagar = wait.until(ExpectedConditions.elementToBeClickable(By.xpath(
+                    "//*[@id=\"BTN_IMPRIMIR\"]")));
 
             // Hacer clic en el botón
-            botonImprimir.click();
-            System.out.println("Se hizo clic en el botón Imprimir.");
+            botonPagar.click();
+            System.out.println("Se hizo clic en el botón Pagar.");
 
             Thread.sleep(2000);
 
 
         } catch (Exception e) {
-            System.err.println("Error al hacer clic en el botón Imprimir: " + e.getMessage());
+            System.err.println("Error al hacer clic en el botón Pagar: " + e.getMessage());
         }
     }
 
@@ -453,7 +379,6 @@ public class PagoPasivos {
 
             Thread.sleep(2000);
 
-
         } catch (NoAlertPresentException e) {
             System.err.println("No se encontró ninguna alerta en el navegador.");
         } catch (Exception e) {
@@ -464,7 +389,7 @@ public class PagoPasivos {
     public void MensajePoliza() {
         try {
             WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(3));
-            By xpathMensajePoliza = By.xpath("/html/body/form/table/tbody/tr/td/table/tbody/tr/td/div/table/tbody/tr[2]/td/div[1]/table/tbody/tr/td/div/div[3]/table/tbody/tr/td/table/tbody/tr[2]/td/div[1]/table/tbody/tr/td/input");
+            By xpathMensajePoliza = By.xpath("//*[@id=\"BTN_OK\"]");
 
             if (driver.findElements(xpathMensajePoliza).size() > 0) {
                 WebElement mensajePoliza = wait.until(ExpectedConditions.elementToBeClickable(xpathMensajePoliza));
@@ -473,59 +398,17 @@ public class PagoPasivos {
             } else {
                 System.out.println("El campo Mensaje de Póliza no está presente. Continuando...");
             }
-
             Thread.sleep(2000);
-
 
         } catch (Exception e) {
             System.out.println("No se pudo hacer clic en el campo Mensaje de Póliza. Continuando...");
         }
     }
 
-    public void CorreoProveedor() {
-        try {
-            WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(3));
-            JavascriptExecutor js = (JavascriptExecutor) driver;
-            Random random = new Random();
-
-            String[] botonesXPath = {
-                    "/html/body/form/table/tbody/tr/td/table/tbody/tr/td/div/table/tbody/tr[2]/td/div[1]/table/tbody/tr/td/div/div[3]/table/tbody/tr/td/table/tbody/tr[2]/td/div[2]/table/tbody/tr/td/input",
-                    "/html/body/form/table/tbody/tr/td/table/tbody/tr/td/div/table/tbody/tr[2]/td/div[1]/table/tbody/tr/td/div/div[3]/table/tbody/tr/td/table/tbody/tr[2]/td/div[3]/table/tbody/tr/td/input"
-            };
-
-            boolean clickExitoso = false;
-            for (String xpath : botonesXPath) {
-                By botonBy = By.xpath(xpath);
-                if (driver.findElements(botonBy).size() > 0) {
-                    WebElement boton = wait.until(ExpectedConditions.elementToBeClickable(botonBy));
-                    System.out.println("Intentando hacer clic en el botón con XPath: " + xpath);
-                    js.executeScript("arguments[0].scrollIntoView({block: 'center'});", boton);
-
-                    try {
-                        boton.click();
-                        System.out.println("Se hizo clic en el botón correctamente.");
-                    } catch (Exception e) {
-                        js.executeScript("arguments[0].click();", boton);
-                        System.out.println("Se hizo clic en el botón con JavaScript.");
-                    }
-                    clickExitoso = true;
-                    break;
-                }
-            }
-
-            if (!clickExitoso) {
-                System.out.println("Ninguno de los botones de Correo Proveedor estaba disponible. Continuando...");
-            }
-
-        } catch (Exception e) {
-            System.out.println("Error en CorreoProveedor. Continuando...");
-        }
-    }
-
     public void Impresion() {
         try {
             WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(3));
-            By xpathImpresion = By.xpath("/html/body/form/table/tbody/tr/td/table/tbody/tr/td/div/table/tbody/tr[2]/td/div[1]/table/tbody/tr/td/table/tbody/tr[1]/td/div/div[3]/div/table/tbody/tr/td/input");
+            By xpathImpresion = By.xpath("//*[@id=\"BTN_REGRESAR\"]");
 
             if (driver.findElements(xpathImpresion).size() > 0) {
                 WebElement botonImpresion = wait.until(ExpectedConditions.elementToBeClickable(xpathImpresion));
@@ -537,7 +420,6 @@ public class PagoPasivos {
 
             Thread.sleep(2000);
 
-
         } catch (Exception e) {
             System.out.println("No se pudo hacer clic en el botón Impresión. Continuando...");
         }
@@ -548,13 +430,12 @@ public class PagoPasivos {
         try {
             // Esperar a que el botón para cerrar la ventana de pago esté presente y clickeable
             WebElement botonCerrar = wait.until(ExpectedConditions.elementToBeClickable(By.xpath(
-                    "/html/body/form/table/tbody/tr/td[2]/div/table/tbody/tr[2]/td/div[1]/table/tbody/tr/td/table/tbody/tr[1]/td/div/div[1]/div[4]/div/table/tbody/tr/td/a/span/span")));
+                    "//*[@id=\"z_BTN_SALIR_IMG\"]/span")));
 
             // Hacer clic en el botón
             botonCerrar.click();
             System.out.println("Se hizo clic en el botón para cerrar la ventana de pago.");
             Thread.sleep(2000);
-
 
         } catch (Exception e) {
             System.err.println("Error al hacer clic en el botón Cerrar Ventana de Pago: " + e.getMessage());
@@ -566,7 +447,7 @@ public class PagoPasivos {
         try {
             // Esperar a que el botón Salir esté presente y clickeable
             WebElement botonSalir = wait.until(ExpectedConditions.elementToBeClickable(By.xpath(
-                    "/html/body/form/table/tbody/tr/td/table/tbody/tr/td/div/table/tbody/tr[2]/td/div[1]/table/tbody/tr/td/table/tbody/tr[1]/td/div/div[5]/div[2]/div/table/tbody/tr/td/input")));
+                    "//*[@id=\"BTN_CANCELAR\"]")));
 
             // Hacer clic en el botón
             botonSalir.click();
@@ -581,5 +462,3 @@ public class PagoPasivos {
 
 
 }
-
-

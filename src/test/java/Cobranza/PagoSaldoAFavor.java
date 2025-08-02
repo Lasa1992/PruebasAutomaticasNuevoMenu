@@ -1,5 +1,6 @@
 package Cobranza;
 
+import Facturacion.FacturaConceptoTimbrada;
 import Indicadores.InicioSesion;
 import Indicadores.Variables;
 import Utilidades.UtilidadesAllure;
@@ -32,7 +33,6 @@ public class PagoSaldoAFavor {
     static StringBuilder informacionTimbrado = new StringBuilder();
 
     private static String FolioFactura; // Variable para almacenar el valor
-
 
     private static List<String> Facturas = new ArrayList<>();
 
@@ -80,25 +80,26 @@ public class PagoSaldoAFavor {
         informacionConcepto.setLength(0);
         informacionTimbrado.setLength(0);
 
-        // Comienza el flujo de facturación
-        //Se hace primer factura
-        handleImageButton();
-        handleSubMenuButton();
-        BotonAgregarListado();
-        CodigoClienteFactura();
-        MonedaFactura();
-        ConceptofacturacionAgregar(); // Abre el formulario de facturación de concepto
-        IngresaValorCantidad(); // Ingresa la cantidad
-        AsignarCodigoConceptoFacturacion(); // Aquí le pasas el código único
-        IngresaPrecioUnitario(); // Ingresa el precio unitario
-        BotonAgregarConcepto(); // Agrega el concepto
-        ObtenerFolioFactura(); // Captura el folio de la factura
-        AceptarFactura(); // Acepta la factura
-        BotonConcurrenciaFactura();
-        BotonTimbre(); // Timbrar la factura
-        //ValidarYEnviarCorreo(); // Validar posibles errores
-        //BotonPoliza(); // Aceptar botón generó póliza
-        BotonImpresion(); // Regresar a la pantalla principal
+        //Accedemos a los metodos de la clase FacturaConceptoTimbrado
+        FacturaConceptoTimbrada factura = new FacturaConceptoTimbrada();
+        factura.setup();
+        factura.handleImageButton();
+        factura.handleSubMenuButton();
+        factura.BotonAgregarListado();
+        factura.AsignarCliente();
+        factura.MonedaFactura();
+        factura.ConceptofacturacionAgregar();
+        factura.IngresaValorCantidad();
+        factura.AsignarCodigoConceptoFacturacion();
+        factura.IngresaPrecioUnitario();
+        factura.BotonAgregarConcepto();
+        factura.ObtenerFolioFactura();
+        factura.AceptarFactura();
+        factura.BotonConcurrenciaFactura();
+        factura.BotonTimbre();
+        //factura.ValidarYEnviarCorreo();
+        //factura.BotonPoliza()
+        factura.BotonImpresion();
 
 
         // Bloque donde se controla la generación del Saldo a favor
@@ -136,257 +137,6 @@ public class PagoSaldoAFavor {
     }
 
 
-    private static void handleImageButton() {
-        try {
-            WebElement imageButton = wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//img[contains(@src, '/GMTERPV8_WEB/Imagenes/FACTURACION1')]")));
-            imageButton.click();
-        } catch (Exception e) {
-            UtilidadesAllure.manejoError(driver, e, "Botón Módulo Facturación no funciona.");
-            System.out.println("Botón Módulo Facturación no funciona.");
-        }
-    }
-
-    private static void handleSubMenuButton() {
-        try {
-            WebElement subMenuButton = wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//img[contains(@src, '/GMTERPV8_WEB/Imagenes/FACTURACION/PORCONCEPTO1')]")));
-            subMenuButton.click();
-        } catch (Exception e) {
-            // Captura el mensaje de error, toma una captura de pantalla y lo despliega en el reporte de Allure.
-            UtilidadesAllure.manejoError(driver, e, "Botón listado de Facturas por Concepto no funciona.");
-            System.out.println("Botón listado Facturas por Concepto no funciona.");
-        }
-    }
-
-    private static void BotonAgregarListado() {
-        try {
-            WebElement additionalButton = wait.until(ExpectedConditions.elementToBeClickable(By.id("BTN_AGREGAR")));
-            additionalButton.click();
-        } catch (Exception e) {
-            UtilidadesAllure.manejoError(driver, e, "Botón agregar no encontrado o no clickeable.");
-            System.out.println("Botón agregar no encontrado o no clickeable.");
-        }
-    }
-
-    private static void CodigoClienteFactura() {
-        try {
-            WebElement clienteField = wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("EDT_NUMEROCLIENTE")));
-            clienteField.clear();
-            Thread.sleep(500);
-            clienteField.sendKeys(NUMERO_CLIENTE); // Usar la variable NUMERO_CLIENTE
-            Thread.sleep(200);
-            clienteField.sendKeys(Keys.TAB);
-        } catch (Exception e) {
-            UtilidadesAllure.manejoError(driver, e, "Error al llenar el campo del número de cliente para la factura.");
-        }
-    }
-
-    private static void MonedaFactura() {
-        try {
-            // Encuentra el primer combo box (select) por ID
-            Select primerComboBox = new Select(driver.findElement(By.id("COMBO_CATMONEDAS")));
-
-            // Define las opciones disponibles
-            List<String> opciones = List.of("PESOS");
-
-            // Elige aleatoriamente una opción
-            Random random = new Random();
-            String opcionSeleccionada = opciones.get(random.nextInt(opciones.size()));
-            //String opcionSeleccionada = "PESOS"; // Selecciona Moneda PESOS en la factura
-
-            // Selecciona la opción en el primer combo box
-            primerComboBox.selectByVisibleText(opcionSeleccionada);
-
-            // Imprime la opción seleccionada
-            System.out.println("La Moneda es: " + opcionSeleccionada);
-            informacionFactura.append("Moneda: ").append(opcionSeleccionada).append("\n\n");
-
-            // Agrega al reporte de Allure la información de la factura generada.
-            Allure.addAttachment("Informacion Factura", informacionFactura.toString());
-        } catch (Exception e) {
-            UtilidadesAllure.manejoError(driver, e, "Se ha producido un error: " + e.getMessage());
-            System.out.println("Se ha producido un error: " + e.getMessage());
-            e.printStackTrace();
-        }
-    }
-
-    private void ConceptofacturacionAgregar() {
-        try {
-            WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(5));
-            // Espera explícita hasta que el botón sea clicable
-            WebElement botonAgregar = wait.until(ExpectedConditions.elementToBeClickable(By.id("BTN_AGREGAR")));
-            botonAgregar.click();
-        } catch (Exception e) {
-            UtilidadesAllure.manejoError(driver, e, "Error al presionar el botón Agregar: " + e.getMessage());
-            System.out.println("Error al presionar el botón Agregar: " + e.getMessage());
-            e.printStackTrace();
-        }
-    }
-
-    private void IngresaValorCantidad() {
-        try {
-            WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
-            WebElement nuevoCampo = wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("EDT_CANTIDAD")));
-            nuevoCampo.click();
-
-            Random random = new Random();
-            int valorAleatorio = random.nextInt(10) + 1; // genera un número entero entre 1 y 10
-
-            nuevoCampo.sendKeys(String.valueOf(valorAleatorio));
-            informacionConcepto.append("Cantidad del Concepto: ").append(valorAleatorio).append("\n");
-        } catch (Exception e) {
-            UtilidadesAllure.manejoError(driver, e, "Error al ingresar la cantidad: " + e.getMessage());
-            System.out.println("Error al ingresar la cantidad: " + e.getMessage());
-            e.printStackTrace();
-        }
-    }
-
-    private void AsignarCodigoConceptoFacturacion() {
-        try {
-            Thread.sleep(1000);
-
-            WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
-            WebElement campoCodigo = driver.findElement(By.id("EDT_CODIGOCONCEPTOFACTURACION"));
-            WebElement campoConcepto = driver.findElement(By.id("EDT_CONCEPTOFACTURACION"));
-
-            int intentos = 0;
-
-            // Intentar diferentes valores entre 1 y 10
-            while (intentos < 10) {
-                intentos++;
-
-                // Generar el valor entre 1 y 10
-                int codigoConcepto = intentos;
-
-                // Limpiar el campo y asignar el valor
-                campoCodigo.clear();
-                campoCodigo.sendKeys(String.valueOf(codigoConcepto));
-                campoCodigo.sendKeys(Keys.TAB); // Cambiar de foco para activar validaciones
-
-                // Esperar hasta que el campo de concepto esté visible
-                wait.until(ExpectedConditions.attributeToBeNotEmpty(campoConcepto, "value"));
-                String valorConcepto = campoConcepto.getAttribute("value");
-
-                if (valorConcepto != null && !valorConcepto.equals("El concepto de facturación no está activo, Revisar")) {
-                    System.out.println("Valor válido encontrado: " + codigoConcepto);
-                    System.out.println("El concepto de facturación es: " + valorConcepto);
-
-                    // Se agrega información al reporte de Allure
-                    informacionConcepto.append("Número Concepto: ").append(codigoConcepto).append("\n");
-                    informacionConcepto.append("Nombre Concepto: ").append(valorConcepto).append("\n");
-
-                    // Retornar y detener el flujo
-                    return;
-                } else {
-                    System.out.println("Intento " + intentos + ": Valor " + codigoConcepto + " produjo el mensaje de error.");
-                }
-            }
-
-            // Si no se encuentra un valor válido después de 10 intentos
-            System.out.println("No se encontró un valor válido después de 10 intentos.");
-            informacionConcepto.append("Concepto: Error, no se encontró un valor válido después de 10 intentos.\n");
-
-            return;
-        } catch (Exception e) {
-            UtilidadesAllure.manejoError(driver, e, "Error al asignar el código de concepto de facturación: " + e.getMessage());
-            System.out.println("Error al asignar el código de concepto de facturación: " + e.getMessage());
-            e.printStackTrace();
-        }
-    }
-
-    private void IngresaPrecioUnitario() {
-        try {
-            WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
-            WebElement CampoPrecioUnitario = wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("EDT_PRECIOUNITARIO")));
-
-            Random random = new Random();
-            double valorAleatorio = 1 + (1000 - 1) * random.nextDouble();
-            CampoPrecioUnitario.sendKeys(Keys.TAB);
-            CampoPrecioUnitario.sendKeys(String.format("%.2f", valorAleatorio));
-            informacionConcepto.append("Precio Unitario: ").append(valorAleatorio).append("\n");
-        } catch (Exception e) {
-            UtilidadesAllure.manejoError(driver, e, "Error al ingresar el precio unitario: " + e.getMessage());
-            System.out.println("Error al ingresar el precio unitario: " + e.getMessage());
-            e.printStackTrace();
-        }
-    }
-
-    private void BotonAgregarConcepto() {
-        try {
-            // Localizar el botón "Agregar" por su ID
-            WebElement botonAgregar = driver.findElement(By.id("BTN_ACEPTARDETALLE"));
-            // Hacer clic en el botón "Agregar"
-            botonAgregar.click();
-            System.out.println("Se ha hecho clic en el botón 'Agregar'.");
-
-            // Verificar si el mensaje de confirmación está presente
-            try {
-                WebElement botonConfirmar = driver.findElement(By.id("BTN_YES"));
-                if (botonConfirmar.isDisplayed()) {
-                    System.out.println("Se ha mostrado un mensaje de confirmación.");
-                    // Hacer clic en el botón "Sí" para confirmar
-                    botonConfirmar.click();
-                    System.out.println("Se ha hecho clic en el botón 'Sí' para confirmar.");
-                }
-            } catch (NoSuchElementException e) {
-                System.out.println("No se ha mostrado un mensaje de confirmación.");
-            }
-        } catch (Exception e) {
-            UtilidadesAllure.manejoError(driver, e, null);
-            System.out.println("Se ha producido un error al hacer clic en el botón 'Agregar': " + e.getMessage());
-            e.printStackTrace();
-        }
-        Allure.addAttachment("Informacion del Concepto", informacionConcepto.toString());
-    }
-
-    @Step("Obtener Folio de Factura")
-    private void ObtenerFolioFactura() {
-        try {
-            WebElement folioFacturaField = wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("EDT_FOLIO")));
-            FolioFactura = folioFacturaField.getAttribute("value");
-            //Facturas.add(FolioFactura); // Ejemplo de folio de la factura a la lista de facturas
-            Facturas.add("FACTURA CFDI "+FolioFactura+"-CALMXLI"); // Ejemplo de folio de la factura a la lista de facturas
-            System.out.println("Documento Optenido: " + Facturas);
-        } catch (TimeoutException e) {
-            UtilidadesAllure.manejoError(driver, e, "Error al obtener el folio de la factura");
-        }
-    }
-
-    private void AceptarFactura() {
-        try {
-            // Localizar el botón "Agregar" por su ID
-            WebElement botonAgregar = driver.findElement(By.id("BTN_ACEPTAR"));
-            // Hacer clic en el botón
-            botonAgregar.click();
-            System.out.println("Se ha hecho clic en el botón 'Agregar'.");
-        } catch (Exception e) {
-            UtilidadesAllure.manejoError(driver, e, null);
-            System.out.println("Se ha producido un error al hacer clic en el botón 'Agregar': " + e.getMessage());
-            e.printStackTrace();
-        }
-    }
-
-    @Step("Aceptar mensaje de concurrencia si aparece")
-    private void BotonConcurrenciaFactura() {
-        try {
-            // Esperar unos segundos para ver si aparece el mensaje de concurrencia
-            WebElement botonAceptarConcurrencia = wait.until(ExpectedConditions.elementToBeClickable(
-                    By.xpath("/html/body/form/table/tbody/tr/td/table/tbody/tr/td/div/table/tbody/tr[2]/td/div[1]/table/tbody/tr/td/div/div[3]/table/tbody/tr/td/table/tbody/tr[2]/td/div[1]/table/tbody/tr/td/input")));
-
-            // Si el botón está disponible, hacer clic en él
-            botonAceptarConcurrencia.click();
-            System.out.println("Mensaje de concurrencia detectado y aceptado.");
-
-            // Llamar a los métodos que deben repetirse
-            ObtenerFolioFactura();
-            AceptarFactura();
-        } catch (TimeoutException e) {
-            // Si no aparece el mensaje, continuar normalmente
-            System.out.println("No se detectó mensaje de concurrencia.");
-        } catch (Exception e) {
-            UtilidadesAllure.manejoError(driver, e, "Error al manejar el mensaje de concurrencia");
-        }
-    }
-
     private void BotonTimbre() {
         try {
             WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
@@ -406,79 +156,6 @@ public class PagoSaldoAFavor {
             Thread.sleep(5000);  // Espera entre búsquedas de cada factura
         } catch (Exception e) {
             System.out.println("Error al presionar el botón de aceptar Timbre. Continuando...");
-            e.printStackTrace();
-        }
-    }
-
-    public void ValidarYEnviarCorreo() {
-        try {
-            WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
-            // Buscar todos los botones con "onclick"
-            List<WebElement> botones = wait.until(
-                    ExpectedConditions.presenceOfAllElementsLocatedBy(By.xpath("//input[@onclick]")));
-            // Filtrar botones que son visibles y clickeables
-            List<WebElement> botonesValidos = botones.stream()
-                    .filter(b -> b.isDisplayed() && b.isEnabled())
-                    .collect(Collectors.toList());
-            // Si no hay botones disponibles, continuar sin fallar
-            if (botonesValidos.isEmpty()) {
-                System.out.println("No hay botones visibles y clickeables. Continuando...");
-                return;
-            }
-            System.out.println("Botones válidos encontrados:");
-            for (WebElement boton : botonesValidos) {
-                // Se pueden agregar más detalles si es necesario
-            }
-            // Seleccionar aleatoriamente un botón de la lista de botones válidos
-            WebElement botonSeleccionado = botonesValidos.get(new Random().nextInt(botonesValidos.size()));
-            // Intentar hacer clic en el botón seleccionado
-            try {
-                System.out.println("Se hizo clic en el botón con ID: " + botonSeleccionado.getAttribute("id"));
-                botonSeleccionado.click();
-            } catch (Exception e) {
-                System.out.println("Click() falló, intentando con JavaScript...");
-                ((JavascriptExecutor) driver).executeScript("arguments[0].click();", botonSeleccionado);
-                System.out.println("Click ejecutado con JavaScript en el botón con ID: " + botonSeleccionado.getAttribute("id"));
-            }
-        } catch (Exception e) {
-            System.err.println("Error al hacer clic en el botón. Continuando...");
-            e.printStackTrace();
-        }
-    }
-
-    private void BotonPoliza() {
-        try {
-            WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
-            // Buscar el botón con XPath usando "onclick"
-            WebElement botonAceptar = wait.until(ExpectedConditions.elementToBeClickable(
-                    By.xpath("//input[@type='button' and contains(@onclick, 'BTN_OK')]")
-            ));
-            // Intentar hacer clic
-            botonAceptar.click();
-            System.out.println("Se presionó el botón BTN_OK");
-        } catch (Exception e) {
-            System.out.println("No se encontró el botón BTN_OK o no se pudo hacer clic.");
-        }
-    }
-
-    private void BotonImpresion() {
-        try {
-            WebDriverWait shortWait = new WebDriverWait(driver, Duration.ofSeconds(3));
-            // Buscar el botón con "onclick" que contiene "BTN_REGRESAR"
-            WebElement botonRegresar = shortWait.until(ExpectedConditions.elementToBeClickable(
-                    By.xpath("//input[@type='button' and @name='BTN_REGRESAR' and contains(@onclick, 'BTN_REGRESAR')]")
-            ));
-            if (botonRegresar != null) {
-                botonRegresar.click();
-                System.out.println("Se presionó el botón de regresar y se genró la factura correctamente.");
-            } else {
-                System.out.println("No se encontró el botón de regresar, continuando con la ejecución.");
-            }
-        } catch (TimeoutException e) {
-            System.out.println("El botón de regresar no se mostró, continuando la ejecución normalmente");
-        } catch (Exception e) {
-            UtilidadesAllure.manejoError(driver, e, "Error al presionar el botón de regresar");
-            System.out.println("Error al presionar el botón de regresar");
             e.printStackTrace();
         }
     }
@@ -607,42 +284,6 @@ public class PagoSaldoAFavor {
         } catch (TimeoutException | NoSuchElementException e) {
             UtilidadesAllure.manejoError(driver, e, "Error al seleccionar una cuenta bancaria en pesos aleatoria.");
             System.out.println("Error al seleccionar una cuenta bancaria en pesos aleatoria.");
-        }
-    }
-
-    @Step("Buscar factura para pagar")
-    public void BusquedaFacturaPagar() {
-        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(2));
-        try {
-            // Localizar el campo de búsqueda usando XPath
-            WebElement campoBusqueda = wait.until(ExpectedConditions.elementToBeClickable(
-                    By.xpath("//input[contains(@class, 'EDT_BUSQUEDAGENERAL')]")));
-            campoBusqueda.click();
-            // Limpiar el campo antes de ingresar el número de viaje
-            campoBusqueda.clear();
-            // Ingresar el número de viaje del cliente
-            campoBusqueda.sendKeys(FolioFactura);
-            System.out.println("Número de viaje ingresado en búsqueda: " + FolioFactura);
-        } catch (Exception e) {
-            System.out.println("Error en la búsqueda de factura: " + e.getMessage());
-            UtilidadesAllure.manejoError(driver, e, "Error en la búsqueda de factura.");
-        }
-    }
-
-    public void SeleccionFactura() {
-        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(4));
-        try {
-            // Espera explícita hasta que el checkbox de la factura sea visible y clickeable
-            WebElement facturaCheckbox = wait.until(ExpectedConditions.elementToBeClickable(
-                    By.id("_0_TABLE_PROFACTURAS_0")));
-            // Seleccionar el checkbox de la factura
-            if (!facturaCheckbox.isSelected()) {
-                facturaCheckbox.click();
-            }
-            System.out.println("Se seleccionó la factura");
-        } catch (Exception e) {
-            UtilidadesAllure.manejoError(driver, e, "Error al seleccionar la factura");
-            System.out.println("Error al seleccionar la factura");
         }
     }
 
@@ -883,9 +524,6 @@ public class PagoSaldoAFavor {
         }
     }
 
-
-
-
     private void AceptarSaldoAFavor() {
         try {
             // Primer mensaje
@@ -980,48 +618,44 @@ public class PagoSaldoAFavor {
     }
 
     public void SeleccionarFacturasSaldo() {
-        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(20));  // Aumentamos el tiempo de espera
-        JavascriptExecutor js = (JavascriptExecutor) driver;
-
         try {
-            // Iterar sobre el array/lista de Facturas
-            for (String factura : Facturas) {
+            WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(20));  // Aumentamos el tiempo de espera
+            JavascriptExecutor js = (JavascriptExecutor) driver;
+            // **Clic en el ícono de búsqueda**
+            WebElement iconoBuscar = wait.until(ExpectedConditions.elementToBeClickable(
+                    By.id("TABLE_PROFACTURAS_TITRES_RECH_2")));
+            iconoBuscar.click();
+            System.out.println("Se hizo clic en el ícono de búsqueda de facturas para seleccionarlas y agregarlas al contra recibo.");
+            Thread.sleep(500);
 
-                // **Clic en el ícono de búsqueda**
-                WebElement iconoBuscar = wait.until(ExpectedConditions.elementToBeClickable(
-                        By.id("TABLE_PROFACTURAS_TITRES_RECH_2")));
-                iconoBuscar.click();
-                System.out.println("Se hizo clic en el ícono de búsqueda de facturas para seleccionarlas y agregarlas al contra recibo.");
+            // **Interacción con el campo de búsqueda**
+            WebElement inputBuscar = wait.until(ExpectedConditions.visibilityOfElementLocated(
+                    By.cssSelector("form > input"))); // Cambié a `visibilityOfElementLocated`
+            inputBuscar.clear();  // Limpiar el campo antes de ingresar el nuevo valor
+            inputBuscar.sendKeys(Variables.Facturas);  // Buscar el documento actual
+            Thread.sleep(1000);
+            inputBuscar.sendKeys(Keys.ENTER);
+            System.out.println("Se ingresó y buscó el documento: " + Variables.Facturas);
+            Thread.sleep(500);
+
+            // **Esperar y seleccionar la fila correcta con el número de documento**
+            WebElement filaSeleccionada = wait.until(ExpectedConditions.presenceOfElementLocated(
+                    By.xpath("//tr[contains(@class, 'TABLE-Selected') and .//td[contains(@class, 'wbcolCOL_DOCUMENTO')]//div[text()='" + Variables.Facturas + "']]")));
+            System.out.println("Se encontró la fila del documento: " + Variables.Facturas);
+
+            // **Buscar el checkbox dentro de la fila seleccionada**
+            WebElement checkBox = filaSeleccionada.findElement(By.xpath(".//td[contains(@class, 'wbcolCOL_MARCAR')]//input[@type='checkbox']"));
+
+            // **Imprimir el ID del checkbox encontrado**
+            String checkBoxId = checkBox.getAttribute("id");
+            System.out.println("Checkbox encontrado con ID: " + checkBoxId);
+
+            // **Si el checkbox no es visible, hacer scroll hasta él**
+            if (!checkBox.isDisplayed()) {
+                System.out.println("El checkbox no es visible, desplazándose hacia él...");
+                js.executeScript("arguments[0].scrollIntoView({block: 'center'});", checkBox);
                 Thread.sleep(500);
-
-                // **Interacción con el campo de búsqueda**
-                WebElement inputBuscar = wait.until(ExpectedConditions.visibilityOfElementLocated(
-                        By.cssSelector("form > input"))); // Cambié a `visibilityOfElementLocated`
-                inputBuscar.clear();  // Limpiar el campo antes de ingresar el nuevo valor
-                inputBuscar.sendKeys(factura);  // Buscar el documento actual
-                Thread.sleep(1000);
-                inputBuscar.sendKeys(Keys.ENTER);
-                System.out.println("Se ingresó y buscó el documento: " + factura);
-                Thread.sleep(500);
-
-                // **Esperar y seleccionar la fila correcta con el número de documento**
-                WebElement filaSeleccionada = wait.until(ExpectedConditions.presenceOfElementLocated(
-                        By.xpath("//tr[contains(@class, 'TABLE-Selected') and .//td[contains(@class, 'wbcolCOL_DOCUMENTO')]//div[text()='" + factura + "']]")));
-                System.out.println("Se encontró la fila del documento: " + factura);
-
-                // **Buscar el checkbox dentro de la fila seleccionada**
-                WebElement checkBox = filaSeleccionada.findElement(By.xpath(".//td[contains(@class, 'wbcolCOL_MARCAR')]//input[@type='checkbox']"));
-
-                // **Imprimir el ID del checkbox encontrado**
-                String checkBoxId = checkBox.getAttribute("id");
-                System.out.println("Checkbox encontrado con ID: " + checkBoxId);
-
-                // **Si el checkbox no es visible, hacer scroll hasta él**
-                if (!checkBox.isDisplayed()) {
-                    System.out.println("El checkbox no es visible, desplazándose hacia él...");
-                    js.executeScript("arguments[0].scrollIntoView({block: 'center'});", checkBox);
-                    Thread.sleep(500);
-                }
+            }
 
                 // **Si el checkbox está deshabilitado, habilitarlo**
                 if (!checkBox.isEnabled()) {
@@ -1044,7 +678,7 @@ public class PagoSaldoAFavor {
                 }
 
                 Thread.sleep(2000);  // Espera entre búsquedas de cada factura
-            }
+
 
         } catch (NoSuchElementException e) {
             System.err.println("Elemento no encontrado: " + e.getMessage());

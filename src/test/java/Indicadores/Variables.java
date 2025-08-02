@@ -10,6 +10,11 @@ public class Variables {
     public static final String DocumentoTraslado = "CARTA PORTE CFDI - CCPT"; // Número de documento de traslado
     public static final String Operador = "000001"; // Número de operador
     public static final String PROVEEDOR = "1"; // Número de proveedor
+    public static String numeroDocumentoGenerado; //Número de documento para Pagar Pasivos
+    public static String DocumentoGeneradoPasivo; // Número de documento para Contra Recibo y Pagar Contra Recibos
+    public static String Facturas;// Variable para almancenar Documento + Folio de Factura.
+    public static String MonedaFactura;// Variable para almancenar la Moneda de la Factura.
+    public static final String BENEFICIARIO = "18"; //Número de Beneficiario
 
     // Variables de configuración para la BD de IIA040805DZ4
 //    public static final String RFC = "IIA040805DZ4"; // RFC de prueba

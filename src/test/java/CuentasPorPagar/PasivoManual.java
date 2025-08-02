@@ -1,27 +1,19 @@
 package CuentasPorPagar;
 import Indicadores.InicioSesion;
 import Indicadores.Variables;
-import Utilidades.UtilidadesAllure;
-import com.google.errorprone.annotations.Var;
-import io.qameta.allure.Allure;
 import io.qameta.allure.Description;
 import io.qameta.allure.Step;
 import org.junit.jupiter.api.*;
 import org.openqa.selenium.*;
-import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import org.openqa.selenium.support.ui.Select;
-import org.openqa.selenium.support.ui.FluentWait;
-
 
 
 import java.time.Duration;
 import java.util.List;
-import java.util.Objects;
 import java.util.Random;
-import java.util.stream.Collectors;
 
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class PasivoManual {
@@ -31,6 +23,7 @@ public class PasivoManual {
 
     private static final String CODIGO_PROVEEDOR = Variables.PROVEEDOR;
 
+    private String folioGuardado; // Variable de instancia para almacenar el folio
 
     @BeforeEach
     public void setup() {
@@ -57,21 +50,22 @@ public class PasivoManual {
 
     @Test
     @Order(2)
-    @Description("Ingresar al modulo de facturación.")
-    public void ingresarModuloFacturacion() {
+    @Description("Ingresar al modulo de Cuentas Por Pagar.")
+    public void ingresarModuloCuentasPorPagar() {
         BotonCuentasPorPagar();
         BotonPasivos();
     }
 
-    @RepeatedTest(2)
+    @RepeatedTest(1)
     @Order(3)
-    @Description("Se genera una factura con conceptos aleatorios")
-    public void FacturacionporConcepto() {
+    @Description("Se genera una Pasivo")
+    public void Pasivo() {
 
         AgregarPasivo();
         QuitarCampoFecha();
         CodigoProveedor();
         NoDocumento();
+        CopiarFolio();
         MonedaPasivo();
         SubtotalPasivo();
         IVAPasivo();
@@ -81,10 +75,9 @@ public class PasivoManual {
 
     }
 
-
     @AfterAll
     public static void tearDown() {
-        System.out.println("🔒 Cerrando sesión y liberando WebDriver desde FacturacionGeneral...");
+        System.out.println("🔒 Cerrando sesión y liberando WebDriver desde Pasivos...");
         InicioSesion.cerrarSesion(); // Asegurar que se libere el WebDriver correctamente
     }
 
@@ -104,7 +97,7 @@ public class PasivoManual {
         }
     }
 
-    @Step("Hacer clic en el botón de Pagos")
+    @Step("Hacer clic en el botón de Pasivos")
     public void BotonPasivos() {
         try {
             // Esperar a que el botón de Pagos esté presente y clickeable
@@ -113,10 +106,10 @@ public class PasivoManual {
 
             // Hacer clic en el botón
             botonPagos.click();
-            System.out.println("Se hizo clic en el botón de Pagos.");
+            System.out.println("Se hizo clic en el botón de Pasivos.");
 
         } catch (Exception e) {
-            System.err.println("Error al hacer clic en el botón de Pagos: " + e.getMessage());
+            System.err.println("Error al hacer clic en el botón de Pasivos: " + e.getMessage());
         }
     }
 
@@ -128,7 +121,7 @@ public class PasivoManual {
 
             // Esperar que el botón "Agregar" esté presente en el DOM usando XPath
             WebElement botonAgregar = wait.until(ExpectedConditions.presenceOfElementLocated(By.xpath(
-                    "/html/body/form/table/tbody/tr/td/div/table/tbody/tr[1]/td/table/tbody/tr/td/table/tbody/tr[3]/td/div[1]/table/tbody/tr/td/table/tbody/tr[2]/td/div[14]/table/tbody/tr/td/table/tbody/tr[1]/td[2]"
+                    "//*[@id=\"tzOPT_AGREGARMENU\"]/table/tbody/tr[1]/td[2]"
             )));
             wait.until(ExpectedConditions.visibilityOf(botonAgregar));
 
@@ -153,20 +146,37 @@ public class PasivoManual {
 
     public void QuitarCampoFecha() {
         try {
-            WebElement body = driver.findElement(By.tagName("body")); // Clic en el fondo de la página
-            body.click();
-            body.click();
-            System.out.println("✅ Campo EDT_FECHA deseleccionado con un clic en el body.");
+            Thread.sleep(3000);
+            // Localizamos el elemento que queremos validar (reemplaza el XPath por el correcto)
+            WebElement campoFecha = driver.findElement(By.xpath("//*[@id=\"EDT_FECHA\"]"));
+            int maxIntentos = 3;
+            int intentos = 0;
+
+            // Verificamos si el elemento tiene el foco y repetimos el clic en el body si es necesario
+            while(campoFecha.equals(driver.switchTo().activeElement()) && intentos < maxIntentos) {
+                System.out.println("El campo está seleccionado. Haciendo clic en el body para quitar la selección... (Intento " + (intentos+1) + ")");
+                WebElement body = driver.findElement(By.tagName("body"));
+                body.click();
+                intentos++;
+            }
+
+            // Validamos el estado final
+            if (!campoFecha.equals(driver.switchTo().activeElement())) {
+                System.out.println("El campo se deseleccionó correctamente tras " + intentos + " intento(s).");
+            } else {
+                System.out.println("El campo sigue seleccionado tras " + intentos + " intento(s).");
+            }
         } catch (Exception e) {
-            System.err.println("⚠ No se pudo deseleccionar el campo EDT_FECHA: " + e.getMessage());
+            System.err.println("Error al deseleccionar el campo: " + e.getMessage());
         }
     }
+
 
     @Step("Ingresar el número 1 en el campo Código de Proveedor")
     public void CodigoProveedor() {
         try {
             WebElement inputCodigo = wait.until(ExpectedConditions.presenceOfElementLocated(By.xpath(
-                    "/html/body/form/table/tbody/tr/td/table/tbody/tr/td/div/table/tbody/tr[2]/td/div[1]/table/tbody/tr/td/table/tbody/tr[2]/td/div[12]/table/tbody/tr/td/table/tbody/tr[2]/td/div[18]/table/tbody/tr/td/ul/li[2]/input")));
+                    "//*[@id=\"EDT_NUMEROPROVEEDOR\"]")));
             inputCodigo.clear();
             inputCodigo.sendKeys(CODIGO_PROVEEDOR);
             System.out.println("Se ingresó el número " + CODIGO_PROVEEDOR + " en el campo Código de Proveedor.");
@@ -175,33 +185,59 @@ public class PasivoManual {
         }
     }
 
-    @Step("Ingresar 'PA' en el primer campo de NoDocumento y copiar el folio al segundo campo")
+    @Step("Ingresar 'PA' en el primer campo de NoDocumento, copiar el folio al segundo campo y concatenarlos correctamente")
     public void NoDocumento() {
         try {
-            // Localizar el primer campo de NoDocumento y escribir "PA"
+            // **Localizar y escribir 'PA' en el primer campo de NoDocumento**
             WebElement inputPrimerCampo = wait.until(ExpectedConditions.presenceOfElementLocated(By.xpath(
                     "/html/body/form/table/tbody/tr/td/table/tbody/tr/td/div/table/tbody/tr[2]/td/div[1]/table/tbody/tr/td/table/tbody/tr[2]/td/div[12]/table/tbody/tr/td/table/tbody/tr[2]/td/div[35]/table/tbody/tr[2]/td/table[1]/tbody/tr/td/table/tbody/tr[2]/td/div[1]/table/tbody/tr/td/ul/li[2]/input")));
             inputPrimerCampo.clear();
             inputPrimerCampo.sendKeys("PA");
             System.out.println("Se ingresó 'PA' en el primer campo de NoDocumento.");
 
-            // Localizar el campo del cual se copiará el folio
+            // **Localizar el campo del folio y copiar su valor**
             WebElement inputFolio = wait.until(ExpectedConditions.presenceOfElementLocated(By.xpath(
                     "/html/body/form/table/tbody/tr/td/table/tbody/tr/td/div/table/tbody/tr[2]/td/div[1]/table/tbody/tr/td/table/tbody/tr[2]/td/div[12]/table/tbody/tr/td/table/tbody/tr[2]/td/div[6]/table/tbody/tr/td/ul/li[2]/input")));
-            String folioCopiado = inputFolio.getAttribute("value");
+            String folioCopiado = inputFolio.getAttribute("value").trim(); // Obtener y limpiar el valor del folio
+            System.out.println("Se copió el folio: " + folioCopiado);
 
-            // Localizar el segundo campo de NoDocumento y pegar el folio copiado
+            // **Localizar el segundo campo de NoDocumento y pegar el folio**
             WebElement inputSegundoCampo = wait.until(ExpectedConditions.presenceOfElementLocated(By.xpath(
                     "/html/body/form/table/tbody/tr/td/table/tbody/tr/td/div/table/tbody/tr[2]/td/div[1]/table/tbody/tr/td/table/tbody/tr[2]/td/div[12]/table/tbody/tr/td/table/tbody/tr[2]/td/div[35]/table/tbody/tr[2]/td/table[1]/tbody/tr/td/table/tbody/tr[2]/td/div[4]/table/tbody/tr/td/ul/li[2]/input")));
             inputSegundoCampo.clear();
             inputSegundoCampo.sendKeys(folioCopiado);
-            System.out.println("Se copió el folio '" + folioCopiado + "' y se pegó en el segundo campo de NoDocumento.");
+            System.out.println("Se pegó el folio en el segundo campo de NoDocumento.");
+
+            // **Generar la variable con formato 'PA-FOLIO'**
+            Variables.numeroDocumentoGenerado = "PA-" + folioCopiado;
+            Variables.DocumentoGeneradoPasivo = "PA-0000" + folioCopiado;
+            System.out.println("Se generó correctamente el número de documento: " + Variables.numeroDocumentoGenerado);
+
 
         } catch (Exception e) {
             System.err.println("Error en NoDocumento: " + e.getMessage());
         }
     }
 
+    @Step("Copiar y almacenar el folio en memoria")
+    public void CopiarFolio() {
+        try {
+            // Localizar el campo y obtener su valor
+            WebElement inputFolio = wait.until(ExpectedConditions.presenceOfElementLocated(By.xpath(
+                    "/html/body/form/table/tbody/tr/td/table/tbody/tr/td/div/table/tbody/tr[2]/td/div[1]/table/tbody/tr/td/table/tbody/tr[2]/td/div[12]/table/tbody/tr/td/table/tbody/tr[2]/td/div[6]/table/tbody/tr/td/ul/li[2]/input")));
+
+            // Guardar el valor del campo en la variable
+            folioGuardado = inputFolio.getAttribute("value");
+
+        } catch (Exception e) {
+            System.err.println("Error en CopiarFolio: " + e.getMessage());
+        }
+    }
+
+    // Método para recuperar el folio almacenado
+    public String obtenerFolioGuardado() {
+        return folioGuardado;
+    }
 
     @Step("Seleccionar entre PESOS y DÓLARES en el campo Moneda")
     public void MonedaPasivo() {
@@ -268,9 +304,9 @@ public class PasivoManual {
     public void AceptarPoliza() {
         try {
             // Localizar el botón "Aceptar Póliza" usando el XPath proporcionado
-            WebElement botonAceptar = driver.findElement(
-                    By.xpath("/html/body/form/table/tbody/tr/td/table/tbody/tr/td/div/table/tbody/tr[2]/td/div[1]/table/tbody/tr/td/div/div[3]/table/tbody/tr/td/table/tbody/tr[2]/td/div[1]/table/tbody/tr/td/input"));
-
+            WebElement botonAceptar = wait.until(ExpectedConditions.presenceOfElementLocated(By.xpath(
+                    "/html/body/form/table/tbody/tr/td/table/tbody/tr/td/div/table/tbody/tr[2]/td/div[1]/table/tbody/tr/td/div/div[3]/table/tbody/tr/td/table/tbody/tr[2]/td/div[1]/table/tbody/tr/td/input")));
+            wait.until(ExpectedConditions.elementToBeClickable(botonAceptar));
             // Hacer clic en el botón "Aceptar Póliza"
             botonAceptar.click();
             System.out.println("Se hizo clic en el botón Aceptar Póliza.");

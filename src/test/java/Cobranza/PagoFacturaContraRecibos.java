@@ -363,7 +363,7 @@ public class PagoFacturaContraRecibos {
             FolioFactura = folioFacturaField.getAttribute("value");
             //Facturas.add(FolioFactura); // Ejemplo de folio de la factura a la lista de facturas
             Facturas.add("FACTURA CFDI "+FolioFactura+"-CALMXLI"); // Ejemplo de folio de la factura a la lista de facturas
-            System.out.println("Documento Optenido: " + Facturas);
+            System.out.println("Documento Obtenido: " + Facturas);
         } catch (TimeoutException e) {
             UtilidadesAllure.manejoError(driver, e, "Error al obtener el folio de la factura");
         }

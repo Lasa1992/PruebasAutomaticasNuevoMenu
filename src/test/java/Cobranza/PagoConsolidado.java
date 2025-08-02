@@ -117,10 +117,10 @@ public class PagoConsolidado {
         BotonImpresion(); // Regresar a la pantalla principal
 
 
-        // Bloque donde se controla el pago por factoraje
+        // Bloque donde se controla el pago Consolidado
         BotonModuloCobranza(); // Selecciona el módulo de Cobranza en la interfaz de usuario.
         BotonPagosAbonos(); // Selecciona el submódulo pagos/abonos.
-        BotonRegistrarPagoConsolidado(); // Selecciona la opción de registrar pago de factoraje.
+        BotonRegistrarPagoConsolidado(); // Selecciona la opción de registrar pago Consolidado
         deseleccionarCampoFecha(); // Deselecciona el campo de fecha.
         CodigoClientPago(); // Introduce el código del cliente para el pago.
         SeleccionarClientAdicional(); // Selecciona un cliente adicional.
