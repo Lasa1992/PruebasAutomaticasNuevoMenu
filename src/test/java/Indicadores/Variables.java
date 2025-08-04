@@ -14,7 +14,7 @@ public class Variables {
     public static String DocumentoGeneradoPasivo; // Número de documento para Contra Recibo y Pagar Contra Recibos
     public static String Facturas;// Variable para almancenar Documento + Folio de Factura.
     public static String MonedaFactura;// Variable para almancenar la Moneda de la Factura.
-    public static final String BENEFICIARIO = "18"; //Número de Beneficiario
+    public static final String BENEFICIARIO = "18"; //Número de Beneficiarios
 
     // Variables de configuración para la BD de IIA040805DZ4
 //    public static final String RFC = "IIA040805DZ4"; // RFC de prueba
