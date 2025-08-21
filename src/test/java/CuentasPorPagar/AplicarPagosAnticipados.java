@@ -224,7 +224,7 @@ public class AplicarPagosAnticipados {
             System.out.println("Se ingresó y buscó el documento: " + Variables.DocumentoGeneradoPasivo);
             Thread.sleep(500);
 
-            // **Esperar y seleccionar la fila correcta con el número de documento**
+            // **Esperar y seleccionar la fila correcta con el número de documento*
             WebElement filaSeleccionada = wait.until(ExpectedConditions.presenceOfElementLocated(
                     By.xpath("//tr[contains(@class, 'TABLE-Selected') and .//td[contains(@class, 'wbcolCOL_DOCUMENTO')]//div[text()='" + Variables.DocumentoGeneradoPasivo + "']]")));
             System.out.println("Se encontró la fila del documento: " + Variables.DocumentoGeneradoPasivo);

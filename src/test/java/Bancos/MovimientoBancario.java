@@ -354,7 +354,7 @@ public class MovimientoBancario {
         }
     }
 
-    //Metodo para seleccionar cuenta banacaria para Pagos Anticipados
+    //Metodo para seleccionar cuenta banacaria para Pagos Anticipados.
     @Step("Seleccionar Cuenta Bancaria")
     public void CuentaBancariaPagoAnticipado() {
         try {

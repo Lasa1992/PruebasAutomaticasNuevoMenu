@@ -289,7 +289,7 @@ public class PasivoManual {
         }
     }
 
-    //Guardar Total Pasivo en Variable Global para Movimiento bancario utilizado en Aplicar Pagos Anticipados
+    //Guardar Total Pasivo en Variable Global para Movimiento bancario utilizado en Aplicar Pagos Anticipados.
     @Step("Almacenar Total Pasivo")
     public void TotalPasivo() {
         try {
