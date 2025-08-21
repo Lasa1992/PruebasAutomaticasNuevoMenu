@@ -3,18 +3,15 @@ package Bancos;
 import Indicadores.InicioSesion;
 import Utilidades.UtilidadesAllure;
 import Indicadores.Variables;
-import io.qameta.allure.Allure;
 import io.qameta.allure.Description;
 import io.qameta.allure.Step;
 import org.junit.jupiter.api.*;
 import org.openqa.selenium.*;
-import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.Select;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
 import java.text.SimpleDateFormat;
-import java.time.Duration;
 import java.util.Date;
 import java.util.List;
 import java.util.Random;
@@ -24,10 +21,6 @@ public class MovimientoBancario {
 
     private static WebDriver driver;
     private static WebDriverWait wait;
-
-    // Variable global para almacenar el número de movimiento
-    private static String folioMovimiento = "";
-
 
     @BeforeEach
     public void setup() {
@@ -79,7 +72,7 @@ public class MovimientoBancario {
         Referencia();
         Importe();
         AceptarMovimiento();
-        MensajePoliza();
+        //MensajePoliza();
         SalirventanaRegistro();
 
     }
@@ -91,7 +84,7 @@ public class MovimientoBancario {
     }
 
     @Step("Abrir el módulo de Bancos")
-    private void ingresarModuloBancos() {
+    public void ingresarModuloBancos() {
         try {
             WebElement botonBancos = wait.until(ExpectedConditions.elementToBeClickable(
                     By.xpath("//img[contains(@src, '/GMTERPV8_WEB/Imagenes/BANCO1')]")
@@ -105,7 +98,7 @@ public class MovimientoBancario {
     }
 
     @Step("Abrir submódulo de Movimientos Bancarios")
-    private void submoduloMovBancarios() {
+    public void submoduloMovBancarios() {
         try {
             WebElement subModuloMovimientos = wait.until(ExpectedConditions.elementToBeClickable(
                     By.xpath("//img[contains(@src, '/GMTERPV8_WEB/Imagenes/BANCO/MOVIMIENTOSBANCARIOS')]")
@@ -119,7 +112,7 @@ public class MovimientoBancario {
     }
 
     @Step("Registrar Movimiento Bancario")
-    private void RegistrarMovBancario() {
+    public void RegistrarMovBancario() {
         try {
             WebElement botonRegistrar = wait.until(ExpectedConditions.elementToBeClickable(
                     By.xpath("/html/body/form/table/tbody/tr/td/div/table/tbody/tr/td/table/tbody/tr/td/table/tbody/tr[1]/td/div[3]/div[2]/div[1]/table/tbody/tr/td/table/tbody/tr[1]/td/div/div[1]/div/input")
@@ -134,7 +127,7 @@ public class MovimientoBancario {
     }
 
     @Step("Seleccionar Cuenta Bancaria Aleatoria")
-    private void CuentaBancaria() {
+    public void CuentaBancaria() {
         try {
             WebElement dropdownCuenta = wait.until(ExpectedConditions.elementToBeClickable(
                     By.xpath("/html/body/form/table/tbody/tr/td/table/tbody/tr/td/div/table/tbody/tr[2]/td/div[1]/table/tbody/tr/td/table/tbody/tr[1]/td/div/div[2]/table/tbody/tr/td/div/table/tbody/tr/td/table/tbody/tr[1]/td/div/div[2]/div[1]/div/table/tbody/tr/td/table/tbody/tr/td/ul/li[2]/table/tbody/tr/td/select")
@@ -155,21 +148,23 @@ public class MovimientoBancario {
     }
 
     @Step("Capturar y Guardar Número de Movimiento")
-    private void NumeroMovimiento() {
+    public void NumeroMovimiento() {
         try {
             WebElement inputMovimiento = wait.until(ExpectedConditions.visibilityOfElementLocated(
                     By.xpath("/html/body/form/table/tbody/tr/td/table/tbody/tr/td/div/table/tbody/tr[2]/td/div[1]/table/tbody/tr/td/table/tbody/tr[1]/td/div/div[2]/table/tbody/tr/td/div/table/tbody/tr/td/table/tbody/tr[1]/td/div/div[3]/div[1]/div/table/tbody/tr/td/table/tbody/tr/td/ul/li[2]/input")
             ));
 
             // Capturar el valor del campo
-            folioMovimiento = inputMovimiento.getAttribute("value");
+            String folioMov = inputMovimiento.getAttribute("value");
 
             // Verificar que el campo tiene un valor antes de almacenarlo
-            if (folioMovimiento == null || folioMovimiento.isEmpty()) {
+            if (folioMov == null || folioMov.isEmpty()) {
                 System.out.println("Advertencia: El campo de Número de Movimiento está vacío.");
             } else {
-                System.out.println("Número de movimiento capturado y guardado globalmente: " + folioMovimiento);
+                System.out.println("Número de movimiento capturado y guardado globalmente: " + folioMov);
             }
+
+            Variables.FolioMovimientoBancario = folioMov;
 
         } catch (Exception e) {
             UtilidadesAllure.manejoError(driver, e, "Error al capturar el número de movimiento.");
@@ -177,7 +172,7 @@ public class MovimientoBancario {
     }
 
     @Step("Seleccionar Concepto Aleatorio")
-    private void Concepto() {
+    public void Concepto() {
         try {
             WebElement dropdownConcepto = wait.until(ExpectedConditions.elementToBeClickable(
                     By.xpath("/html/body/form/table/tbody/tr/td/table/tbody/tr/td/div/table/tbody/tr[2]/td/div[1]/table/tbody/tr/td/table/tbody/tr[1]/td/div/div[2]/table/tbody/tr/td/div/table/tbody/tr/td/table/tbody/tr[1]/td/div/div[4]/div[1]/div/table/tbody/tr/td/table/tbody/tr/td/ul/li[2]/table/tbody/tr/td/select")
@@ -198,7 +193,7 @@ public class MovimientoBancario {
     }
 
     @Step("Ingresar Número de Proveedor y Avanzar con Tab")
-    private void Proveedor() {
+    public void Proveedor() {
         try {
             WebElement inputProveedor = wait.until(ExpectedConditions.elementToBeClickable(
                     By.xpath("/html/body/form/table/tbody/tr/td/table/tbody/tr/td/div/table/tbody/tr[2]/td/div[1]/table/tbody/tr/td/table/tbody/tr[1]/td/div/div[2]/table/tbody/tr/td/div/table/tbody/tr/td/table/tbody/tr[2]/td/div[15]/input")
@@ -220,9 +215,8 @@ public class MovimientoBancario {
     }
 
 
-
     @Step("Ingresar Referencia con Fecha Actual y Número de Movimiento")
-    private void Referencia() {
+    public void Referencia() {
         try {
             WebElement inputReferencia = wait.until(ExpectedConditions.elementToBeClickable(
                     By.xpath("/html/body/form/table/tbody/tr/td/table/tbody/tr/td/div/table/tbody/tr[2]/td/div[1]/table/tbody/tr/td/table/tbody/tr[1]/td/div/div[2]/table/tbody/tr/td/div/table/tbody/tr/td/table/tbody/tr[2]/td/div[16]/table/tbody/tr/td/ul/li[2]/textarea")
@@ -232,7 +226,7 @@ public class MovimientoBancario {
             String fechaActual = new SimpleDateFormat("yyyy-MM-dd").format(new Date());
 
             // Construir la referencia con la fecha y el número de movimiento
-            String referencia = fechaActual + " - " + folioMovimiento;
+            String referencia = fechaActual + " - " + Variables.FolioMovimientoBancario;
 
             inputReferencia.click();
             inputReferencia.sendKeys(referencia);
@@ -245,7 +239,7 @@ public class MovimientoBancario {
     }
 
     @Step("Ingresar Importe Aleatorio")
-    private void Importe() {
+    public void Importe() {
         try {
             WebElement inputImporte = wait.until(ExpectedConditions.elementToBeClickable(
                     By.xpath("/html/body/form/table/tbody/tr/td/table/tbody/tr/td/div/table/tbody/tr[2]/td/div[1]/table/tbody/tr/td/table/tbody/tr[1]/td/div/div[2]/table/tbody/tr/td/div/table/tbody/tr/td/table/tbody/tr[2]/td/div[12]/table/tbody/tr/td/ul/li[2]/input")
@@ -268,8 +262,21 @@ public class MovimientoBancario {
         }
     }
 
+    @Step("Seleccionar check Anticipo")
+    public void OpcionAnticipo(){
+        try{
+            WebElement anticipo = wait.until(ExpectedConditions.elementToBeClickable(By.xpath(
+                    "//*[@id=\"CBOX_MOVIMIENTOPORANTICIPO_1\"]")));
+            //Marcar check Anticipo
+            anticipo.click();
+            System.out.println("Se marco opción Anticipo.");
+        } catch (Exception e){
+            System.out.println("Error al marcar opción Anticipo: " + e.getMessage());
+        }
+    }
+
     @Step("Aceptar Movimiento Bancario")
-    private void AceptarMovimiento() {
+    public void AceptarMovimiento() {
         try {
             WebElement botonAceptar = wait.until(ExpectedConditions.elementToBeClickable(
                     By.xpath("/html/body/form/table/tbody/tr/td/table/tbody/tr/td/div/table/tbody/tr[2]/td/div[1]/table/tbody/tr/td/table/tbody/tr[1]/td/div/div[3]/div[3]/div/input")
@@ -284,7 +291,7 @@ public class MovimientoBancario {
     }
 
     @Step("Hacer clic en el Mensaje de Póliza")
-    private void MensajePoliza() {
+    public void MensajePoliza() {
         try {
             WebElement inputMensajePoliza = wait.until(ExpectedConditions.elementToBeClickable(
                     By.xpath("/html/body/form/table/tbody/tr/td/table/tbody/tr/td/div/table/tbody/tr[2]/td/div[1]/table/tbody/tr/td/div/div[3]/table/tbody/tr/td/table/tbody/tr[2]/td/div[1]/table/tbody/tr/td/input")
@@ -298,12 +305,11 @@ public class MovimientoBancario {
         }
     }
 
-
     @Step("Salir de la Ventana de Registro")
-    private void SalirventanaRegistro() {
+    public void SalirventanaRegistro() {
         try {
             WebElement botonSalir = wait.until(ExpectedConditions.elementToBeClickable(
-                    By.xpath("/html/body/form/table/tbody/tr/td/table/tbody/tr/td/div/table/tbody/tr[2]/td/div[1]/table/tbody/tr/td/table/tbody/tr[1]/td/div/div[3]/div[4]/div/input")
+                    By.xpath("//*[@id=\"BTN_CANCELAR\"]")
             ));
 
             botonSalir.click();
@@ -313,5 +319,64 @@ public class MovimientoBancario {
             UtilidadesAllure.manejoError(driver, e, "Error al hacer clic en el botón de salir.");
         }
     }
+
+    //Metodo para seleccionar Concepto RETIRO POR TRANSFERENCIA para Aplicar Pagos Anticipados
+    @Step("Seleccionar Concepto Retiro Por Transferencia")
+    public void ConceptoPagoAnticipado() {
+        try {
+            By localizarCampo = By.xpath("//*[@id=\"COMBO_CATTIPOSMOVIMIENTOSBANCARIOS\"]");
+            // Esperar que el combo esté visible
+            WebElement comboEstatusLlanta = wait.until(ExpectedConditions.elementToBeClickable(localizarCampo));
+            // Crear el objeto Select y seleccionar por texto visible
+            Select selectEstatus = new Select(comboEstatusLlanta);
+            selectEstatus.selectByVisibleText("RETIRO POR TRANSFERENCIA");
+
+            System.out.println("Se seleccionó la opción RETIRO POR TRANSFERENCIA.");
+        } catch (Exception e) {
+            UtilidadesAllure.manejoError(driver, e, "Error al seleccionar la opción RETIRO POR TRANSFERENCIA.");
+        }
+    }
+
+    //Metodo para capturar importe para Aplicar Pagos Anticipados
+    @Step("Ingresar Importe")
+    public void ImportePagoAnticipado() {
+        try {
+            WebElement inputImporte = wait.until(ExpectedConditions.elementToBeClickable(
+                    By.xpath("/html/body/form/table/tbody/tr/td/table/tbody/tr/td/div/table/tbody/tr[2]/td/div[1]/table/tbody/tr/td/table/tbody/tr[1]/td/div/div[2]/table/tbody/tr/td/div/table/tbody/tr/td/table/tbody/tr[2]/td/div[12]/table/tbody/tr/td/ul/li[2]/input")
+            ));
+            // Ingresar importe desde la variable global Total
+            inputImporte.click();
+            inputImporte.sendKeys(Variables.Total);
+            System.out.println("Importe ingresado: " + Variables.Total);
+
+        } catch (Exception e) {
+            UtilidadesAllure.manejoError(driver, e, "Error al ingresar el importe.");
+        }
+    }
+
+    //Metodo para seleccionar cuenta banacaria para Pagos Anticipados
+    @Step("Seleccionar Cuenta Bancaria")
+    public void CuentaBancariaPagoAnticipado() {
+        try {
+            WebElement dropdownCuenta = wait.until(ExpectedConditions.elementToBeClickable(
+                    By.xpath("//*[@id=\"COMBO_CATCUENTASBANCARIAS\"]")
+            ));
+            Select select = new Select(dropdownCuenta);
+
+            //Seleccionar Cuenta Bancaria de PESOS o DÓLARES
+            if (Variables.Moneda.equals("0")){ //Indice "0" corresponde a la Moneda PESOS
+                //Selecciona Cuenta Bancaria PESOS
+                select.selectByVisibleText("0132508532 - BBVA BANCOMER");
+                System.out.println("Se selecciono la Cuenta Bancaria 0132508532 - BBVA BANCOMER");
+            } else {
+                //Selecciona Cuenta Bancaria DÓLARES
+                select.selectByVisibleText("9552121223345 - SANTANDER 3345");
+                System.out.println("Se selecciono la Cuenta Bancaria 9552121223345 - SANTANDER 3345");
+            }
+        } catch (Exception e) {
+            UtilidadesAllure.manejoError(driver, e, "Error al seleccionar una Cuenta Bancaria.");
+        }
+    }
+
 
 }

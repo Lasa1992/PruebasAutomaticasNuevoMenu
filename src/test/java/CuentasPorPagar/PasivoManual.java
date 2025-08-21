@@ -72,7 +72,6 @@ public class PasivoManual {
         AceptarPasivo();
         AceptarPoliza();
 
-
     }
 
     @AfterAll
@@ -250,6 +249,9 @@ public class PasivoManual {
             int indiceAleatorio = new Random().nextInt(opciones.size());
             select.selectByIndex(indiceAleatorio);
             System.out.println("Se seleccionó la moneda: " + opciones.get(indiceAleatorio).getText());
+            Variables.Moneda = String.valueOf(indiceAleatorio);
+            System.out.println("se guardo el indice: "+ Variables.Moneda);
+
         } catch (Exception e) {
             System.err.println("Error en MonedaPasivo: " + e.getMessage());
         }
@@ -284,6 +286,25 @@ public class PasivoManual {
             System.out.println("Se seleccionó el IVA: " + opciones.get(indiceAleatorio).getText());
         } catch (Exception e) {
             System.err.println("Error en IVAPasivo: " + e.getMessage());
+        }
+    }
+
+    //Guardar Total Pasivo en Variable Global para Movimiento bancario utilizado en Aplicar Pagos Anticipados
+    @Step("Almacenar Total Pasivo")
+    public void TotalPasivo() {
+        try {
+            Thread.sleep(3000);
+            // Localizar el campo y obtener su valor
+            WebElement inputTotal= wait.until(ExpectedConditions.presenceOfElementLocated(By.xpath(
+                    "//*[@id=\"EDT_IMPORTETOTAL\"]")));
+
+            // Guardar el valor del campo en la variable
+            String TotalCopiado= inputTotal.getAttribute("value").trim();
+            Variables.Total = TotalCopiado;
+            System.out.println("Se guardo el Total Pasivo de: " + Variables.Total);
+
+        } catch (Exception e) {
+            System.err.println("Error al Guardar el Total del Pasivo: " + e.getMessage());
         }
     }
 
