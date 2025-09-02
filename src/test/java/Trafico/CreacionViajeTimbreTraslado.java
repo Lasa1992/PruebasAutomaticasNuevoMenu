@@ -70,7 +70,7 @@ public class CreacionViajeTimbreTraslado {
         BotonListadoViajes();
     }
 
-    @RepeatedTest(30)
+    @RepeatedTest(2)
     @Order(4)
     @Description("Crear y timbrar el viaje con Carta Porte CFDI - TR")
     public void testCrearViaje() {

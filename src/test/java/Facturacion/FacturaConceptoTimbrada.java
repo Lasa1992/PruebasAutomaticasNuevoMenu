@@ -68,7 +68,7 @@ public class FacturaConceptoTimbrada {
         handleSubMenuButton();
     }
 
-    @RepeatedTest(2)
+    @RepeatedTest(23)
     @Order(4)
     @Description("Se genera una factura con conceptos aleatorios")
     public void FacturacionporConcepto() {

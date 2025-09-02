@@ -6,6 +6,7 @@ import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.edge.EdgeDriver;
 import org.openqa.selenium.edge.EdgeOptions;
 import org.openqa.selenium.firefox.FirefoxDriver;
+import org.openqa.selenium.firefox.FirefoxOptions;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
@@ -20,9 +21,9 @@ public class InicioSesion {
     // Lista de credenciales para pruebas en paralelo
     private static final String[][] CREDENTIALS = {
             {"UsuarioPrueba1", "Prueba.0000"},
-            {"UsuarioPrueba2", "Prueba.0000"},
+          {"UsuarioPrueba2", "Prueba.0000"},
             {"UsuarioPrueba3", "Prueba.0000"},
-            {"UsuarioPrueba4", "Prueba.0000"}
+         {"UsuarioPrueba4", "Prueba.0000"}
     };
 
     private static final String RFCPRUEBA = Variables.RFC;
@@ -39,41 +40,51 @@ public class InicioSesion {
             WebDriver driver;
 
             switch (navegador.toLowerCase()) {
-                case "firefox":
-                    // System.out.println("🦊 Iniciando pruebas en Firefox...");
+                case "firefox": {
                     System.setProperty("webdriver.gecko.driver", "C:\\RepositorioPrueAuto\\Mozila\\geckodriver.exe");
-                    driver = new FirefoxDriver();
+                    FirefoxOptions ff = new FirefoxOptions();
+                    ff.addArguments("--headless");               // headless
+                    ff.addArguments("--width=1920");             // tamaño útil en headless
+                    ff.addArguments("--height=1080");
+                    driver = new FirefoxDriver(ff);
                     break;
-                case "edge":
-                    //System.out.println("🌐 Iniciando pruebas en Edge...");
+                }
+                case "edge": {
                     System.setProperty("webdriver.edge.driver", "C:\\RepositorioPrueAuto\\Edge\\msedgedriver.exe");
-                    EdgeOptions edgeOptions = new EdgeOptions();
-                    edgeOptions.addArguments("--inprivate");  // Modo incógnito
-                    edgeOptions.addArguments("--disable-features=EdgeSignin"); // Desactiva autenticación automática
-
-                    driver = new EdgeDriver(edgeOptions);
+                    EdgeOptions edge = new EdgeOptions();
+                    edge.addArguments("--headless=new");         // headless (Chromium)
+                    edge.addArguments("--window-size=1920,1080");
+                    edge.addArguments("--inprivate");
+                    edge.addArguments("--disable-features=EdgeSignin");
+                    driver = new EdgeDriver(edge);
                     break;
+                }
                 case "chrome":
-                default:
-                    //System.out.println("🔵 Iniciando pruebas en Chrome...");
+                default: {
                     System.setProperty("webdriver.chrome.driver", "C:\\RepositorioPrueAuto\\Chromedriver\\chromedriver.exe");
-                    ChromeOptions options = new ChromeOptions();
-                    options.addArguments("--headless");
-                    driver = new ChromeDriver();
+                    ChromeOptions ch = new ChromeOptions();
+                    //ch.addArguments("--headless=new");           // headless moderno
+                    ch.addArguments("--window-size=1920,1080");
+                    ch.addArguments("--disable-gpu");
+                    ch.addArguments("--no-sandbox");
+                    ch.addArguments("--disable-dev-shm-usage");
+                    driver = new ChromeDriver(ch);               // ¡usar options!
                     break;
+                }
             }
 
-            WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
+            WebDriverWait wait = new WebDriverWait(driver, java.time.Duration.ofSeconds(10));
 
-            driver.manage().window().maximize();
+            // En headless, maximize no tiene efecto; el tamaño ya está definido arriba.
+            // driver.manage().window().maximize();
+
             driver.get("https://www.softwareparatransporte.com/");
 
             driverThreadLocal.set(driver);
             waitThreadLocal.set(wait);
-
-            //System.out.println("🌍 WebDriver creado en " + navegador + " para hilo " + Thread.currentThread().getId());
         }
     }
+
 
     /**
      * Obtiene el WebDriver del hilo actual.

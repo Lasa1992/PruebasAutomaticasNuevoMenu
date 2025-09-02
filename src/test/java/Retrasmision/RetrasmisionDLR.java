@@ -65,15 +65,17 @@ public class RetrasmisionDLR {
     @Description("Crear y timbrar viaje con control de reinicio por tiempo")
     public void testCrearViajeConControl() {
 
-        int totalEjecuciones = Integer.parseInt(System.getProperty("totalEjecuciones", "50"));
-        int tiempoReinicioMin = Integer.parseInt(System.getProperty("tiempoReinicioMin", "180"));
-        long tiempoReinicioMs = tiempoReinicioMin * 60 * 1000L;
+        int totalEjecuciones = Integer.parseInt(System.getProperty("totalEjecuciones", "100"));
+        //int tiempoReinicioMin = Integer.parseInt(System.getProperty("tiempoReinicioMin", "18000"));
+        //long tiempoReinicioMs = tiempoReinicioMin * 60 * 1000L;
 
         int ejecucionesRealizadas = 0;
         long tiempoInicio = System.currentTimeMillis();
 
         while (ejecucionesRealizadas < totalEjecuciones) {
             try {
+
+                InicioSesion.handleNovedadesScreen();
                 BotonAgregarCartaPorte();
                 TipoDocumentoTraslado();
                 NumeroViajeCliente();
@@ -93,18 +95,23 @@ public class RetrasmisionDLR {
                 ejecucionesRealizadas++;
                 System.out.println("✅ Viaje creado correctamente. Total: " + ejecucionesRealizadas + "/" + totalEjecuciones);
 
+                // ⏳ Espera 2 minutos antes de la siguiente repetición
+                System.out.println("⏳ Esperando 90 segundos antes de continuar...");
+                Thread.sleep(75 * 1000); // 2 minutos en milisegundos
+
+
             } catch (Exception e) {
                 UtilidadesAllure.manejoError(driver, e, "Error durante la ejecución del viaje");
             }
 
-            if (System.currentTimeMillis() - tiempoInicio >= tiempoReinicioMs) {
+            /*if (System.currentTimeMillis() - tiempoInicio >= tiempoReinicioMs) {
                 System.out.println("🔄 Reiniciando navegador tras " + tiempoReinicioMin + " minutos...");
                 InicioSesion.cerrarSesion();
                 setup();
                 BotonModuloTrafico();
                 BotonListadoViajes();
                 tiempoInicio = System.currentTimeMillis();
-            }
+            }*/
         }
 
         System.out.println("🎯 Ejecución completada. Total viajes creados: " + ejecucionesRealizadas);

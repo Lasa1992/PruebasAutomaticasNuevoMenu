@@ -247,7 +247,7 @@ public class Llantas {
         }
     }
 
-    private static void IngresarCostoLlanta() {
+  /*  private static void IngresarCostoLlanta() {
         try {
 
             // Generar número aleatorio entre 1000 y 1800
@@ -268,9 +268,19 @@ public class Llantas {
         } catch (Exception e) {
             UtilidadesAllure.manejoError(driver, e, "Error al ingresar la vida útil en el campo Costo Llanta.");
         }
+    }*/
+
+    private static void IngresarCostoLlanta() throws InterruptedException {
+        WebElement Campocosto = driver.findElement(By.xpath("//*[@id=\"EDT_COSTOLLANTA\"]"));
+        Campocosto.click();
+        Thread.sleep(1000);
+        //Campocosto.clear();
+        Thread.sleep(2000);
+        Campocosto.sendKeys("500");
+        Campocosto.sendKeys(Keys.TAB);
     }
 
-    // Método auxiliar para verificar si hay una alerta
+    // Método auxiliar para verificar si hay una alerta3
     private static boolean isAlertPresent() {
         try {
             driver.switchTo().alert();
