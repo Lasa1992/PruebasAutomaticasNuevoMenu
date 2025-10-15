@@ -119,8 +119,9 @@ public class FacturacionViajeComplemento {
 
     private static void BotonModuloTrafico() {
         try {
-            WebElement ModuloBotonTrafico = wait.until(ExpectedConditions.elementToBeClickable(
-                    By.xpath("//img[contains(@src, '/GMTERPV8_WEB/Imagenes/TRAFICO1.jpg')]")));
+            WebElement ModuloBotonTrafico = wait.until(
+                    ExpectedConditions.elementToBeClickable(By.xpath("//*[@id=\"sidebar\"]/div/ul/li[5]"))
+            );
             ModuloBotonTrafico.click();
         } catch (Exception e) {
             UtilidadesAllure.manejoError(driver, e, "Botón Módulo Tráfico no funciona.");
@@ -129,8 +130,9 @@ public class FacturacionViajeComplemento {
 
     private static void BotonListadoViajes() {
         try {
-            WebElement ListadoBoton = wait.until(ExpectedConditions.elementToBeClickable(
-                    By.xpath("//a[img[contains(@src, '/GMTERPV8_WEB/Imagenes/TRAFICO/VIAJES1.jpg')]]")));
+            WebElement ListadoBoton = wait.until(
+                    ExpectedConditions.elementToBeClickable(By.xpath("//*[@id=\"submenuTRAFICO\"]/li[2]/a"))
+            );
             ListadoBoton.click();
         } catch (Exception e) {
             UtilidadesAllure.manejoError(driver, e, "Botón Listado de Viajes no funciona.");
@@ -139,7 +141,7 @@ public class FacturacionViajeComplemento {
 
     private static void BotonAgregarCartaPorte() {
         try {
-            WebElement additionalButton = wait.until(ExpectedConditions.elementToBeClickable(By.id("BTN_AGREGAR")));
+            WebElement additionalButton = wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//*[@id=\"BTN_AGREGAR\"]")));
             additionalButton.click();
         } catch (TimeoutException e) {
             UtilidadesAllure.manejoError(driver, e, "Botón Agregar Carta Porte no funciona.");
@@ -388,7 +390,7 @@ public class FacturacionViajeComplemento {
     private static void BotonModuloFacturacion() {
         try {
             WebElement imageButton = wait.until(ExpectedConditions.elementToBeClickable(
-                    By.xpath("//img[contains(@src, '/GMTERPV8_WEB/Imagenes/FACTURACION1.jpg')]")));
+                    By.xpath("//*[@id=\"sidebar\"]/div/ul/li[3]")));
             imageButton.click();
         } catch (Exception e) {
             UtilidadesAllure.manejoError(driver, e, "Botón Módulo Facturación no funciona.");
@@ -399,7 +401,7 @@ public class FacturacionViajeComplemento {
     private static void BotonFacturacionPorViaje() {
         try {
             WebElement subMenuButton = wait.until(ExpectedConditions.elementToBeClickable(
-                    By.xpath("//img[contains(@src, '/GMTERPV8_WEB/Imagenes/FACTURACION/PORVIAJE1.jpg')]")));
+                    By.xpath("//*[@id=\"submenuFACTURACION\"]/li[3]/a")));
             subMenuButton.click();
         } catch (Exception e) {
             UtilidadesAllure.manejoError(driver, e, "Botón listado de Facturas por Viaje no funciona.");
@@ -409,7 +411,7 @@ public class FacturacionViajeComplemento {
 
     private static void BotonAgregarFactura() {
         try {
-            WebElement addButton = wait.until(ExpectedConditions.elementToBeClickable(By.id("BTN_AGREGAR")));
+            WebElement addButton = wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//*[@id=\"tzBTN_AGREGAR\"]")));
             addButton.click();
         } catch (Exception e) {
             UtilidadesAllure.manejoError(driver, e, "Botón Agregar Factura no funciona.");

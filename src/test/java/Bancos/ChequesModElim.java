@@ -109,7 +109,7 @@ public class ChequesModElim {
     private void ingresarModuloBancos() {
         try {
             WebElement botonBancos = wait.until(ExpectedConditions.elementToBeClickable(
-                    By.xpath("//img[contains(@src, '/GMTERPV8_WEB/Imagenes/BANCO1')]")
+                    By.xpath("//*[@id=\"sidebar\"]/div/ul/li[7]")
             ));
             botonBancos.click();
         } catch (Exception e) {
@@ -121,7 +121,7 @@ public class ChequesModElim {
     private void submoduloCheques() {
         try {
             WebElement subCheques = wait.until(ExpectedConditions.elementToBeClickable(
-                    By.xpath("//img[contains(@src, '/GMTERPV8_WEB/Imagenes/BANCO/CHEQUES')]")
+                    By.xpath("//*[@id=\"submenuBANCO\"]/li[2]/a")
             ));
             subCheques.click();
         } catch (Exception e) {
@@ -133,7 +133,7 @@ public class ChequesModElim {
     private void RegistrarCheque() {
         try {
             WebElement botonRegistrar = wait.until(ExpectedConditions.elementToBeClickable(
-                    By.xpath("/html/body/form/table/tbody/tr/td/div/table/tbody/tr/td/table/tbody/tr/td/table/tbody/tr[1]/td/div[3]/div[2]/div[1]/table/tbody/tr/td/table/tbody/tr[1]/td/div/div[1]/div/input")
+                    By.xpath("//*[@id=\"BTN_REGISTRAR\"]")
             ));
             botonRegistrar.click();
         } catch (Exception e) {
@@ -291,7 +291,7 @@ public class ChequesModElim {
     private void BuscarCheque() {
         try {
             WebElement inputBusqueda = wait.until(ExpectedConditions.elementToBeClickable(
-                    By.xpath("/html/body/form/table/tbody/tr/td/div/table/tbody/tr/td/table/tbody/tr/td/table/tbody/tr[1]/td/div[3]/div[2]/div[3]/div/table/tbody/tr/td/div/div/div[1]/div[1]/label/input")
+                    By.xpath("//*[@id=\"TABLE_ProCheques_filter\"]/label/input")
             ));
 
             // Limpiar campo antes de escribir
@@ -311,7 +311,7 @@ public class ChequesModElim {
     private void SeleccionarCheque() {
         try {
             WebElement listadoCheques = wait.until(ExpectedConditions.visibilityOfElementLocated(
-                    By.xpath("/html/body/form/table/tbody/tr/td/div/table/tbody/tr/td/table/tbody/tr/td/table/tbody/tr[1]/td/div[3]/div[2]/div[3]/div/table/tbody/tr/td/div/div/div[2]/div[2]")
+                    By.xpath("//*[@id=\"TABLE_ProCheques_wrapper\"]/div[2]/div[2]")
             ));
 
             // Verificar si hay cheques disponibles
@@ -335,7 +335,7 @@ public class ChequesModElim {
     private void BotonModificar() {
         try {
             WebElement botonModificar = wait.until(ExpectedConditions.elementToBeClickable(
-                    By.xpath("/html/body/form/table/tbody/tr/td/div/table/tbody/tr/td/table/tbody/tr/td/table/tbody/tr[1]/td/div[3]/div[2]/div[1]/table/tbody/tr/td/table/tbody/tr[1]/td/div/div[2]/div/input")
+                    By.xpath("//*[@id=\"BTN_MODIFICAR\"]")
             ));
 
             botonModificar.click();
@@ -371,7 +371,7 @@ public class ChequesModElim {
     private void BotonCancelar() {
         try {
             WebElement botonCancelar = wait.until(ExpectedConditions.elementToBeClickable(
-                    By.xpath("/html/body/form/table/tbody/tr/td/div/table/tbody/tr/td/table/tbody/tr/td/table/tbody/tr[1]/td/div[3]/div[2]/div[1]/table/tbody/tr/td/table/tbody/tr[1]/td/div/div[3]/div/input")
+                    By.xpath("//*[@id=\"BTN_CANCELAR\"]")
             ));
 
             botonCancelar.click();
@@ -407,7 +407,7 @@ public class ChequesModElim {
     private void EliminarCheque() {
         try {
             WebElement botonEliminar = wait.until(ExpectedConditions.elementToBeClickable(
-                    By.xpath("/html/body/form/table/tbody/tr/td/div/table/tbody/tr/td/table/tbody/tr/td/table/tbody/tr[1]/td/div[3]/div[2]/div[1]/table/tbody/tr/td/table/tbody/tr[1]/td/div/div[4]/div/input")
+                    By.xpath("//*[@id=\"BTN_ELIMINAR\"]")
             ));
 
             botonEliminar.click();

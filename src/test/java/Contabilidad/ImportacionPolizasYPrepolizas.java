@@ -115,7 +115,7 @@ public class ImportacionPolizasYPrepolizas {
     private void ingresarModuloBancos() {
         try {
             WebElement botonBancos = wait.until(ExpectedConditions.elementToBeClickable(
-                    By.xpath("//img[contains(@src, '/GMTERPV8_WEB/Imagenes/CONTABILIDAD1')]")
+                    By.xpath("//*[@id=\"sidebar\"]/div/ul/li[9]")
             ));
             botonBancos.click();
             System.out.println("Módulo Bancos: Módulo de Bancos abierto correctamente.");
@@ -129,7 +129,7 @@ public class ImportacionPolizasYPrepolizas {
     private void submoduloCheques() {
         try {
             WebElement subPolizascontables = wait.until(ExpectedConditions.elementToBeClickable(
-                    By.xpath("//img[contains(@src, '/GMTERPV8_WEB/Imagenes/CONTABILIDAD/POLIZASCONTABLES')]")
+                    By.xpath("//*[@id=\"submenuCONTABILIDAD\"]/li[3]/a")
             ));
             subPolizascontables.click();
             System.out.println("Submódulo Cheques: Submódulo de Cheques abierto correctamente.");
@@ -143,7 +143,7 @@ public class ImportacionPolizasYPrepolizas {
     private void BotonImportar() {
         try {
             WebElement botonRegistrar = wait.until(ExpectedConditions.elementToBeClickable(
-                    By.xpath("/html/body/form/table/tbody/tr/td/div/table/tbody/tr[1]/td/table/tbody/tr/td/table/tbody/tr[1]/td/div[3]/div[2]/div[1]/table/tbody/tr/td/table/tbody/tr[1]/td/div/div[2]/div/input")
+                    By.xpath("//*[@id=\"BTN_IMPORTAR\"]")
             ));
             botonRegistrar.click();
             System.out.println("Botón Importar: El botón Importar fue presionado correctamente.");
@@ -286,7 +286,7 @@ public class ImportacionPolizasYPrepolizas {
     private void BuscarPoliza() {
         try {
             WebElement inputBuscar = wait.until(ExpectedConditions.visibilityOfElementLocated(
-                    By.xpath("/html/body/form/table/tbody/tr/td/div/table/tbody/tr[1]/td/table/tbody/tr/td/table/tbody/tr[1]/td/div[3]/div[2]/div[3]/div/table/tbody/tr/td/div/div/div[1]/div[1]/label/input")
+                    By.xpath("//*[@id=\"TABLE_ProPolizas_filter\"]/label/input")
             ));
             inputBuscar.clear();
             inputBuscar.sendKeys(FolioPoliza);
@@ -301,7 +301,7 @@ public class ImportacionPolizasYPrepolizas {
     private void SeleccionarPoliza() {
         try {
             WebElement registro = wait.until(ExpectedConditions.elementToBeClickable(
-                    By.xpath("//table[@id='TABLE_ProPolizas']//td[normalize-space(text())='" + FolioPoliza + "']")
+                    By.xpath("//*[@id=\"TABLE_ProPolizas_wrapper\"]/div[2]/div[2]" + FolioPoliza + "']")
             ));
             registro.click();
             System.out.println("Seleccionar Póliza: Registro con número " + FolioPoliza + " seleccionado correctamente.");
@@ -315,7 +315,7 @@ public class ImportacionPolizasYPrepolizas {
     private void BotonModificar() {
         try {
             WebElement btnModificar = wait.until(ExpectedConditions.elementToBeClickable(
-                    By.xpath("/html/body/form/table/tbody/tr/td/div/table/tbody/tr[1]/td/table/tbody/tr/td/table/tbody/tr[1]/td/div[3]/div[2]/div[1]/table/tbody/tr/td/table/tbody/tr[1]/td/div/div[3]/div/input")
+                    By.xpath("//*[@id=\"BTN_MODIFICAR\"]")
             ));
             btnModificar.click();
             System.out.println("Botón Modificar: Se hizo click en el botón Modificar correctamente.");
@@ -403,7 +403,7 @@ public class ImportacionPolizasYPrepolizas {
     private void BotonConsultar() {
         try {
             WebElement btnConsultar = wait.until(ExpectedConditions.elementToBeClickable(
-                    By.xpath("/html/body/form/table/tbody/tr/td/div/table/tbody/tr[1]/td/table/tbody/tr/td/table/tbody/tr[1]/td/div[3]/div[2]/div[1]/table/tbody/tr/td/table/tbody/tr[1]/td/div/div[4]/div/input")
+                    By.xpath("//*[@id=\"BTN_CONSULTAR\"]")
             ));
             btnConsultar.click();
             System.out.println("Botón Consultar: Se presionó correctamente.");
@@ -446,7 +446,7 @@ public class ImportacionPolizasYPrepolizas {
         try {
             // Localizar el botón de impresión usando el XPath proporcionado
             WebElement botonImprimir = driver.findElement(
-                    By.xpath("//*[@id=\"z_BTN_IMPRIMIR_IMG\"]/span"));
+                    By.xpath("//*[@id=\"BTN_IMPRIMIR\"]"));
 
             // Hacer clic en el botón
             botonImprimir.click();
@@ -515,7 +515,7 @@ public class ImportacionPolizasYPrepolizas {
     private void EliminarPoliza() {
         try {
             WebElement btnEliminar = wait.until(ExpectedConditions.elementToBeClickable(
-                    By.xpath("/html/body/form/table/tbody/tr/td/div/table/tbody/tr[1]/td/table/tbody/tr/td/table/tbody/tr[1]/td/div[3]/div[2]/div[1]/table/tbody/tr/td/table/tbody/tr[1]/td/div/div[5]/div/input")
+                    By.xpath("//*[@id=\"BTN_ELIMINAR\"]")
             ));
             btnEliminar.click();
             System.out.println("EliminarPoliza: Se presionó el botón de eliminar póliza correctamente.");

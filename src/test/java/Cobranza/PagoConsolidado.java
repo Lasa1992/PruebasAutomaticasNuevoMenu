@@ -112,7 +112,7 @@ public class PagoConsolidado {
         AceptarFactura(); // Acepta la factura
         BotonConcurrenciaFactura();
         BotonTimbre(); // Timbrar la factura
-       ValidarYEnviarCorreo(); // Validar posibles errores
+        ValidarYEnviarCorreo(); // Validar posibles errores
         //BotonPoliza(); // Aceptar botón generó póliza
         BotonImpresion(); // Regresar a la pantalla principal
 
@@ -145,9 +145,9 @@ public class PagoConsolidado {
     }
 
 
-    private static void handleImageButton() {
+    public static void handleImageButton() {
         try {
-            WebElement imageButton = wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//img[contains(@src, '/GMTERPV8_WEB/Imagenes/FACTURACION1')]")));
+            WebElement imageButton = wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//*[@id=\"sidebar\"]/div/ul/li[3]")));
             imageButton.click();
         } catch (Exception e) {
             UtilidadesAllure.manejoError(driver, e, "Botón Módulo Facturación no funciona.");
@@ -155,12 +155,12 @@ public class PagoConsolidado {
         }
     }
 
-    private static void handleSubMenuButton() {
+    public static void handleSubMenuButton() {
         try {
-            WebElement subMenuButton = wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//img[contains(@src, '/GMTERPV8_WEB/Imagenes/FACTURACION/PORCONCEPTO1')]")));
+            WebElement subMenuButton = wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//*[@id=\"submenuFACTURACION\"]/li[2]/a")));
             subMenuButton.click();
         } catch (Exception e) {
-            // Captura el mensaje de error, toma una captura de pantalla y lo despliega en el reporte de Allure.
+            //Captura el mensaje de error, toma una captura de pantalla y lo despliega en el reporte de Allure.
             UtilidadesAllure.manejoError(driver, e, "Botón listado de Facturas por Concepto no funciona.");
             System.out.println("Botón listado Facturas por Concepto no funciona.");
         }
@@ -509,7 +509,7 @@ public class PagoConsolidado {
             // Espera explícita hasta que el botón (imagen) de Cobranza sea clicable
             WebElement ModuloBotonCobranza = wait.until(
                     ExpectedConditions.elementToBeClickable(
-                            By.xpath("//img[contains(@src, '/GMTERPV8_WEB/Imagenes/COBRANZA1.jpg')]")
+                            By.xpath("//*[@id=\"sidebar\"]/div/ul/li[4]")
                     )
             );
             // Hacer clic en el botón una vez esté listo
@@ -524,7 +524,7 @@ public class PagoConsolidado {
         try {
             // Espera explícita hasta que el botón de Pagos/Abonos sea clicable
             WebElement pagosAbonosBoton = wait.until(ExpectedConditions.elementToBeClickable(
-                    By.xpath("//img[contains(@src, '/GMTERPV8_WEB/Imagenes/COBRANZA/PAGOSABONOS1.jpg')]")
+                    By.xpath("//*[@id=\"submenuCOBRANZA\"]/li[2]/a")
             ));
             // Hacer clic en el botón
             pagosAbonosBoton.click();

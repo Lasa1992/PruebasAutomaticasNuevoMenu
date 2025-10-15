@@ -89,7 +89,7 @@ public class OrdenesServicio {
 
     private static void handleImageButton() {
         try {
-            WebElement imageButton = wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//img[contains(@src, '/GMTERPV8_WEB/Imagenes/MANTENIMIENTO1')]")));
+            WebElement imageButton = wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//*[@id=\"sidebar\"]/div/ul/li[10]")));
             imageButton.click();
             System.out.println("Botón Módulo Mantenimiento seleccionado correctamente...");
         } catch (Exception e) {
@@ -100,7 +100,7 @@ public class OrdenesServicio {
 
     private static void handleSubMenuButton() {
         try {
-            WebElement subMenuButton = wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//img[contains(@src, '/GMTERPV8_WEB/Imagenes/MANTENIMIENTO/ORDENESSERVICIOS1')]")));
+            WebElement subMenuButton = wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//*[@id=\"submenuMANTENIMIENTO\"]/li[3]/a")));
             subMenuButton.click();
             System.out.println("Botón Ordenes de Servicio seleccionado correctamente...");
         } catch (Exception e) {
@@ -553,7 +553,7 @@ public class OrdenesServicio {
             // 4. Seleccionar "PA" en el combo de categorías de pasivos
             //si no se tiene el check de varias categorias de pasivos en pasivos se usa este check
             WebElement comboCategoria = wait.until(ExpectedConditions.elementToBeClickable(
-                    By.xpath("//*[@id=\"COMBO_CATCATEGORIASPASIVOS\"]")));
+                    By.xpath("//*[@id=\"COMBO_CATEGORIASPROVEEDOR\"]")));
             Select selectCategoria = new Select(comboCategoria);
             selectCategoria.selectByVisibleText("PA");
 

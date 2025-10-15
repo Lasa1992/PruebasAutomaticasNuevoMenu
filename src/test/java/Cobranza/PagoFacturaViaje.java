@@ -146,26 +146,19 @@ public class PagoFacturaViaje {
 
     private static void BotonModuloTrafico() {
         try {
-            // Espera explícita hasta que el botón (enlace) que contiene la imagen sea clicable
-            WebElement ModuloBotonTrafico = wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//img[contains(@src, '/GMTERPV8_WEB/Imagenes/TRAFICO1')]")));
-
-            // Hacer clic en el botón una vez esté listo
+            WebElement ModuloBotonTrafico = wait.until(ExpectedConditions.elementToBeClickable(
+                    By.xpath("//*[@id=\"sidebar\"]/div/ul/li[5]")));
             ModuloBotonTrafico.click();
-
         } catch (Exception e) {
-            // Manejo del error utilizando la clase UtilidadesAllure
             UtilidadesAllure.manejoError(driver, e, "Botón Módulo Tráfico no funciona.");
         }
     }
 
     private static void BotonListadoViajes() {
         try {
-            // Espera explícita hasta que el enlace que contiene la imagen sea clicable
-            WebElement ListadoBoton = wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//a[img[contains(@src, '/GMTERPV8_WEB/Imagenes/TRAFICO/VIAJES1.')]]")));
-
-            // Hacer clic en el enlace una vez esté listo
+            WebElement ListadoBoton = wait.until(ExpectedConditions.elementToBeClickable(
+                    By.xpath("//*[@id=\"submenuTRAFICO\"]/li[2]/a")));
             ListadoBoton.click();
-
         } catch (Exception e) {
             UtilidadesAllure.manejoError(driver, e, "Botón Listado de Viajes no funciona.");
         }
@@ -454,7 +447,7 @@ public class PagoFacturaViaje {
         try {
             // Espera explícita hasta que el botón que contiene la imagen de facturación sea clicable
             WebElement imageButton = wait.until(ExpectedConditions.elementToBeClickable(
-                    By.xpath("//img[contains(@src, '/GMTERPV8_WEB/Imagenes/FACTURACION1')]")));
+                    By.xpath("//*[@id=\"sidebar\"]/div/ul/li[3]")));
 
             // Hacer clic en el botón una vez esté listo
             imageButton.click();
@@ -470,7 +463,7 @@ public class PagoFacturaViaje {
         try {
             // Espera explícita hasta que el botón que contiene la imagen de facturación por viaje sea clicable
             WebElement subMenuButton = wait.until(ExpectedConditions.elementToBeClickable(
-                    By.xpath("//img[contains(@src, '/GMTERPV8_WEB/Imagenes/FACTURACION/PORVIAJE1')]")));
+                    By.xpath("//*[@id=\"submenuFACTURACION\"]/li[3]/a")));
 
             // Hacer clic en el botón una vez esté listo
             subMenuButton.click();
@@ -728,7 +721,7 @@ public class PagoFacturaViaje {
             // Espera explícita hasta que el botón (imagen) de Cobranza sea clicable
             WebElement ModuloBotonCobranza = wait.until(
                     ExpectedConditions.elementToBeClickable(
-                            By.xpath("//img[contains(@src, '/GMTERPV8_WEB/Imagenes/COBRANZA1.jpg')]")
+                            By.xpath("//*[@id=\"sidebar\"]/div/ul/li[4]")
                     )
             );
 
@@ -747,7 +740,7 @@ public class PagoFacturaViaje {
         try {
             // Espera explícita hasta que el botón de Pagos/Abonos sea clicable
             WebElement pagosAbonosBoton = wait.until(ExpectedConditions.elementToBeClickable(
-                    By.xpath("//img[contains(@src, '/GMTERPV8_WEB/Imagenes/COBRANZA/PAGOSABONOS1.jpg')]")));
+                    By.xpath("//*[@id=\"submenuCOBRANZA\"]/li[2]/a")));
 
             // Hacer clic en el botón
             pagosAbonosBoton.click();

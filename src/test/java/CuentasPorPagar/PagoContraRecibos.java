@@ -82,38 +82,6 @@ public class PagoContraRecibos {
         InicioSesion.cerrarSesion(); // Asegurar que se libere el WebDriver correctamente
     }
 
-    @Step("Hacer clic en el botón de Cuentas por Pagar")
-    public void BotonCuentasPorPagar() {
-        try {
-            // Esperar a que el botón de Cuentas por Pagar esté presente y clickeable
-            WebElement botonCuentasPorPagar = wait.until(ExpectedConditions.elementToBeClickable(By.xpath(
-                    "//*[@id=\"HTM_HTMLTEMPLATE1\"]/div/ul/li[7]/a/img")));
-
-            // Hacer clic en el botón
-            botonCuentasPorPagar.click();
-            System.out.println("Se hizo clic en el botón de Cuentas por Pagar.");
-
-        } catch (Exception e) {
-            System.err.println("Error al hacer clic en el botón de Cuentas por Pagar: " + e.getMessage());
-        }
-    }
-
-    @Step("Hacer clic en el botón de Contra Recibos")
-    public void BotonContraRecibos() {
-        try {
-            // Esperar a que el botón de Contra Recibos esté presente y clickeable
-            WebElement botonPagos = wait.until(ExpectedConditions.elementToBeClickable(By.xpath(
-                    "//*[@id=\"HTM_HTMLTEMPLATE1\"]/div/ul/li[7]/ul/li[3]/a/img")));
-
-            // Hacer clic en el botón
-            botonPagos.click();
-            System.out.println("Se hizo clic en el botón de Contra Recibos.");
-
-        } catch (Exception e) {
-            System.err.println("Error al hacer clic en el botón de Contra Recibos: " + e.getMessage());
-        }
-    }
-
     @Step("Hace clic en el botón Pagar Contra Recibo")
     public void PagarContraRecibo() {
         try {

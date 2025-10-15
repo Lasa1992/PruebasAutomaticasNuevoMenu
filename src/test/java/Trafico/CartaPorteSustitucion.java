@@ -121,26 +121,19 @@ public class CartaPorteSustitucion {
 
     private static void BotonModuloTrafico() {
         try {
-            // Espera explícita hasta que el botón (enlace) que contiene la imagen sea clicable
-            WebElement ModuloBotonTrafico = wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//img[contains(@src, '/GMTERPV8_WEB/Imagenes/TRAFICO1.jpg')]")));
-
-            // Hacer clic en el botón una vez esté listo
+            WebElement ModuloBotonTrafico = wait.until(ExpectedConditions.elementToBeClickable(
+                    By.xpath("//*[@id=\"sidebar\"]/div/ul/li[5]")));
             ModuloBotonTrafico.click();
-
         } catch (Exception e) {
-            // Manejo del error utilizando la clase UtilidadesAllure
             UtilidadesAllure.manejoError(driver, e, "Botón Módulo Tráfico no funciona.");
         }
     }
 
     private static void BotonListadoViajes() {
         try {
-            // Espera explícita hasta que el enlace que contiene la imagen sea clicable
-            WebElement ListadoBoton = wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//a[img[contains(@src, '/GMTERPV8_WEB/Imagenes/TRAFICO/VIAJES1.jpg')]]")));
-
-            // Hacer clic en el enlace una vez esté listo
+            WebElement ListadoBoton = wait.until(ExpectedConditions.elementToBeClickable(
+                    By.xpath("//*[@id=\"submenuTRAFICO\"]/li[2]/a")));
             ListadoBoton.click();
-
         } catch (Exception e) {
             UtilidadesAllure.manejoError(driver, e, "Botón Listado de Viajes no funciona.");
         }

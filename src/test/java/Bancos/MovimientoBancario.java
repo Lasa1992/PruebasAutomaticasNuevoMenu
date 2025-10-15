@@ -72,7 +72,7 @@ public class MovimientoBancario {
         Referencia();
         Importe();
         AceptarMovimiento();
-        //MensajePoliza();
+        MensajePoliza();
         SalirventanaRegistro();
 
     }
@@ -87,7 +87,7 @@ public class MovimientoBancario {
     public void ingresarModuloBancos() {
         try {
             WebElement botonBancos = wait.until(ExpectedConditions.elementToBeClickable(
-                    By.xpath("//img[contains(@src, '/GMTERPV8_WEB/Imagenes/BANCO1')]")
+                    By.xpath("//*[@id=\"sidebar\"]/div/ul/li[7]")
             ));
             botonBancos.click();
         } catch (TimeoutException e) {
@@ -101,7 +101,7 @@ public class MovimientoBancario {
     public void submoduloMovBancarios() {
         try {
             WebElement subModuloMovimientos = wait.until(ExpectedConditions.elementToBeClickable(
-                    By.xpath("//img[contains(@src, '/GMTERPV8_WEB/Imagenes/BANCO/MOVIMIENTOSBANCARIOS')]")
+                    By.xpath("//*[@id=\"submenuBANCO\"]/li[3]/a")
             ));
             subModuloMovimientos.click();
         } catch (TimeoutException e) {
@@ -115,7 +115,7 @@ public class MovimientoBancario {
     public void RegistrarMovBancario() {
         try {
             WebElement botonRegistrar = wait.until(ExpectedConditions.elementToBeClickable(
-                    By.xpath("/html/body/form/table/tbody/tr/td/div/table/tbody/tr/td/table/tbody/tr/td/table/tbody/tr[1]/td/div[3]/div[2]/div[1]/table/tbody/tr/td/table/tbody/tr[1]/td/div/div[1]/div/input")
+                    By.xpath("//*[@id=\"BTN_REGISTRAR\"]")
             ));
 
             System.out.println("Clic en botón de registrar movimiento bancario.");

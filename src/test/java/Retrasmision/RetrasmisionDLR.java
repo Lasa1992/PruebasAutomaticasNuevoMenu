@@ -126,7 +126,7 @@ public class RetrasmisionDLR {
     @Step("Ingresar al Módulo Tráfico")
     private static void BotonModuloTrafico() {
         try {
-            wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//img[contains(@src, '/GMTERPV8_WEB/Imagenes/TRAFICO1')]"))).click();
+            wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//*[@id=\"sidebar\"]/div/ul/li[5]"))).click();
             System.out.println("✅ Ingreso al Módulo Tráfico.");
         } catch (Exception e) {
             UtilidadesAllure.manejoError(driver, e, "Botón Módulo Tráfico no funciona.");
@@ -136,7 +136,7 @@ public class RetrasmisionDLR {
     @Step("Acceder al Listado de Viajes")
     private static void BotonListadoViajes() {
         try {
-            wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//a[img[contains(@src, '/GMTERPV8_WEB/Imagenes/TRAFICO/VIAJES1')]]"))).click();
+            wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//*[@id=\"submenuTRAFICO\"]/li[2]/a"))).click();
             System.out.println("✅ Acceso al Listado de Viajes.");
         } catch (Exception e) {
             UtilidadesAllure.manejoError(driver, e, "Botón Listado de Viajes no funciona.");

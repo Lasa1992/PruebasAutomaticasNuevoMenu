@@ -110,7 +110,7 @@ public class FacturacionGeneral {
 
     private static void ModuloFacturacion() {
         try {
-            WebElement imageButton = wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//img[contains(@src, '/GMTERPV8_WEB/Imagenes/FACTURACION1')]")));
+            WebElement imageButton = wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//*[@id=\"sidebar\"]/div/ul/li[3]")));
             imageButton.click();
         } catch (Exception e) {
             UtilidadesAllure.manejoError(driver, e, "Botón Módulo Facturación no funciona.");
@@ -121,7 +121,7 @@ public class FacturacionGeneral {
     private static void SubmoduloFacturacionGeneral() {
         try {
             WebElement subMenuButton = wait.until(ExpectedConditions.elementToBeClickable(
-                    By.xpath("/html/body/form/table/tbody/tr/td/div/table/tbody/tr/td/table/tbody/tr/td/table/tbody/tr[1]/td/div[3]/div[1]/div[2]/div/table/tbody/tr/td/table/tbody/tr[1]/td/div/div/table/tbody/tr/td/div/ul/li[3]/ul/li[8]/a/img")));
+                    By.xpath("//*[@id=\"submenuFACTURACION\"]/li[8]/a")));
             subMenuButton.click();
         } catch (Exception e) {
             UtilidadesAllure.manejoError(driver, e, "Error al hacer clic en el submódulo de Facturación General.");
@@ -133,7 +133,7 @@ public class FacturacionGeneral {
     private static void AgregarFacturaGeneral() {
         try {
             WebElement elemento = wait.until(ExpectedConditions.elementToBeClickable(
-                    By.xpath("/html/body/form/table/tbody/tr/td/div/table/tbody/tr/td/table/tbody/tr/td/table/tbody/tr[1]/td/div[3]/div[2]/div[1]/table/tbody/tr/td/table/tbody/tr[1]/td/div/div[1]/div/table/tbody/tr/td/a/span")));
+                    By.xpath("//*[@id=\"tzBTN_AGREGAR\"]")));
             elemento.click();
         } catch (Exception e) {
             UtilidadesAllure.manejoError(driver, e, "Error al hacer clic en Agregar Factura General.");

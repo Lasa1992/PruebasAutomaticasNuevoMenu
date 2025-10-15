@@ -119,10 +119,8 @@ public class ViajeACartaPorte {
 
     private static void BotonModuloTrafico() {
         try {
-            WebElement ModuloBotonTrafico = wait.until(
-                    ExpectedConditions.elementToBeClickable(
-                            By.xpath("//img[contains(@src, '/GMTERPV8_WEB/Imagenes/TRAFICO1.jpg')]"))
-            );
+            WebElement ModuloBotonTrafico = wait.until(ExpectedConditions.elementToBeClickable(
+                    By.xpath("//*[@id=\"sidebar\"]/div/ul/li[5]")));
             ModuloBotonTrafico.click();
         } catch (Exception e) {
             UtilidadesAllure.manejoError(driver, e, "Botón Módulo Tráfico no funciona.");
@@ -131,10 +129,8 @@ public class ViajeACartaPorte {
 
     private static void BotonListadoViajes() {
         try {
-            WebElement ListadoBoton = wait.until(
-                    ExpectedConditions.elementToBeClickable(
-                            By.xpath("//a[img[contains(@src, '/GMTERPV8_WEB/Imagenes/TRAFICO/VIAJES1.jpg')]]"))
-            );
+            WebElement ListadoBoton = wait.until(ExpectedConditions.elementToBeClickable(
+                    By.xpath("//*[@id=\"submenuTRAFICO\"]/li[2]/a")));
             ListadoBoton.click();
         } catch (Exception e) {
             UtilidadesAllure.manejoError(driver, e, "Botón Listado de Viajes no funciona.");
@@ -375,7 +371,7 @@ public class ViajeACartaPorte {
         try {
             // Localizar el botón de impresión usando el XPath proporcionado
             WebElement botonImprimir = driver.findElement(
-                    By.xpath("/html/body/form/table/tbody/tr/td/div/table/tbody/tr[3]/td/div[1]/table/tbody/tr/td/table/tbody/tr[1]/td/div[3]/div[2]/div[1]/table/tbody/tr/td/table/tbody/tr[1]/td/div/div[3]/div/table/tbody/tr/td/button"));
+                    By.xpath("//*[@id=\"tzBTN_CONVERTIR\"]"));
 
             // Hacer clic en el botón
             botonImprimir.click();
@@ -489,6 +485,7 @@ public class ViajeACartaPorte {
             WebElement botonAceptarTimbre = wait.until(ExpectedConditions.elementToBeClickable(
                     By.id("BTN_YES")));
             botonAceptarTimbre.click();
+            System.out.println("Se dio clic en la opción SI del timbrado");
         } catch (Exception e) {
             UtilidadesAllure.manejoError(driver, e,
                     "Error al hacer clic en el botón Sí para aceptar el mensaje de timbre");

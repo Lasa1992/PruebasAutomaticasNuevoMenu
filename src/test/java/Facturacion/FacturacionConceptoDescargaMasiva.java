@@ -29,13 +29,16 @@ public class FacturacionConceptoDescargaMasiva {
     static StringBuilder informacionTimbrado = new StringBuilder();
     private static final String NUMERO_CLIENTE = Variables.CLIENTE;
 
-    @BeforeAll
-    public static void setup() {
-        // System.setProperty("webdriver.chrome.driver", "C:\\RepositorioPrueAuto\\Chromedriver\\chromedriver.exe");
-        driver = new ChromeDriver();
-        wait = new WebDriverWait(driver, Duration.ofSeconds(10));
-        driver.manage().window().maximize();
-        driver.get("https://www.softwareparatransporte.com/GMTERPV8_WEB/ES/PAGE_CatUsuariosLoginAWP.awp");
+    @BeforeEach
+    public void setup() {
+        // 🛠️ Obtener el navegador dinámicamente desde la variable del sistema
+        String navegador = System.getProperty("navegador", "chrome"); // Si no se especifica, usa Chrome
+        System.out.println("🌍 Configurando pruebas en: " + navegador.toUpperCase());
+
+        // 🛠️ Configurar el WebDriver con el navegador correcto
+        InicioSesion.setup(navegador);
+        driver = InicioSesion.getDriver();
+        wait = InicioSesion.getWait();
     }
 
     @Test
@@ -100,7 +103,7 @@ public class FacturacionConceptoDescargaMasiva {
     private static void ModuloFacturacion() {
         try {
             WebElement imageButton = wait.until(ExpectedConditions.elementToBeClickable(
-                    By.xpath("//img[contains(@src, '/GMTERPV8_WEB/Imagenes/FACTURACION1')]")));
+                    By.xpath("//*[@id=\"sidebar\"]/div/ul/li[3]")));
             imageButton.click();
         } catch (Exception e) {
             UtilidadesAllure.manejoError(driver, e, "Botón Módulo Facturación no funciona.");
@@ -111,7 +114,7 @@ public class FacturacionConceptoDescargaMasiva {
     private static void SubModuloFacturacionConcepto() {
         try {
             WebElement subMenuButton = wait.until(ExpectedConditions.elementToBeClickable(
-                    By.xpath("//img[contains(@src, '/GMTERPV8_WEB/Imagenes/FACTURACION/PORCONCEPTO1')]")));
+                    By.xpath("//*[@id=\"submenuFACTURACION\"]/li[2]/a")));
             subMenuButton.click();
         } catch (Exception e) {
             UtilidadesAllure.manejoError(driver, e, "Botón listado de Facturas por Concepto no funciona.");
@@ -127,7 +130,7 @@ public class FacturacionConceptoDescargaMasiva {
             String fechaFormateada = fechaUnaSemanaAtras.format(formatter);
 
             WebElement inputFechaDesde = wait.until(ExpectedConditions.presenceOfElementLocated(By.xpath(
-                    "/html/body/form/table/tbody/tr/td/div/table/tbody/tr/td/table/tbody/tr/td/table/tbody/tr[1]/td/div[3]/div[2]/div[2]/table/tbody/tr/td/table/tbody/tr[1]/td/div/div[1]/div/table/tbody/tr/td/table/tbody/tr/td/ul/li[2]/input"
+                    "//*[@id=\"EDT_DESDE\"]"
             )));
 
             inputFechaDesde.click();
@@ -146,7 +149,7 @@ public class FacturacionConceptoDescargaMasiva {
     public void BotonAplicar() {
         try {
             WebElement botonAplicar = wait.until(ExpectedConditions.elementToBeClickable(
-                    By.xpath("/html/body/form/table/tbody/tr/td/div/table/tbody/tr/td/table/tbody/tr/td/table/tbody/tr[1]/td/div[3]/div[2]/div[2]/table/tbody/tr/td/table/tbody/tr[2]/td/div[1]/a/span/span")
+                    By.xpath("//*[@id=\"BTN_APLICAR\"]")
             ));
             botonAplicar.click();
             System.out.println("Se hizo clic en el botón Aplicar.");
@@ -160,7 +163,7 @@ public class FacturacionConceptoDescargaMasiva {
     public void BotonDescargar() {
         try {
             WebElement botonDescargar = driver.findElement(
-                    By.xpath("/html/body/form/table/tbody/tr/td/div/table/tbody/tr/td/table/tbody/tr/td/table/tbody/tr[1]/td/div[3]/div[2]/div[1]/table/tbody/tr/td/table/tbody/tr[2]/td/div/table/tbody/tr/td/table/tbody/tr[1]/td[2]"));
+                    By.xpath("//*[@id=\"tzOPT_DESCARGARMENU\"]/table/tbody/tr[1]"));
             botonDescargar.click();
             System.out.println("Se hizo clic en el botón de descargar carta porte.");
             Thread.sleep(3000);
@@ -173,7 +176,7 @@ public class FacturacionConceptoDescargaMasiva {
     public void SeleccionarOpcionDescarga() {
         try {
             WebElement opcionDescarga = driver.findElement(
-                    By.xpath("/html/body/form/table/tbody/tr/td/div/table/tbody/tr/td/table/tbody/tr/td/table/tbody/tr[1]/td/div[3]/div[2]/div[1]/table/tbody/tr/td/table/tbody/tr[2]/td/div[1]/table/tbody/tr/td/table/tbody/tr[2]/td/div/table/tbody/tr[2]/td[2]/a"));
+                    By.xpath("//*[@id=\"tzOPT_DESCARGAMASIVAPDF_XML\"]"));
             opcionDescarga.click();
             System.out.println("Se seleccionó la opción de descarga.");
             Thread.sleep(4000);

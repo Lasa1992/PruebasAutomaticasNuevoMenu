@@ -162,8 +162,9 @@ public class PrenominaCalculoCierrePago {
 
     private static void ModuloNominas() {
         try {
-            WebElement imageButton = wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//*[@id=\"HTM_HTMLTEMPLATE1\"]/div/ul/li[14]/a/img")));
+            WebElement imageButton = wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//*[@id=\"sidebar\"]/div/ul/li[15]")));
             imageButton.click();
+            System.out.println("Se encontro Modulo de Nominas");
         } catch (Exception e) {
             UtilidadesAllure.manejoError(driver, e, "Botón Módulo Nóminas no funciona.");
             System.out.println("Botón Módulo Nóminas no funciona.");
@@ -172,8 +173,9 @@ public class PrenominaCalculoCierrePago {
 
     private static void Prenomina() {
         try {
-            WebElement imageButton = wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//*[@id=\"HTM_HTMLTEMPLATE1\"]/div/ul/li[14]/ul/li[2]/a/img")));
+            WebElement imageButton = wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//*[@id=\"submenuNOMINA\"]/li[2]/a")));
             imageButton.click();
+            System.out.println("Sub Modulo de Prenomina abierto correctamente");
         } catch (Exception e) {
             UtilidadesAllure.manejoError(driver, e, "Botón Módulo Nóminas no funciona.");
             System.out.println("Botón Módulo Nóminas no funciona.");

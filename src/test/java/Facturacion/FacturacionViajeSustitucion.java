@@ -108,7 +108,7 @@ public class FacturacionViajeSustitucion {
         BotonConcurrenciaFactura();
         AceptarTimbre();
         //EnvioCorreoFactura();
-        //AceptarPoliza();
+        AceptarPoliza();
         AceptarImpresion();
 
         // ======================
@@ -141,8 +141,9 @@ public class FacturacionViajeSustitucion {
 
     private static void BotonModuloTrafico() {
         try {
-            WebElement ModuloBotonTrafico = wait.until(ExpectedConditions.elementToBeClickable(
-                    By.xpath("//img[contains(@src, '/GMTERPV8_WEB/Imagenes/TRAFICO1')]")));
+            WebElement ModuloBotonTrafico = wait.until(
+                    ExpectedConditions.elementToBeClickable(By.xpath("//*[@id=\"sidebar\"]/div/ul/li[5]"))
+            );
             ModuloBotonTrafico.click();
         } catch (Exception e) {
             UtilidadesAllure.manejoError(driver, e, "Botón Módulo Tráfico no funciona.");
@@ -151,8 +152,9 @@ public class FacturacionViajeSustitucion {
 
     private static void BotonListadoViajes() {
         try {
-            WebElement ListadoBoton = wait.until(ExpectedConditions.elementToBeClickable(
-                    By.xpath("//a[img[contains(@src, '/GMTERPV8_WEB/Imagenes/TRAFICO/VIAJES1')]]")));
+            WebElement ListadoBoton = wait.until(
+                    ExpectedConditions.elementToBeClickable(By.xpath("//*[@id=\"submenuTRAFICO\"]/li[2]/a"))
+            );
             ListadoBoton.click();
         } catch (Exception e) {
             UtilidadesAllure.manejoError(driver, e, "Botón Listado de Viajes no funciona.");
@@ -161,7 +163,7 @@ public class FacturacionViajeSustitucion {
 
     private static void BotonAgregarCartaPorte() {
         try {
-            WebElement additionalButton = wait.until(ExpectedConditions.elementToBeClickable(By.id("BTN_AGREGAR")));
+            WebElement additionalButton = wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//*[@id=\"tzBTN_AGREGAR\"]")));
             additionalButton.click();
         } catch (TimeoutException e) {
             UtilidadesAllure.manejoError(driver, e, "Botón Agregar Carta Porte no funciona.");
@@ -444,7 +446,7 @@ public class FacturacionViajeSustitucion {
     private static void BotonModuloFacturacion() {
         try {
             WebElement imageButton = wait.until(ExpectedConditions.elementToBeClickable(
-                    By.xpath("//img[contains(@src, '/GMTERPV8_WEB/Imagenes/FACTURACION1')]")));
+                    By.xpath("//*[@id=\"sidebar\"]/div/ul/li[3]")));
             imageButton.click();
         } catch (Exception e) {
             UtilidadesAllure.manejoError(driver, e, "Botón Módulo Facturación no funciona.");
@@ -454,7 +456,7 @@ public class FacturacionViajeSustitucion {
     private static void BotonFacturacionPorViaje() {
         try {
             WebElement subMenuButton = wait.until(ExpectedConditions.elementToBeClickable(
-                    By.xpath("//img[contains(@src, '/GMTERPV8_WEB/Imagenes/FACTURACION/PORVIAJE1')]")));
+                    By.xpath("//*[@id=\"submenuFACTURACION\"]/li[3]/a")));
             subMenuButton.click();
         } catch (Exception e) {
             UtilidadesAllure.manejoError(driver, e, "Botón Facturación por Viaje no funciona.");
@@ -463,7 +465,7 @@ public class FacturacionViajeSustitucion {
 
     private static void BotonAgregarFactura() {
         try {
-            WebElement addButton = wait.until(ExpectedConditions.elementToBeClickable(By.id("BTN_AGREGAR")));
+            WebElement addButton = wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//*[@id=\"BTN_AGREGAR\"]")));
             addButton.click();
         } catch (Exception e) {
             UtilidadesAllure.manejoError(driver, e, "Botón Agregar Factura no funciona.");
@@ -716,18 +718,18 @@ public class FacturacionViajeSustitucion {
     private static void BusquedaFacturaListado() {
         try {
             WebElement busquedaField = wait.until(ExpectedConditions.visibilityOfElementLocated(
-                    By.cssSelector("input[type='search'][aria-controls='TABLE_ProFacturasPorViaje']")));
+                    By.xpath("//*[@id=\"TABLE_ProFacturasPorViaje_filter\"]/label/input")));
             busquedaField.clear();
             busquedaField.sendKeys(numeroFactura);
             System.out.println("Se ingresó el folio de la factura para su búsqueda: " + numeroFactura);
 
             WebElement buscarButton = wait.until(ExpectedConditions.elementToBeClickable(
-                    By.id("z_BTN_APLICAR_IMG")));
+                    By.xpath("//*[@id=\"dwwBTN_APLICAR\"]")));
             buscarButton.click();
             System.out.println("Se presionó el botón de búsqueda");
 
             WebElement resultadoBusqueda = wait.until(ExpectedConditions.visibilityOfElementLocated(
-                    By.xpath("//table[@id='TABLE_ProFacturasPorViaje']")));
+                    By.xpath("//*[@id=\"TABLE_ProFacturasPorViaje_wrapper\"]/div[2]/div[2]")));
             System.out.println("La búsqueda se completó y los resultados están visibles.");
         } catch (Exception e) {
             UtilidadesAllure.manejoError(driver, e, "Error al buscar la factura en el listado");
@@ -738,7 +740,7 @@ public class FacturacionViajeSustitucion {
     private static void SeleccionarFactura() {
         try {
             WebElement fila = driver.findElement(By.xpath(
-                    "//table[@id='TABLE_ProFacturasPorViaje']//tr[td[1][contains(text(),'" + numeroFactura + "')]]"));
+                    "//*[@id=\"TABLE_ProFacturasPorViaje_wrapper\"]/div[2]/div[2]" + numeroFactura + "')]]"));
             fila.click();
             System.out.println("Factura seleccionada: " + numeroFactura);
         } catch (NoSuchElementException e) {
@@ -754,7 +756,7 @@ public class FacturacionViajeSustitucion {
     private static void CancelacionFactura() {
         try {
             WebElement cancelarButton = wait.until(ExpectedConditions.elementToBeClickable(
-                    By.id("z_BTN_CANCELAR_IMG")));
+                    By.xpath("//*[@id=\"tzBTN_CANCELAR\"]")));
             cancelarButton.click();
             System.out.println("Se presionó el botón de cancelar factura");
         } catch (Exception e) {

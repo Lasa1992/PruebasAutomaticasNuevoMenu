@@ -80,7 +80,7 @@ public class PagoPasivos {
         pasivo.SubtotalPasivo();
         pasivo.IVAPasivo();
         pasivo.AceptarPasivo();
-        pasivo.AceptarPoliza();
+        //pasivo.AceptarPoliza();
 
         //Se crea pago de Pago pasivo
         BotonPagoRapido();
@@ -114,7 +114,7 @@ public class PagoPasivos {
         try {
             // Esperar a que el botón de Cuentas por Pagar esté presente y clickeable
             WebElement botonCuentasPorPagar = wait.until(ExpectedConditions.elementToBeClickable(By.xpath(
-                    "//*[@id=\"HTM_HTMLTEMPLATE1\"]/div/ul/li[7]/a/img")));
+                    "//*[@id=\"sidebar\"]/div/ul/li[8]")));
 
             // Hacer clic en el botón
             botonCuentasPorPagar.click();
@@ -125,20 +125,19 @@ public class PagoPasivos {
         }
     }
 
-    @Step("Hacer clic en el botón de Pagos")
+    @Step("Hacer clic en el botón de Pasivos")
     public void BotonPasivos() {
         try {
             // Esperar a que el botón de Pagos esté presente y clickeable
             WebElement botonPagos = wait.until(ExpectedConditions.elementToBeClickable(By.xpath(
-                    "//*[@id=\"HTM_HTMLTEMPLATE1\"]/div/ul/li[7]/ul/li[2]/a/img")));
+                    "//*[@id=\"submenuCUENTASPORPAGAR\"]/li[2]/a")));
 
             // Hacer clic en el botón
             botonPagos.click();
-            System.out.println("Se hizo clic en el botón de Pagos.");
-            Thread.sleep(1000);
+            System.out.println("Se hizo clic en el botón de Pasivos.");
 
         } catch (Exception e) {
-            System.err.println("Error al hacer clic en el botón de Pagos: " + e.getMessage());
+            System.err.println("Error al hacer clic en el botón de Pasivos: " + e.getMessage());
         }
     }
 

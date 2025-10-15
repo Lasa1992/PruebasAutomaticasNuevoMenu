@@ -4,12 +4,10 @@ import Facturacion.FacturaConceptoTimbrada;
 import Indicadores.InicioSesion;
 import Indicadores.Variables;
 import Utilidades.UtilidadesAllure;
-import io.qameta.allure.Allure;
 import io.qameta.allure.Description;
 import io.qameta.allure.Step;
 import org.junit.jupiter.api.*;
 import org.openqa.selenium.*;
-import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import org.openqa.selenium.support.ui.Select;
@@ -80,12 +78,13 @@ public class NotasDeCredito {
         CodigoCliente();
         SeleccionarUsoCfdi();
         SeleccionarMoneda();
+        //SeleccionarIVA(); //Ejecutar este metodo solo en IIA
         SeleccionarFacturasNC();
         IntroducirMontoPago();
         IntroducirConcepto();
         AceptarNotaCredito();
         TimbreNC();
-        AceptarPolizaNC();
+       // AceptarPolizaNC();
 
     }
 
@@ -100,7 +99,7 @@ public class NotasDeCredito {
             // Espera explícita hasta que el botón (imagen) de Cobranza sea clicable
             WebElement ModuloBotonCobranza = wait.until(
                     ExpectedConditions.elementToBeClickable(
-                            By.xpath("//img[contains(@src, '/GMTERPV8_WEB/Imagenes/COBRANZA1.jpg')]")
+                            By.xpath("//*[@id=\"sidebar\"]/div/ul/li[4]")
                     )
             );
             // Hacer clic en el botón una vez esté listo
@@ -115,7 +114,7 @@ public class NotasDeCredito {
         try {
             // Espera explícita hasta que el botón de Notas de Credito sea clicable
             WebElement NotaCreditoBoton = wait.until(ExpectedConditions.elementToBeClickable(
-                    By.xpath("//*[@id=\"HTM_HTMLTEMPLATE1\"]/div/ul/li[4]/ul/li[3]/a/img")
+                    By.xpath("//*[@id=\"submenuCOBRANZA\"]/li[3]/a")
             ));
             // Hacer clic en el botón
             NotaCreditoBoton.click();
@@ -186,7 +185,7 @@ public class NotasDeCredito {
 
             //Crear objeto Select y seleccionar texto visible
             Select Moneda = new Select(ComboMoneda);
-            Moneda.selectByVisibleText(Variables.MonedaFactura);
+            Moneda.selectByVisibleText(Variables.Moneda);
             System.out.println("Se seleccionó Moneda.");
 
         } catch (TimeoutException e){
@@ -194,6 +193,32 @@ public class NotasDeCredito {
 
         }
 
+    }
+
+    //Metodo para seleccionar en el Filtro de IVA al 16%, cuando se ejecute en IIA
+    public void SeleccionarIVA(){
+        try {
+            //Dar clic en filtro IVA
+            WebElement filtroIva = wait.until(ExpectedConditions.elementToBeClickable(By.xpath(
+                    "//*[@id=\"BTN_TRASLADA\"]")));
+            filtroIva.click();
+            System.out.println("Se abre filtro para seleccionar IVA.");
+
+            //Seleccionar checkbox IVA al 16%
+            WebElement SeleccionarIva = wait.until(ExpectedConditions.elementToBeClickable(By.xpath
+                    ("//*[@id=\"_6_TABLE_TRASLADA_1\"]")));
+            SeleccionarIva.click();
+            System.out.println("Se marco el check IVA 16%.");
+
+            //Dar clic en botón Seleccionar
+            WebElement BotonSeleccionar = wait.until(ExpectedConditions.elementToBeClickable(By.xpath
+                    ("//*[@id=\"dwwBTN_SELECCIONARTRASLADA\"]")));
+            BotonSeleccionar.click();
+            System.out.println("Se dio clic en botón seleccionar.");
+
+        }catch (Exception e){
+            System.out.println("Error al seleccionar IVA en el filtro.");
+        }
     }
 
     //Método para seleccionar las facturas en Nota de credito

@@ -13,7 +13,7 @@ public class Variables {
 //    public static String numeroDocumentoGenerado; //Número de documento para Pagar Pasivos
 //    public static String DocumentoGeneradoPasivo; // Número de documento para Contra Recibo y Pagar Contra Recibos
 //    public static String Facturas;// Variable para almancenar Documento + Folio de Factura.
-//    public static String MonedaFactura;// Variable para almancenar la Moneda de la Factura.
+//    public static String Moneda;// Variable para almancenar la Moneda de la Factura.
 //    public static final String BENEFICIARIO = "18"; //Número de Beneficiarios
 
    //.ariables de configuración para la BD de IIA040805DZ4
@@ -27,7 +27,7 @@ public class Variables {
     public static String numeroDocumentoGenerado; //Número de documento para Pagar Pasivos
     public static String DocumentoGeneradoPasivo; // Número de documento para Contra Recibo y Pagar Contra Recibos
     public static String Facturas;// Variable para almancenar Documento + Folio de Factura.
-    public static String Moneda;// Variable para almancenar la Moneda.
+    public static String Moneda;// Variable para almancenar la Moneda de la Factura.
     public static final String BENEFICIARIO = "18"; //Número de Beneficiarios
     public static String FolioMovimientoBancario;//Variable para almacenar Folio de Movimiento Bancario
     public static String Total; //Variable para almacenar el Total

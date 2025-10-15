@@ -253,9 +253,9 @@ public class CartaPorteComercioExterior {
 
     private static void BotonModuloTrafico() {
         try {
-            WebElement moduloBoton = wait.until(ExpectedConditions.elementToBeClickable(
-                    By.xpath("//img[contains(@src, '/GMTERPV8_WEB/Imagenes/TRAFICO1.jpg')]")));
-            moduloBoton.click();
+            WebElement ModuloBotonTrafico = wait.until(ExpectedConditions.elementToBeClickable(
+                    By.xpath("//*[@id=\"sidebar\"]/div/ul/li[5]")));
+            ModuloBotonTrafico.click();
         } catch (Exception e) {
             UtilidadesAllure.manejoError(driver, e, "Botón Módulo Tráfico no funciona.");
         }
@@ -263,9 +263,9 @@ public class CartaPorteComercioExterior {
 
     private static void BotonListadoViajes() {
         try {
-            WebElement listadoBoton = wait.until(ExpectedConditions.elementToBeClickable(
-                    By.xpath("//a[img[contains(@src, '/GMTERPV8_WEB/Imagenes/TRAFICO/VIAJES1.jpg')]]")));
-            listadoBoton.click();
+            WebElement ListadoBoton = wait.until(ExpectedConditions.elementToBeClickable(
+                    By.xpath("//*[@id=\"submenuTRAFICO\"]/li[2]/a")));
+            ListadoBoton.click();
         } catch (Exception e) {
             UtilidadesAllure.manejoError(driver, e, "Botón Listado de Viajes no funciona.");
         }
@@ -695,7 +695,7 @@ public class CartaPorteComercioExterior {
         try {
             // Esperar a que el botón 'Modificar' sea clickeable por XPath
             WebElement botonModificar = wait.until(ExpectedConditions.elementToBeClickable(
-                    By.xpath("//*[@id=\"OPT_MODIFICAR\"]"))
+                    By.xpath("//*[@id=\"tzOPT_MODIFICAR\"]"))
             );
 
             // Scroll hasta el botón para asegurarse de que esté visible

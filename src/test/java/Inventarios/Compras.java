@@ -103,7 +103,7 @@ public class Compras {
 
     private static void handleImageButton() {
         try {
-            WebElement imageButton = wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//img[contains(@src, '/GMTERPV8_WEB/Imagenes/INVENTARIOS1')]")));
+            WebElement imageButton = wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//*[@id=\"sidebar\"]/div/ul/li[11]")));
             imageButton.click();
             System.out.println("Botón Módulo Inventarios seleccionado correctamente...");
         } catch (Exception e) {
@@ -114,7 +114,7 @@ public class Compras {
 
     private static void handleSubMenuButton() {
         try {
-            WebElement subMenuButton = wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//img[contains(@src, '/GMTERPV8_WEB/Imagenes/INVENTARIOS/REQUISICIONESOC1')]")));
+            WebElement subMenuButton = wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//*[@id=\"submenuINVENTARIOS\"]/li[3]/a")));
             subMenuButton.click();
             System.out.println("Botón requisiciones seleccionado correctamente...");
         } catch (Exception e) {
@@ -127,7 +127,7 @@ public class Compras {
     private static void BotonAgregarListadoRecq() {
         try {
             WebElement additionalButton = wait.until(ExpectedConditions.elementToBeClickable(
-                    By.xpath("//*[@id=\"BTN_AGREGAR\"]")));
+                    By.xpath("//*[@id=\"tzBTN_AGREGAR\"]")));
             additionalButton.click();
             System.out.println("Botón Agregar Requisición seleccionado correctamente...");
         } catch (Exception e) {
@@ -352,7 +352,7 @@ public class Compras {
     private static void BotonAutorizar() {
         try {
             WebElement botonAutorizar = wait.until(ExpectedConditions.elementToBeClickable(
-                    By.xpath("//*[@id=\"bzBTN_AUTORIZAR\"]")));
+                    By.xpath("//*[@id=\"tzBTN_AUTORIZAR\"]")));
             botonAutorizar.click();
             System.out.println("Botón 'Autorizar' del listado de requisiciones fue clickeado correctamente.");
             Thread.sleep(4000);
@@ -373,7 +373,7 @@ public class Compras {
 
             // 2. Clic en el botón GenerarOC
             WebElement botonGenerarOC = wait.until(ExpectedConditions.elementToBeClickable(
-                    By.xpath("//*[@id='BTN_GENERAOC']")));
+                    By.xpath("//*[@id=\"tzBTN_GENERAOC\"]")));
             botonGenerarOC.click();
             System.out.println("Botón 'GenerarOC' fue clickeado correctamente desde el listado de Requisiciones.");
 
@@ -442,7 +442,7 @@ public class Compras {
 
     private static void handleSubMenuButtonCom() {
         try {
-            WebElement subMenuButton = wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//img[contains(@src, '/GMTERPV8_WEB/Imagenes/INVENTARIOS/COMPRAS1')]")));
+            WebElement subMenuButton = wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//*[@id=\"submenuINVENTARIOS\"]/li[5]/a")));
             subMenuButton.click();
             System.out.println("Botón compras seleccionado correctamente...");
         } catch (Exception e) {

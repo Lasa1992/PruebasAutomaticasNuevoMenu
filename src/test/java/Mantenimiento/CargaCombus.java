@@ -70,7 +70,7 @@ public class CargaCombus {
 
     private static void handleImageButton() {
         try {
-            WebElement imageButton = wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//img[contains(@src, '/GMTERPV8_WEB/Imagenes/MANTENIMIENTO1')]")));
+            WebElement imageButton = wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//*[@id=\"sidebar\"]/div/ul/li[10]")));
             imageButton.click();
             System.out.println("Botón Módulo Mantenimiento seleccionado correctamente...");
         } catch (Exception e) {
@@ -81,13 +81,13 @@ public class CargaCombus {
 
     private static void handleSubMenuButton() {
         try {
-            WebElement subMenuButton = wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//img[contains(@src, '/GMTERPV8_WEB/Imagenes/MANTENIMIENTO/CARGADECOMBUSTIBLE1')]")));
+            WebElement subMenuButton = wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//*[@id=\"submenuMANTENIMIENTO\"]/li[5]/a")));
             subMenuButton.click();
-            System.out.println("Botón Ordenes de Servicio seleccionado correctamente...");
+            System.out.println("Botón Carga de combustible seleccionado correctamente...");
         } catch (Exception e) {
             // Captura el mensaje de error, toma una captura de pantalla y lo despliega en el reporte de Allure.
             UtilidadesAllure.manejoError(driver, e, "Botón listado de Ordenes de Servicio no funciona.");
-            System.out.println("Botón listado Ordenes de Servicio no funciona.");
+            System.out.println("Botón Carga de combustible no funciona.");
         }
     }
 

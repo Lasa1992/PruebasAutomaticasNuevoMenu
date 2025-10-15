@@ -168,7 +168,7 @@ public class LiquidacionOperativa   {
     private static void BotonModuloTrafico() {
         try {
             WebElement ModuloBotonTrafico = wait.until(ExpectedConditions.elementToBeClickable(
-                    xpath("//img[contains(@src, '/GMTERPV8_WEB/Imagenes/TRAFICO1.jpg')]")));
+                    By.xpath("//*[@id=\"sidebar\"]/div/ul/li[5]")));
             ModuloBotonTrafico.click();
         } catch (Exception e) {
             UtilidadesAllure.manejoError(driver, e, "Botón Módulo Tráfico no funciona.");
@@ -178,7 +178,7 @@ public class LiquidacionOperativa   {
     private static void BotonListadoViajes() {
         try {
             WebElement ListadoBoton = wait.until(ExpectedConditions.elementToBeClickable(
-                    xpath("//a[img[contains(@src, '/GMTERPV8_WEB/Imagenes/TRAFICO/VIAJES1.jpg')]]")));
+                    By.xpath("//*[@id=\"submenuTRAFICO\"]/li[2]/a")));
             ListadoBoton.click();
         } catch (Exception e) {
             UtilidadesAllure.manejoError(driver, e, "Botón Listado de Viajes no funciona.");
@@ -644,11 +644,11 @@ public class LiquidacionOperativa   {
     private void LiquidacionesOperativas() {
         try {
             WebElement liquidacionesButton = wait.until(ExpectedConditions.elementToBeClickable(
-                    xpath("//img[@alt='Liquidaciones']")));
+                    xpath("//*[@id=\"submenuTRAFICO\"]/li[6]/a")));
             liquidacionesButton.click();
-            System.out.println("Se accedió a Liquidaciones Fiscales.");
+            System.out.println("Se accedió a Liquidaciones Operativas.");
         } catch (Exception e) {
-            System.err.println("Error al seleccionar Liquidaciones Fiscales: " + e.getMessage());
+            System.err.println("Error al seleccionar Liquidaciones Operativas: " + e.getMessage());
         }
     }
 
@@ -1063,7 +1063,7 @@ public class LiquidacionOperativa   {
     private void GastosViaje() {
         try {
             WebElement ListadoBoton = wait.until(ExpectedConditions.elementToBeClickable(
-                    xpath("//a[img[contains(@src, '/GMTERPV8_WEB/Imagenes/TRAFICO/GASTOSDEVIAJE1.jpg')]]")));
+                    xpath("//*[@id=\"submenuTRAFICO\"]/li[5]/a")));
             ListadoBoton.click();
         } catch (Exception e) {
             UtilidadesAllure.manejoError(driver, e, "Botón Gastos de Viaje no funcuina.");

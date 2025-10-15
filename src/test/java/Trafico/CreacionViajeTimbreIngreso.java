@@ -102,8 +102,8 @@ public class CreacionViajeTimbreIngreso {
 
     private static void BotonModuloTrafico() {
         try {
-            WebElement ModuloBotonTrafico = wait.until(ExpectedConditions
-                    .elementToBeClickable(By.xpath("//img[contains(@src, '/GMTERPV8_WEB/Imagenes/TRAFICO1.jpg')]")));
+            WebElement ModuloBotonTrafico = wait.until(ExpectedConditions.elementToBeClickable(
+                    By.xpath("//*[@id=\"sidebar\"]/div/ul/li[5]")));
             ModuloBotonTrafico.click();
         } catch (Exception e) {
             UtilidadesAllure.manejoError(driver, e, "Botón Módulo Tráfico no funciona.");
@@ -113,7 +113,7 @@ public class CreacionViajeTimbreIngreso {
     private static void BotonListadoViajes() {
         try {
             WebElement ListadoBoton = wait.until(ExpectedConditions.elementToBeClickable(
-                    By.xpath("//a[img[contains(@src, '/GMTERPV8_WEB/Imagenes/TRAFICO/VIAJES1.jpg')]]")));
+                    By.xpath("//*[@id=\"submenuTRAFICO\"]/li[2]/a")));
             ListadoBoton.click();
         } catch (Exception e) {
             UtilidadesAllure.manejoError(driver, e, "Botón Listado de Viajes no funciona.");

@@ -92,7 +92,7 @@ public class Recorrido {
     private static void BotonModuloTransportePersonal() {
         try {
             // Espera explícita hasta que el botón (enlace) que contiene la imagen sea clicable
-            WebElement ModuloBotonTrafico = wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//img[contains(@src, '/GMTERPV8_WEB/Imagenes/TRANSPORTEDEPERSONAL')]")));
+            WebElement ModuloBotonTrafico = wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//*[@id=\"sidebar\"]/div/ul/li[16]")));
 
             // Hacer clic en el botón una vez esté listo
             ModuloBotonTrafico.click();
@@ -106,7 +106,7 @@ public class Recorrido {
     private static void BotonListadoRecorridos() {
         try {
             // Espera explícita hasta que el enlace que contiene la imagen sea clicable
-            WebElement ListadoBoton = wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//a[img[contains(@src, '/GMTERPV8_WEB/Imagenes/TRANSPORTEDEPERSONAL/RECORRIDOS')]]")));
+            WebElement ListadoBoton = wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//*[@id=\"submenuTRANSPORTEDEPERSONAL\"]/li[2]/a")));
 
             // Hacer clic en el enlace una vez esté listo
             ListadoBoton.click();

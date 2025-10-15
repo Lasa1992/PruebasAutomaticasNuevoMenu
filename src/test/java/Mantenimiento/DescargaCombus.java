@@ -73,7 +73,7 @@ public class DescargaCombus {
 
     private static void handleImageButton() {
         try {
-            WebElement imageButton = wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//img[contains(@src, '/GMTERPV8_WEB/Imagenes/MANTENIMIENTO1')]")));
+            WebElement imageButton = wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//*[@id=\"sidebar\"]/div/ul/li[10]")));
             imageButton.click();
             System.out.println("Botón Módulo Mantenimiento seleccionado correctamente...");
         } catch (Exception e) {
@@ -84,13 +84,13 @@ public class DescargaCombus {
 
     private static void handleSubMenuButton() {
         try {
-            WebElement subMenuButton = wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//img[contains(@src, '/GMTERPV8_WEB/Imagenes/MANTENIMIENTO/DESCARGARCOMBUSTIBLE1')]")));
+            WebElement subMenuButton = wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//*[@id=\"submenuMANTENIMIENTO\"]/li[4]/a")));
             subMenuButton.click();
-            System.out.println("Botón Ordenes de Servicio seleccionado correctamente...");
+            System.out.println("Botón Descarga de combustible seleccionado correctamente...");
         } catch (Exception e) {
             // Captura el mensaje de error, toma una captura de pantalla y lo despliega en el reporte de Allure.
             UtilidadesAllure.manejoError(driver, e, "Botón listado de Ordenes de Servicio no funciona.");
-            System.out.println("Botón listado Ordenes de Servicio no funciona.");
+            System.out.println("Botón Descarga de combustible no funciona.");
         }
     }
 
@@ -147,11 +147,11 @@ public class DescargaCombus {
 
             // 5. Número aleatorio de 3 dígitos
             String listros = String.format("%03d", random.nextInt(1000));
-            WebElement listrosSolicitados = wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//*[@id='EDT_LISTROSSOLICITADOS']")));
+            WebElement listrosSolicitados = wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//*[@id=\"EDT_LITROSSOLICITADOS\"]")));
             listrosSolicitados.sendKeys(listros);
             System.out.println("El número de litros solicitados es: " + listros);
 
-            WebElement listrosDescargados = wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//*[@id='EDT_LISTROSDESCARGADOS']")));
+            WebElement listrosDescargados = wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//*[@id=\"EDT_LITROSDESCARGADOS\"]")));
             listrosDescargados.sendKeys(listros);
 
             // 6. Número aleatorio entre 24.01 y 26.47

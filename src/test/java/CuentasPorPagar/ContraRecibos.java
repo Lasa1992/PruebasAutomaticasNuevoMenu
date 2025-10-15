@@ -62,7 +62,7 @@ public class ContraRecibos {
         pasivo.SubtotalPasivo();
         pasivo.IVAPasivo();
         pasivo.AceptarPasivo();
-        pasivo.AceptarPoliza();
+       // pasivo.AceptarPoliza();
 
         //Metodos para crear Contra Recibo
         BotonCuentasPorPagar();
@@ -87,7 +87,7 @@ public class ContraRecibos {
         try {
             // Esperar a que el botón de Cuentas por Pagar esté presente y clickeable
             WebElement botonCuentasPorPagar = wait.until(ExpectedConditions.elementToBeClickable(By.xpath(
-                    "//*[@id=\"HTM_HTMLTEMPLATE1\"]/div/ul/li[7]/a/img")));
+                    "//*[@id=\"sidebar\"]/div/ul/li[8]")));
 
             // Hacer clic en el botón
             botonCuentasPorPagar.click();
@@ -103,7 +103,7 @@ public class ContraRecibos {
         try {
             // Esperar a que el botón de Contra Recibos esté presente y clickeable
             WebElement botonPagos = wait.until(ExpectedConditions.elementToBeClickable(By.xpath(
-                    "//*[@id=\"HTM_HTMLTEMPLATE1\"]/div/ul/li[7]/ul/li[3]/a/img")));
+                    "//*[@id=\"submenuCUENTASPORPAGAR\"]/li[3]/a")));
 
             // Hacer clic en el botón
             botonPagos.click();

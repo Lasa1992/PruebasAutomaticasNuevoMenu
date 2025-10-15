@@ -32,7 +32,7 @@ public class FacturacionGeneralDescImpr {
     // Se toman las constantes de la clase Variables
     private static final String NUMERO_CLIENTE = Variables.CLIENTE;
 
-    private static String numeroFactura;
+    private static String FolioFactura;
 
     @BeforeEach
     public void setup() {
@@ -124,12 +124,8 @@ public class FacturacionGeneralDescImpr {
 
     private static void ModuloFacturacion() {
         try {
-            WebElement imageButton = wait.until(ExpectedConditions.elementToBeClickable(
-                    By.xpath("//img[contains(@src, '/GMTERPV8_WEB/Imagenes/FACTURACION1')]")));
+            WebElement imageButton = wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//*[@id=\"sidebar\"]/div/ul/li[3]")));
             imageButton.click();
-            System.out.println("Se hizo clic en el Módulo de Facturación.");
-            // Pausa de 3 segundos
-            Thread.sleep(3000);
         } catch (Exception e) {
             UtilidadesAllure.manejoError(driver, e, "Botón Módulo Facturación no funciona.");
             System.out.println("Botón Módulo Facturación no funciona.");
@@ -139,35 +135,31 @@ public class FacturacionGeneralDescImpr {
     private static void SubmoduloFacturacionGeneral() {
         try {
             WebElement subMenuButton = wait.until(ExpectedConditions.elementToBeClickable(
-                    By.xpath("/html/body/form/table/tbody/tr/td/div/table/tbody/tr/td/table/tbody/tr/td/table/tbody/tr[1]/td/div[3]/div[1]/div[2]/div/table/tbody/tr/td/table/tbody/tr[1]/td/div/div/table/tbody/tr/td/div/ul/li[3]/ul/li[8]/a/img")));
+                    By.xpath("//*[@id=\"submenuFACTURACION\"]/li[8]/a")));
             subMenuButton.click();
-            System.out.println("Se hizo clic en el submódulo de Facturación General.");
-            Thread.sleep(3000);
         } catch (Exception e) {
             UtilidadesAllure.manejoError(driver, e, "Error al hacer clic en el submódulo de Facturación General.");
             System.out.println("Error al hacer clic en el submódulo de Facturación General: " + e.getMessage());
         }
     }
 
+
     private static void AgregarFacturaGeneral() {
         try {
             WebElement elemento = wait.until(ExpectedConditions.elementToBeClickable(
-                    By.xpath("/html/body/form/table/tbody/tr/td/div/table/tbody/tr/td/table/tbody/tr/td/table/tbody/tr[1]/td/div[3]/div[2]/div[1]/table/tbody/tr/td/table/tbody/tr[1]/td/div/div[1]/div/table/tbody/tr/td/a/span")));
+                    By.xpath("//*[@id=\"tzBTN_AGREGAR\"]")));
             elemento.click();
-            System.out.println("Se hizo clic en Agregar Factura General.");
-            Thread.sleep(3000);
         } catch (Exception e) {
             UtilidadesAllure.manejoError(driver, e, "Error al hacer clic en Agregar Factura General.");
             System.out.println("Error al hacer clic en Agregar Factura General: " + e.getMessage());
         }
     }
-
     @Step("Manejar Número de Factura (obtener folio)")
     private void NumeroFactura() {
         try {
             WebElement folioField = wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("EDT_FOLIO")));
-            numeroFactura = folioField.getAttribute("value");
-            System.out.println("El número de factura es: " + numeroFactura);
+            FolioFactura = folioField.getAttribute("value");
+            System.out.println("El número de factura es: " + FolioFactura);
             Thread.sleep(3000);
         } catch (TimeoutException e) {
             UtilidadesAllure.manejoError(driver, e, "Error al manejar el Número de Factura");
@@ -435,46 +427,60 @@ public class FacturacionGeneralDescImpr {
 
     private static void BusquedaFacturaListado() {
         try {
-            // Este selector es un ejemplo, ajústalo según tu tabla o buscador
+            // Buscar el campo de búsqueda con XPath en lugar de CSS Selector
             WebElement busquedaField = wait.until(ExpectedConditions.visibilityOfElementLocated(
-                    By.cssSelector("#TABLE_ProFacturasGenerales_wrapper input[type='search']")));
-            busquedaField.clear();
-            busquedaField.sendKeys(numeroFactura);
-            System.out.println("Se ingresó el folio de la factura para su búsqueda: " + numeroFactura);
+                    By.xpath("//*[@id=\"TABLE_ProFacturasGenerales_filter\"]/label/input")));
 
-            WebElement buscarButton = wait.until(ExpectedConditions.elementToBeClickable(By.id("BTN_APLICAR")));
-            buscarButton.click();
-            System.out.println("Se presionó el botón de búsqueda.");
-            Thread.sleep(3000);
+            busquedaField.clear();
+            busquedaField.sendKeys(FolioFactura);
+            System.out.println("Se ingresó el folio de la factura para su búsqueda: " + FolioFactura);
+            busquedaField.sendKeys(Keys.ENTER);
+
+            // Esperar a que la tabla muestre el folio buscado
+            wait.until(ExpectedConditions.textToBePresentInElementLocated(
+                    By.xpath("//table[@id='TABLE_ProFacturasGenerales']//tbody"), FolioFactura));
+
+            System.out.println("La búsqueda se completó y los resultados están visibles.");
         } catch (Exception e) {
-            UtilidadesAllure.manejoError(driver, e, "Error al buscar la factura en el listado");
-            System.out.println("Error al buscar la factura en el listado: " + e.getMessage());
+            UtilidadesAllure.manejoError(driver, e, "Error al buscar la factura: " + FolioFactura);
         }
     }
 
     @Step("Seleccionar Factura en el Listado")
     private static void SeleccionarFactura() {
         try {
-            WebElement fila = driver.findElement(By.xpath(
-                    "//table[@id='TABLE_ProFacturasGenerales']//tr[td[1][contains(text(),'" + numeroFactura + "')]]"));
-            fila.click();
-            System.out.println("Factura seleccionada: " + numeroFactura);
             Thread.sleep(3000);
+            WebElement tablaFacturas = wait.until(ExpectedConditions.visibilityOfElementLocated(
+                    By.xpath("//*[@id=\"TABLE_ProFacturasGenerales_wrapper\"]/div[2]/div[2]")));
+
+            WebElement fila = wait.until(ExpectedConditions.elementToBeClickable(By.xpath(
+                    "//table[@id='TABLE_ProFacturasGenerales']//tr[td[contains(text(),'" + FolioFactura + "')]]")));
+
+            ((JavascriptExecutor) driver).executeScript("arguments[0].scrollIntoView({block: 'center'});", fila);
+            try {
+                fila.click();
+            } catch (Exception e) {
+                ((JavascriptExecutor) driver).executeScript("arguments[0].click();", fila);
+            }
+            System.out.println("Factura seleccionada correctamente: " + FolioFactura);
         } catch (NoSuchElementException e) {
-            UtilidadesAllure.manejoError(driver, e, "No se encontró la factura con número: " + numeroFactura);
+            System.out.println("ERROR: No se encontró la factura con folio: " + FolioFactura);
+            UtilidadesAllure.manejoError(driver, e, "No se encontró la factura con el número: " + FolioFactura);
+        } catch (TimeoutException e) {
+            System.out.println("ERROR: La tabla no cargó los resultados a tiempo.");
+            UtilidadesAllure.manejoError(driver, e, "La tabla de facturas no cargó correctamente.");
         } catch (Exception e) {
-            UtilidadesAllure.manejoError(driver, e, "Error al seleccionar la factura en el listado");
-            System.out.println("Error al seleccionar la factura: " + e.getMessage());
+            System.out.println("ERROR: Ocurrió un problema al seleccionar la factura.");
+            UtilidadesAllure.manejoError(driver, e, "Error inesperado al seleccionar la factura.");
         }
     }
-
     // ------------------ Impresión y Descarga ------------------
 
     @Step("Hacer clic en el botón de impresión")
     public void BotonImprimir() {
         try {
             WebElement botonImprimir = driver.findElement(
-                    By.xpath("/html/body/form/table/tbody/tr/td/div/table/tbody/tr/td/table/tbody/tr/td/table/tbody/tr[1]/td/div[3]/div[2]/div[1]/table/tbody/tr/td/table/tbody/tr[1]/td/div/div[5]/div/table/tbody/tr/td/a/span/span"));
+                    By.xpath("//*[@id=\"BTN_IMPRIMIR\"]"));
             botonImprimir.click();
             System.out.println("Se hizo clic en el botón de impresión.");
             Thread.sleep(3000);
@@ -547,7 +553,7 @@ public class FacturacionGeneralDescImpr {
     public void BotonDescargar() {
         try {
             WebElement botonDescargar = driver.findElement(
-                    By.xpath("/html/body/form/table/tbody/tr/td/div/table/tbody/tr/td/table/tbody/tr/td/table/tbody/tr[1]/td/div[3]/div[2]/div[1]/table/tbody/tr/td/table/tbody/tr[2]/td/div/table/tbody/tr/td/table/tbody/tr[1]/td[2]"));
+                    By.xpath("//*[@id=\"tzOPT_DESCARGARMENU\"]"));
             botonDescargar.click();
             System.out.println("Se hizo clic en el botón de descargar carta porte.");
             Thread.sleep(3000);
@@ -560,7 +566,7 @@ public class FacturacionGeneralDescImpr {
     public void SeleccionarOpcionDescarga() {
         try {
             WebElement opcionDescarga = driver.findElement(
-                    By.xpath("/html/body/form/table/tbody/tr/td/div/table/tbody/tr/td/table/tbody/tr/td/table/tbody/tr[1]/td/div[3]/div[2]/div[1]/table/tbody/tr/td/table/tbody/tr[2]/td/div/table/tbody/tr/td/table/tbody/tr[2]/td/div/table/tbody/tr[1]/td[2]/a"));
+                    By.xpath("//*[@id=\"tzOPT_DESCARGARXML\"]"));
             opcionDescarga.click();
             System.out.println("Se seleccionó la opción de descarga.");
             Thread.sleep(5000);

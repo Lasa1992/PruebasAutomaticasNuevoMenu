@@ -115,7 +115,7 @@ public class SalidaYLlegada {
     private static void BotonModuloTrafico() {
         try {
             WebElement ModuloBotonTrafico = wait.until(ExpectedConditions.elementToBeClickable(
-                    By.xpath("//img[contains(@src, '/GMTERPV8_WEB/Imagenes/TRAFICO1.jpg')]")));
+                    By.xpath("//*[@id=\"sidebar\"]/div/ul/li[5]")));
             ModuloBotonTrafico.click();
         } catch (Exception e) {
             UtilidadesAllure.manejoError(driver, e, "Botón Módulo Tráfico no funciona.");
@@ -125,7 +125,7 @@ public class SalidaYLlegada {
     private static void BotonListadoViajes() {
         try {
             WebElement ListadoBoton = wait.until(ExpectedConditions.elementToBeClickable(
-                    By.xpath("//a[img[contains(@src, '/GMTERPV8_WEB/Imagenes/TRAFICO/VIAJES1.jpg')]]")));
+                    By.xpath("//*[@id=\"submenuTRAFICO\"]/li[2]/a")));
             ListadoBoton.click();
         } catch (Exception e) {
             UtilidadesAllure.manejoError(driver, e, "Botón Listado de Viajes no funciona.");
@@ -291,7 +291,7 @@ public class SalidaYLlegada {
                     By.id("EDT_IMPORTARMATERIALES_ARCHIVO")));
 
             // Ajusta la ruta del archivo a tu escenario
-            String rutaArchivo = "C:\\Users\\UsuarioY\\Desktop\\Pruebas Automaticas\\XLSXPruebas\\ImportarMaterialesPA.xlsx";
+            String rutaArchivo =  "C:\\RepositorioPrueAuto\\XLSXPruebas\\ImportarMaterialesPA.xlsx";
             File archivo = new File(rutaArchivo);
             if (!archivo.exists()) {
                 throw new Exception("El archivo especificado no existe: " + rutaArchivo);

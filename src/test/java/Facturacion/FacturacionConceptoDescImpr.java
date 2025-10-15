@@ -122,10 +122,9 @@ public class FacturacionConceptoDescImpr {
         InicioSesion.cerrarSesion(); // Asegurar que se libere el WebDriver correctamente
     }
 
-    private static void handleImageButton() {
+    public static void handleImageButton() {
         try {
-            WebElement imageButton = wait.until(ExpectedConditions.elementToBeClickable(
-                    By.xpath("//img[contains(@src, '/GMTERPV8_WEB/Imagenes/FACTURACION1')]")));
+            WebElement imageButton = wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//*[@id=\"sidebar\"]/div/ul/li[3]")));
             imageButton.click();
         } catch (Exception e) {
             UtilidadesAllure.manejoError(driver, e, "Botón Módulo Facturación no funciona.");
@@ -133,20 +132,21 @@ public class FacturacionConceptoDescImpr {
         }
     }
 
-    private static void handleSubMenuButton() {
+    public static void handleSubMenuButton() {
         try {
-            WebElement subMenuButton = wait.until(ExpectedConditions.elementToBeClickable(
-                    By.xpath("//img[contains(@src, '/GMTERPV8_WEB/Imagenes/FACTURACION/PORCONCEPTO1')]")));
+            WebElement subMenuButton = wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//*[@id=\"submenuFACTURACION\"]/li[2]/a")));
             subMenuButton.click();
         } catch (Exception e) {
+            //Captura el mensaje de error, toma una captura de pantalla y lo despliega en el reporte de Allure.
             UtilidadesAllure.manejoError(driver, e, "Botón listado de Facturas por Concepto no funciona.");
             System.out.println("Botón listado Facturas por Concepto no funciona.");
         }
     }
 
+
     private static void BotonAgregarListado() {
         try {
-            WebElement additionalButton = wait.until(ExpectedConditions.elementToBeClickable(By.id("BTN_AGREGAR")));
+            WebElement additionalButton = wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//*[@id=\"BTN_AGREGAR\"]")));
             additionalButton.click();
         } catch (Exception e) {
             UtilidadesAllure.manejoError(driver, e, "Botón agregar no encontrado o no clickeable.");
@@ -445,7 +445,7 @@ public class FacturacionConceptoDescImpr {
     private static void BusquedaFacturaListado() {
         try {
             WebElement busquedaField = wait.until(ExpectedConditions.visibilityOfElementLocated(
-                    By.cssSelector("input[type='search'][aria-controls='TABLE_ProFacturasPorConcepto']")));
+                    By.xpath("//*[@id=\"TABLE_ProFacturasPorConcepto_filter\"]/label/input")));
 
             busquedaField.clear();
             busquedaField.sendKeys(FolioFactura);
@@ -466,7 +466,7 @@ public class FacturacionConceptoDescImpr {
         try {
             Thread.sleep(3000);
             WebElement tablaFacturas = wait.until(ExpectedConditions.visibilityOfElementLocated(
-                    By.id("TABLE_ProFacturasPorConcepto")));
+                    By.xpath("//*[@id=\"TABLE_ProFacturasPorConcepto_wrapper\"]/div[2]/div[2]")));
 
             WebElement fila = wait.until(ExpectedConditions.elementToBeClickable(By.xpath(
                     "//table[@id='TABLE_ProFacturasPorConcepto']//tr[td[contains(text(),'" + FolioFactura + "')]]")));
@@ -496,7 +496,7 @@ public class FacturacionConceptoDescImpr {
     public void BotonImprimir() {
         try {
             WebElement botonImprimir = driver.findElement(
-                    By.xpath("/html/body/form/table/tbody/tr/td/div/table/tbody/tr/td/table/tbody/tr/td/table/tbody/tr[1]/td/div[3]/div[2]/div[1]/table/tbody/tr/td/table/tbody/tr[1]/td/div/div[5]/div/table/tbody/tr/td/a/span/span"));
+                    By.xpath("//*[@id=\"BTN_IMPRIMIR\"]"));
             botonImprimir.click();
             System.out.println("Se hizo clic en el botón de impresión.");
             Thread.sleep(3000);
@@ -569,7 +569,7 @@ public class FacturacionConceptoDescImpr {
     public void BotonDescargar() {
         try {
             WebElement botonDescargar = driver.findElement(
-                    By.xpath("/html/body/form/table/tbody/tr/td/div/table/tbody/tr/td/table/tbody/tr/td/table/tbody/tr[1]/td/div[3]/div[2]/div[1]/table/tbody/tr/td/table/tbody/tr[2]/td/div/table/tbody/tr/td/table/tbody/tr[1]/td[2]"));
+                    By.xpath("//*[@id=\"tzOPT_DESCARGARMENU\"]/table/tbody/tr[1]"));
             botonDescargar.click();
             System.out.println("Se hizo clic en el botón de descargar carta porte.");
             Thread.sleep(3000);
@@ -582,7 +582,7 @@ public class FacturacionConceptoDescImpr {
     public void SeleccionarOpcionDescarga() {
         try {
             WebElement opcionDescarga = driver.findElement(
-                    By.xpath("/html/body/form/table/tbody/tr/td/div/table/tbody/tr/td/table/tbody/tr/td/table/tbody/tr[1]/td/div[3]/div[2]/div[1]/table/tbody/tr/td/table/tbody/tr[2]/td/div/table/tbody/tr/td/table/tbody/tr[2]/td/div/table/tbody/tr[1]/td[2]/a"));
+                    By.xpath("//*[@id=\"tzOPT_DESCARGARXML\"]"));
             opcionDescarga.click();
             System.out.println("Se seleccionó la opción de descarga.");
             Thread.sleep(5000);

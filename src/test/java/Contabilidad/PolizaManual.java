@@ -106,7 +106,7 @@ public class PolizaManual {
 
             // Primer clic: abre el submenú
             try {
-                WebElement primerElemento = wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//*[@id='HTM_HTMLTEMPLATE1']/div/ul/li[8]/a/img")));
+                WebElement primerElemento = wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//*[@id=\"sidebar\"]/div/ul/li[9]")));
                 primerElemento.click();
                 System.out.println("Primer elemento del menú clicado.");
             } catch (Exception e) {
@@ -116,7 +116,7 @@ public class PolizaManual {
 
             // Segundo clic: selecciona la opción del submenú
             try {
-                WebElement segundoElemento = wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//*[@id='HTM_HTMLTEMPLATE1']/div/ul/li[8]/ul/li[3]/a/img")));
+                WebElement segundoElemento = wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//*[@id=\"submenuCONTABILIDAD\"]/li[3]/a")));
                 segundoElemento.click();
                 System.out.println("Segunda opción del submenú seleccionada.");
             } catch (Exception e) {

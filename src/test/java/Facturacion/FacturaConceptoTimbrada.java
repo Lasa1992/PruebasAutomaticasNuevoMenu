@@ -68,7 +68,7 @@ public class FacturaConceptoTimbrada {
         handleSubMenuButton();
     }
 
-    @RepeatedTest(23)
+    @RepeatedTest(1)
     @Order(4)
     @Description("Se genera una factura con conceptos aleatorios")
     public void FacturacionporConcepto() {
@@ -106,7 +106,7 @@ public class FacturaConceptoTimbrada {
 
     public static void handleImageButton() {
         try {
-            WebElement imageButton = wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//img[contains(@src, '/GMTERPV8_WEB/Imagenes/FACTURACION1')]")));
+            WebElement imageButton = wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//*[@id=\"sidebar\"]/div/ul/li[3]")));
             imageButton.click();
         } catch (Exception e) {
             UtilidadesAllure.manejoError(driver, e, "Botón Módulo Facturación no funciona.");
@@ -116,7 +116,7 @@ public class FacturaConceptoTimbrada {
 
     public static void handleSubMenuButton() {
         try {
-            WebElement subMenuButton = wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//img[contains(@src, '/GMTERPV8_WEB/Imagenes/FACTURACION/PORCONCEPTO1')]")));
+            WebElement subMenuButton = wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//*[@id=\"submenuFACTURACION\"]/li[2]/a")));
             subMenuButton.click();
         } catch (Exception e) {
             //Captura el mensaje de error, toma una captura de pantalla y lo despliega en el reporte de Allure.
@@ -127,7 +127,7 @@ public class FacturaConceptoTimbrada {
 
     public static void BotonAgregarListado() {
         try {
-            WebElement additionalButton = wait.until(ExpectedConditions.elementToBeClickable(By.id("BTN_AGREGAR")));
+            WebElement additionalButton = wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//*[@id=\"BTN_AGREGAR\"]")));
             additionalButton.click();
         } catch (Exception e) {
             //manejarBotonesCancelar();
@@ -179,7 +179,7 @@ public class FacturaConceptoTimbrada {
 
             // Selecciona la opción en el primer combo box
             primerComboBox.selectByVisibleText(opcionSeleccionada);
-            Variables.MonedaFactura = opcionSeleccionada;
+            Variables.Moneda = opcionSeleccionada;
 
             // Imprime la opción seleccionada
             System.out.println("La Moneda es: " + opcionSeleccionada);

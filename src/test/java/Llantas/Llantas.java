@@ -126,7 +126,7 @@ public class Llantas {
 
     private static void handleImageButton() {
         try {
-            WebElement imageButton = wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//img[contains(@src, '/GMTERPV8_WEB/Imagenes/LLANTAS1')]")));
+            WebElement imageButton = wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//*[@id=\"sidebar\"]/div/ul/li[12]")));
             imageButton.click();
             System.out.println("Botón Módulo Llantas seleccionado correctamente...");
         } catch (Exception e) {
@@ -137,7 +137,7 @@ public class Llantas {
 
     private static void handleSubMenuButton() {
         try {
-            WebElement subMenuButton = wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//img[contains(@src, '/GMTERPV8_WEB/Imagenes/LLANTAS/LLANTAS1')]")));
+            WebElement subMenuButton = wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//*[@id=\"submenuLLANTAS\"]/li[2]/a")));
             subMenuButton.click();
             System.out.println("Botón Ordenes de Servicio seleccionado correctamente...");
         } catch (Exception e) {
@@ -151,7 +151,7 @@ public class Llantas {
     private static void BotonAgregarLlanta() {
         try {
             WebElement botonAgregarImagen = wait.until(ExpectedConditions.elementToBeClickable(
-                    By.xpath("//*[@id=\"BTN_REGISTRAR\"]")));
+                    By.xpath("//*[@id=\"tzBTN_REGISTRAR\"]")));
             botonAgregarImagen.click();
             System.out.println("Botón 'Agregar Llanta' fue clickeado correctamente.");
         } catch (Exception e) {

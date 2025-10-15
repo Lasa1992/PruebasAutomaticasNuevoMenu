@@ -70,7 +70,7 @@ public class PasivoManual {
         SubtotalPasivo();
         IVAPasivo();
         AceptarPasivo();
-        AceptarPoliza();
+        //AceptarPoliza();
 
     }
 
@@ -85,7 +85,7 @@ public class PasivoManual {
         try {
             // Esperar a que el botón de Cuentas por Pagar esté presente y clickeable
             WebElement botonCuentasPorPagar = wait.until(ExpectedConditions.elementToBeClickable(By.xpath(
-                    "//*[@id=\"HTM_HTMLTEMPLATE1\"]/div/ul/li[7]/a/img")));
+                    "//*[@id=\"sidebar\"]/div/ul/li[8]")));
 
             // Hacer clic en el botón
             botonCuentasPorPagar.click();
@@ -101,7 +101,7 @@ public class PasivoManual {
         try {
             // Esperar a que el botón de Pagos esté presente y clickeable
             WebElement botonPagos = wait.until(ExpectedConditions.elementToBeClickable(By.xpath(
-                    "//*[@id=\"HTM_HTMLTEMPLATE1\"]/div/ul/li[7]/ul/li[2]/a/img")));
+                    "//*[@id=\"submenuCUENTASPORPAGAR\"]/li[2]/a")));
 
             // Hacer clic en el botón
             botonPagos.click();

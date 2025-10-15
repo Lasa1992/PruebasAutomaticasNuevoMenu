@@ -105,7 +105,7 @@ public class MovimientoBancarioModElim {
     private void ingresarModuloBancos() {
         try {
             WebElement botonBancos = wait.until(ExpectedConditions.elementToBeClickable(
-                    By.xpath("//img[contains(@src, '/GMTERPV8_WEB/Imagenes/BANCO1')]")
+                    By.xpath("//*[@id=\"sidebar\"]/div/ul/li[7]")
             ));
             botonBancos.click();
         } catch (TimeoutException e) {
@@ -119,7 +119,7 @@ public class MovimientoBancarioModElim {
     private void submoduloMovBancarios() {
         try {
             WebElement subModuloMovimientos = wait.until(ExpectedConditions.elementToBeClickable(
-                    By.xpath("//img[contains(@src, '/GMTERPV8_WEB/Imagenes/BANCO/MOVIMIENTOSBANCARIOS')]")
+                    By.xpath("//*[@id=\"submenuBANCO\"]/li[3]/a")
             ));
             subModuloMovimientos.click();
         } catch (TimeoutException e) {
@@ -345,7 +345,7 @@ public class MovimientoBancarioModElim {
     private void BuscarMovimiento() {
         try {
             WebElement inputBusqueda = wait.until(ExpectedConditions.elementToBeClickable(
-                    By.xpath("/html/body/form/table/tbody/tr/td/div/table/tbody/tr/td/table/tbody/tr/td/table/tbody/tr[2]/td/div[1]/div/div/div[1]/div[1]/label/input")
+                    By.xpath("//*[@id=\"TABLE_ProMovimientosBancarios_filter\"]/label/input")
             ));
 
             inputBusqueda.click();
@@ -365,7 +365,7 @@ public class MovimientoBancarioModElim {
     private void SeleccionarMovimiento() {
         try {
             WebElement tablaMovimientos = wait.until(ExpectedConditions.visibilityOfElementLocated(
-                    By.id("TABLE_ProMovimientosBancarios")
+                    By.xpath("//*[@id=\"TABLE_ProMovimientosBancarios_wrapper\"]/div[2]/div[2]")
             ));
 
             // Buscar el registro que contenga el folio en la tabla
@@ -398,7 +398,7 @@ public class MovimientoBancarioModElim {
     private void BotonModificar() {
         try {
             WebElement botonModificar = wait.until(ExpectedConditions.elementToBeClickable(
-                    By.xpath("/html/body/form/table/tbody/tr/td/div/table/tbody/tr/td/table/tbody/tr/td/table/tbody/tr[1]/td/div[3]/div[2]/div[1]/table/tbody/tr/td/table/tbody/tr[1]/td/div/div[2]/div/input")
+                    By.xpath("//*[@id=\"BTN_MODIFICAR\"]")
             ));
 
             botonModificar.click();

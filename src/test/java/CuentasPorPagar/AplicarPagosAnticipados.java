@@ -65,7 +65,7 @@ public class AplicarPagosAnticipados {
         pasivo.IVAPasivo();
         pasivo.TotalPasivo();
         pasivo.AceptarPasivo();
-        pasivo.AceptarPoliza();
+       // pasivo.AceptarPoliza();
 
         //Generar Movimiento Bancario Tipo Retiro por Transferencia
         MovimientoBancario movimiento= new MovimientoBancario();
@@ -106,7 +106,7 @@ public class AplicarPagosAnticipados {
         try {
             // Esperar a que el botón de Cuentas por Pagar esté presente y clickeable
             WebElement botonCuentasPorPagar = wait.until(ExpectedConditions.elementToBeClickable(By.xpath(
-                    "//*[@id=\"HTM_HTMLTEMPLATE1\"]/div/ul/li[7]/a/img")));
+                    "//*[@id=\"sidebar\"]/div/ul/li[8]")));
 
             // Hacer clic en el botón
             botonCuentasPorPagar.click();
@@ -122,7 +122,7 @@ public class AplicarPagosAnticipados {
         try {
             // Esperar a que el botón de Aplicar Pagos Anticipados esté presente y clickeable
             WebElement botonPagosAnticipados = wait.until(ExpectedConditions.elementToBeClickable(By.xpath(
-                    "//*[@id=\"HTM_HTMLTEMPLATE1\"]/div/ul/li[7]/ul/li[6]/a/img")));
+                    "//*[@id=\"submenuCUENTASPORPAGAR\"]/li[6]/a")));
 
             // Hacer clic en el botón
             botonPagosAnticipados.click();

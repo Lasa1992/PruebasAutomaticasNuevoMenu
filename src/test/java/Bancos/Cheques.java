@@ -87,7 +87,7 @@ public class Cheques {
     private void ingresarModuloBancos() {
         try {
             WebElement botonBancos = wait.until(ExpectedConditions.elementToBeClickable(
-                    By.xpath("//img[contains(@src, '/GMTERPV8_WEB/Imagenes/BANCO1')]")
+                    By.xpath("//*[@id=\"sidebar\"]/div/ul/li[7]")
             ));
             botonBancos.click();
         } catch (Exception e) {
@@ -99,7 +99,7 @@ public class Cheques {
     private void submoduloCheques() {
         try {
             WebElement subCheques = wait.until(ExpectedConditions.elementToBeClickable(
-                    By.xpath("//img[contains(@src, '/GMTERPV8_WEB/Imagenes/BANCO/CHEQUES')]")
+                    By.xpath("//*[@id=\"submenuBANCO\"]/li[2]/a")
             ));
             subCheques.click();
         } catch (Exception e) {
@@ -111,7 +111,7 @@ public class Cheques {
     private void RegistrarCheque() {
         try {
             WebElement botonRegistrar = wait.until(ExpectedConditions.elementToBeClickable(
-                    By.xpath("/html/body/form/table/tbody/tr/td/div/table/tbody/tr/td/table/tbody/tr/td/table/tbody/tr[1]/td/div[3]/div[2]/div[1]/table/tbody/tr/td/table/tbody/tr[1]/td/div/div[1]/div/input")
+                    By.xpath("//*[@id=\"BTN_REGISTRAR\"]")
             ));
             botonRegistrar.click();
         } catch (Exception e) {

@@ -108,7 +108,7 @@ public class FacturacionListadoViajes {
     private static void BotonModuloTrafico() {
         try {
             WebElement ModuloBotonTrafico = wait.until(
-                    ExpectedConditions.elementToBeClickable(By.xpath("//img[contains(@src, '/GMTERPV8_WEB/Imagenes/TRAFICO1')]"))
+                    ExpectedConditions.elementToBeClickable(By.xpath("//*[@id=\"sidebar\"]/div/ul/li[5]"))
             );
             ModuloBotonTrafico.click();
         } catch (Exception e) {
@@ -119,7 +119,7 @@ public class FacturacionListadoViajes {
     private static void BotonListadoViajes() {
         try {
             WebElement ListadoBoton = wait.until(
-                    ExpectedConditions.elementToBeClickable(By.xpath("//a[img[contains(@src, '/GMTERPV8_WEB/Imagenes/TRAFICO/VIAJES1')]]"))
+                    ExpectedConditions.elementToBeClickable(By.xpath("//*[@id=\"submenuTRAFICO\"]/li[2]/a"))
             );
             ListadoBoton.click();
         } catch (Exception e) {
@@ -129,7 +129,7 @@ public class FacturacionListadoViajes {
 
     private static void BotonAgregarCartaPorte() {
         try {
-            WebElement additionalButton = wait.until(ExpectedConditions.elementToBeClickable(By.id("BTN_AGREGAR")));
+            WebElement additionalButton = wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//*[@id=\"tzBTN_AGREGAR\"]")));
             additionalButton.click();
         } catch (TimeoutException e) {
             UtilidadesAllure.manejoError(driver, e, "Botón Agregar Carta Porte no funciona.");
@@ -396,7 +396,7 @@ public class FacturacionListadoViajes {
     private void SelecionarCartaporteListado() {
         try {
             WebElement campoBusqueda = wait.until(
-                    ExpectedConditions.visibilityOfElementLocated(By.cssSelector("#TABLE_ProViajes_filter input[type='search']"))
+                    ExpectedConditions.visibilityOfElementLocated(By.xpath("//*[@id=\"EDT_BUSCARVIAJES\"]"))
             );
             campoBusqueda.clear();
             campoBusqueda.sendKeys(folioGuardado);
@@ -404,7 +404,7 @@ public class FacturacionListadoViajes {
 
             Thread.sleep(2000);
 
-            WebElement tablaViajes = driver.findElement(By.id("TABLE_ProViajes"));
+            WebElement tablaViajes = driver.findElement(By.xpath("//*[@id=\"tzdTABLE_PROVIAJES\"]/div"));
             List<WebElement> filas = tablaViajes.findElements(By.tagName("tr"));
 
             for (WebElement fila : filas) {
@@ -423,14 +423,14 @@ public class FacturacionListadoViajes {
     @Step("Presionar Botón Facturación y manejar resultados")
     private void PresionarBotonFacturacion() {
         try {
-            WebElement botonFacturar = wait.until(ExpectedConditions.elementToBeClickable(By.id("BTN_FACTURAR")));
+            WebElement botonFacturar = wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//*[@id=\"tzBTN_FACTURAR\"]")));
             botonFacturar.click();
 
             Thread.sleep(2000);
 
             // Caso 1: Revisa si sigue en el listado (facturación terminada)
             try {
-                WebElement listadoElement = driver.findElement(By.id("TABLE_ProViajes"));
+                WebElement listadoElement = driver.findElement(By.xpath("//*[@id=\"tzdTABLE_PROVIAJES\"]/div"));
                 if (listadoElement.isDisplayed()) {
                     System.out.println("Redirigido al listado. El proceso de facturación ha finalizado.");
                     return;

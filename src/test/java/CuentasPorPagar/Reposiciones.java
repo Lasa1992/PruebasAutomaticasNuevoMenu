@@ -101,7 +101,7 @@ public class Reposiciones {
         try {
             // Esperar a que el botón de Cuentas por Pagar esté presente y clickeable
             WebElement botonCuentasPorPagar = wait.until(ExpectedConditions.elementToBeClickable(By.xpath(
-                    "//*[@id=\"HTM_HTMLTEMPLATE1\"]/div/ul/li[7]/a/img")));
+                    "//*[@id=\"sidebar\"]/div/ul/li[8]")));
 
             // Hacer clic en el botón
             botonCuentasPorPagar.click();
@@ -117,7 +117,7 @@ public class Reposiciones {
         try {
             // Esperar a que el botón de Reposiciones esté presente y clickeable
             WebElement botonPagos = wait.until(ExpectedConditions.elementToBeClickable(By.xpath(
-                    "//*[@id=\"HTM_HTMLTEMPLATE1\"]/div/ul/li[7]/ul/li[5]/a/img")));
+                    "//*[@id=\"submenuCUENTASPORPAGAR\"]/li[5]/a")));
 
             // Hacer clic en el botón
             botonPagos.click();

@@ -96,7 +96,7 @@ public class PagoFacturaConcepto {
         factura.BotonConcurrenciaFactura();
         factura.BotonTimbre();
         //factura.ValidarYEnviarCorreo();
-        //factura.BotonPoliza()
+        factura.BotonPoliza();
         factura.BotonImpresion();
 
         // Bloque donde se controla el pago de la factura
@@ -130,7 +130,7 @@ public class PagoFacturaConcepto {
             // Espera explícita hasta que el botón (imagen) de Cobranza sea clicable
             WebElement ModuloBotonCobranza = wait.until(
                     ExpectedConditions.elementToBeClickable(
-                            By.xpath("//img[contains(@src, '/GMTERPV8_WEB/Imagenes/COBRANZA1.jpg')]")
+                            By.xpath("//*[@id=\"sidebar\"]/div/ul/li[4]")
                     )
             );
             // Hacer clic en el botón una vez esté listo
@@ -145,7 +145,7 @@ public class PagoFacturaConcepto {
         try {
             // Espera explícita hasta que el botón de Pagos/Abonos sea clicable
             WebElement pagosAbonosBoton = wait.until(ExpectedConditions.elementToBeClickable(
-                    By.xpath("//img[contains(@src, '/GMTERPV8_WEB/Imagenes/COBRANZA/PAGOSABONOS1.jpg')]")
+                    By.xpath("//*[@id=\"submenuCOBRANZA\"]/li[2]/a")
             ));
             // Hacer clic en el botón
             pagosAbonosBoton.click();

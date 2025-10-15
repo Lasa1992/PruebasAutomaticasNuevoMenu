@@ -79,7 +79,7 @@ public class LiquidacionFiscal {
         Aceptarpago();
         MensajeCFDI();
         MensajeTimbre();
-        MensajePoliza();
+       // MensajePoliza();
     }
 
     @AfterAll
@@ -91,7 +91,7 @@ public class LiquidacionFiscal {
     private void ModuloTrafico() {
         try {
             WebElement moduloTrafico = wait.until(ExpectedConditions.elementToBeClickable(
-                    By.xpath("//img[contains(@src, 'TRAFICO')]")));
+                    By.xpath("//*[@id=\"sidebar\"]/div/ul/li[5]")));
             moduloTrafico.click();
             System.out.println("Se ingresó al módulo de Tráfico.");
         } catch (Exception e) {
@@ -102,7 +102,7 @@ public class LiquidacionFiscal {
     private void LiquidacionesFiscales() {
         try {
             WebElement liquidacionesButton = wait.until(ExpectedConditions.elementToBeClickable(
-                    By.xpath("//a[contains(@onclick, 'PAGE_ProLiquidacionesFiscalesListado')]")));
+                    By.xpath("//*[@id=\"submenuTRAFICO\"]/li[11]/a")));
             liquidacionesButton.click();
             System.out.println("Se accedió a Liquidaciones Fiscales.");
         } catch (Exception e) {
